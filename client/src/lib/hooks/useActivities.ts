@@ -36,7 +36,7 @@ export const useActivities = (id?: string) => {
     })
 
     const createActivity = useMutation({
-        mutationFn: async (activity: Activity) => {
+        mutationFn: async (activity: FieldActivity) => {
             const response = await agent.post('/activities', activity);
             return response.data;
         },
