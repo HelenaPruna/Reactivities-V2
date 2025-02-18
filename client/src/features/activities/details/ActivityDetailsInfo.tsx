@@ -1,4 +1,4 @@
-import { CalendarToday, Info, Place } from "@mui/icons-material";
+import { CalendarToday, Info } from "@mui/icons-material";
 import { Divider, Grid2, Paper, Typography } from "@mui/material";
 import { formatDate } from "../../../lib/util/util";
 
@@ -28,17 +28,6 @@ export default function ActivityDetailsInfo({activity}: Props) {
                 </Grid2>
             </Grid2>
             <Divider />
-
-            <Grid2 container alignItems="center" pl={2} py={1}>
-                <Grid2 size={1}>
-                    <Place color="info" fontSize="large" />
-                </Grid2>
-                <Grid2 size={11}>
-                    <Typography>
-                        {activity.venue}, {activity.city}
-                    </Typography>
-                </Grid2>
-            </Grid2>
         </Paper>
     )
 }

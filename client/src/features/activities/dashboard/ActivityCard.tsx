@@ -40,8 +40,6 @@ export default function ActivityCard({ activity }: Props) {
                         <AccessTime sx={{ mr: 1 }} />
                         <Typography variant="body2" noWrap>{formatDate(activity.date)}</Typography>
                     </Box>
-                    <AccessTime sx={{ ml: 3, mr: 1 }} />
-                    <Typography variant="body2">{activity.venue}</Typography>
                 </Box>
                 <Box display='flex' gap={2} sx={{ backgroundColor: 'grey.200', py: 3, pl: 3 }}>
                     Attendees go here

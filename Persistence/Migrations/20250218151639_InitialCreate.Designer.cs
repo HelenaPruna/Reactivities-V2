@@ -11,7 +11,7 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250211153301_InitialCreate")]
+    [Migration("20250218151639_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -29,10 +29,6 @@ namespace Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("Date")
                         .HasColumnType("TEXT");
 
@@ -43,17 +39,11 @@ namespace Persistence.Migrations
                     b.Property<bool>("IsCancelled")
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Latitude")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Longitude")
-                        .HasColumnType("REAL");
-
-                    b.Property<string>("Title")
+                    b.Property<string>("Room")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Venue")
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
