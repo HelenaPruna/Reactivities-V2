@@ -15,3 +15,9 @@ type FieldActivity = {
     category: string
     room: string
 }
+
+type User = {
+    id: string
+    email: string
+    displayName: string
+}

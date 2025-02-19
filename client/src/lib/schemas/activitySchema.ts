@@ -1,17 +1,15 @@
 import { z } from 'zod'
+import { requiredString } from '../util/util';
 
-const requiredString = (fieldName: string) => z
-    .string({required_error: `${fieldName} is required`})
-    .min(1, { message: `${fieldName} is required` })
     
 export const activitySchema = z.object({
-    title: requiredString('Title'),
-    description: requiredString('Description'),
-    category: requiredString('Category'),
+    title: requiredString(),
+    description: requiredString(),
+    category: requiredString(),
     date: z.coerce.date({
-        message: 'Date is required'
+        message: 'Camp obligatori'
     }),
-    room: requiredString('Room')
+    room: requiredString()
 })
 
 export type ActivitySchema = z.infer<typeof activitySchema>;
