@@ -1,16 +1,18 @@
-namespace Domain;
+using System;
+using Application.Profiles.DTOs;
 
-public class Activity
+namespace Application.Activities.DTOs;
+
+public class ActivityDto
 {
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public required string Id { get; set; }
     public required string Title { get; set; }
     public DateTime Date { get; set; }
     public required string Description { get; set; }
     public required string Category { get; set; }
     public bool IsCancelled { get; set; }
     public required string Room { get; set; }
+    public UserProfile Creator { get; set; } = null!;
+    public ICollection<UserProfile> Organizers { get; set; } = [];
 
-    //nav parameters
-    public User Creator { get; set; } = null!;
-    public ICollection<ActivityOrganizer> Organizers { get; set; } = [];
 }

@@ -19,8 +19,7 @@ export const useAccount = () => {
                 queryKey: ['user']
             })
         }
-
-    });
+    })
 
     const registerUser = useMutation({
         mutationFn: async (creds:RegisterSchema) => {
