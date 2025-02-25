@@ -14,7 +14,16 @@ export const useActivities = (id?: string) => {
             const response = await agent.get<Activity[]>('/activities');
             return response.data;
         },
-        enabled: !id &&  location.pathname === '/activities' && !!currentUser
+        enabled: !id && location.pathname === '/activities' && !!currentUser,
+        select: data => {
+            return data.map(activity => {
+                return {
+                    ...activity,
+                    isCreator: currentUser?.id === activity.creator.id,
+                    isGoing: activity.organizers.some(x => x.id === currentUser?.id)
+                }
+            })
+        }
     });
 
     const { data: activity, isLoading: isLoadingActivity } = useQuery({
@@ -23,7 +32,15 @@ export const useActivities = (id?: string) => {
             const response = await agent.get<Activity>(`/activities/${id}`);
             return response.data;
         },
-        enabled: !!id && !!currentUser
+        enabled: !!id && !!currentUser,
+        select: data => {
+            return {
+                ...data,
+                isCreator: currentUser?.id === data.creator.id,
+                isGoing: data.organizers.some(x => x.id === currentUser?.id)
+            }    
+            
+        }
     })
 
     const updateActivity = useMutation({
@@ -32,7 +49,7 @@ export const useActivities = (id?: string) => {
         },
         onSuccess: async () => {
             await queryClient.invalidateQueries({
-                queryKey: ['activities']
+                queryKey: ['activities', id]
             })
         }
     })
@@ -60,6 +77,18 @@ export const useActivities = (id?: string) => {
         }
     })
 
+    const updateOrganizers = useMutation({
+        mutationFn: async (organizerIds: string[]) => {
+          await agent.post(`/activities/${id}/organizers`, organizerIds);
+        },
+        onSuccess: async () => { //to improve this should/could be opt updating
+            await queryClient.invalidateQueries({
+                queryKey: ['activities', id]
+            })
+        }
+    })
+
+
     return {
         activities,
         isLoading,
@@ -67,6 +96,7 @@ export const useActivities = (id?: string) => {
         createActivity,
         deleteActivity,
         activity,
-        isLoadingActivity
+        isLoadingActivity,
+        updateOrganizers
     }
 }

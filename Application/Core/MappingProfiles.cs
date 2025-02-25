@@ -19,6 +19,7 @@ public class MappingProfiles : Profile
             .ForMember(d => d.DisplayName, o => o.MapFrom(s => s.User.DisplayName))
             .ForMember(d => d.Id, o => o.MapFrom(s => s.User.Id));
             
+            
         CreateMap<User, UserProfile>()
             .ForMember(d => d.DisplayName, o => o.MapFrom(s => s.DisplayName))
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id));

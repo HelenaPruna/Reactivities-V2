@@ -44,10 +44,10 @@ public class ActivitiesController : BaseApiController
     }
 
     [HttpPost("{id}/organizers")]
-    public async Task<ActionResult> UpdateOrganizers(string id, UserProfile[] profiles)
+    public async Task<ActionResult> UpdateOrganizers(string id, string[] profilesIds)
     {
         return HandleResult(await Mediator.Send(new UpdateOrganizer.Command
-            { ActivityId = id, Profiles = profiles }));
+            { ActivityId = id, ProfilesIds = profilesIds }));
     }
 
 }

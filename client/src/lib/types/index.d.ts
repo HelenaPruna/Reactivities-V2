@@ -6,7 +6,17 @@ type Activity = {
     category: string
     isCancelled: boolean
     room: string
+    creator: Profile
+    organizers: Profile[]
+    isGoing: boolean
+    isCreator: boolean
 }
+
+type Profile = {
+    id: string
+    displayName: string
+}
+
 
 type FieldActivity = {
     title: string

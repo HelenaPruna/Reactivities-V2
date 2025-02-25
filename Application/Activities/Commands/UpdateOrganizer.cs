@@ -14,7 +14,7 @@ public class UpdateOrganizer
     {
         public required string ActivityId { get; set; }
 
-        public required ICollection<UserProfile> Profiles { get; set; }
+        public required ICollection<string> ProfilesIds { get; set; }
     }
 
     public class Handler(AppDbContext context) : IRequestHandler<Command, Result<Unit>>
@@ -28,7 +28,7 @@ public class UpdateOrganizer
 
             var currentOrganizers = activity.Organizers.ToList();
             var currentOrganizerIds = currentOrganizers.Select(aa => aa.User.Id).ToHashSet();
-            var newOrganizerIds = request.Profiles.Select(p => p.Id).ToHashSet();
+            var newOrganizerIds = request.ProfilesIds.ToHashSet();
 
             var organizersToRemove = currentOrganizers.Where(aa => !newOrganizerIds.Contains(aa.User.Id)).ToList();
             foreach (var organizer in organizersToRemove) activity.Organizers.Remove(organizer);

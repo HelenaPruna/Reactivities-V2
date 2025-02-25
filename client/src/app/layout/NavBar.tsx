@@ -25,21 +25,23 @@ export default function NavBar() {
                 <Typography variant="h4" fontWeight='bold'>Reactivities</Typography>
               </MenuItem>
             </Box>
-            <Box sx={{ display: 'flex' }}>
-              <MenuItemLink to='/activities'>Activitats</MenuItemLink>
-              <MenuItemLink to='/errors'>Errors</MenuItemLink>
-            </Box>
-            <Box display='flex' alignItems='center'>
-              {currentUser ? (
-                <UserMenu />
-              ) : (
-                <>
+            {currentUser ? (
+              <>
+                <Box sx={{ display: 'flex' }}>
+                  <MenuItemLink to='/activities'>Activitats</MenuItemLink>
+                </Box>
+                <Box display='flex' alignItems='center'>
+                  <UserMenu />
+                </Box>
+              </>
+            ) : (
+              <>
+                <Box display='flex' alignItems='center'>
                   <MenuItemLink to='/login'>Inicia sessió</MenuItemLink>
                   <MenuItemLink to='/register'>Registra't</MenuItemLink>
-                </>
-
-              )}
-            </Box>
+                </Box>
+              </>
+            )}
           </Toolbar>
         </Container>
         <Observer>
