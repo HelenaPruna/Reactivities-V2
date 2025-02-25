@@ -25,7 +25,7 @@ public class IsCreatorRequirementHandler(AppDbContext dbContext, IHttpContextAcc
         if (httpContext?.GetRouteValue("id") is not string activityId) return;
 
         var creator = await dbContext.Activities.AsNoTracking() //not really needed the no tracking?? just in case
-            .FirstOrDefaultAsync(x => x.Id == activityId && x.Creator.Id == userId);
+            .FirstOrDefaultAsync(x => x.Id == activityId && x.CreatorId == userId);
         if (creator == null) return;
 
         context.Succeed(requirement);

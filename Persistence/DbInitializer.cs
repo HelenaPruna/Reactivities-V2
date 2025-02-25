@@ -34,7 +34,7 @@ public class DbInitializer
                 Description = "Activity 2 months ago",
                 Category = "drinks",
                 Room = "London",
-                Creator = users[0],
+                CreatorId = users[0].Id,
                 Organizers = [
                     new ActivityOrganizer
                     {
@@ -48,7 +48,7 @@ public class DbInitializer
                 Description = "Activity 1 month ago",
                 Category = "culture",
                 Room = "Paris",
-                Creator = users[0],
+                CreatorId = users[0].Id,
                 Organizers = [
                     new ActivityOrganizer
                     {
@@ -62,7 +62,7 @@ public class DbInitializer
                 Description = "Activity 1 month in future",
                 Category = "culture",
                 Room = "London",
-                Creator = users[2]
+                CreatorId = users[2].Id
             },
             new() {
                 Title = "Future Activity 2",
@@ -70,7 +70,7 @@ public class DbInitializer
                 Description = "Activity 2 months in future",
                 Category = "music",
                 Room = "London",
-                Creator = users[0],
+                CreatorId = users[0].Id,
                 Organizers = [
                     new ActivityOrganizer
                     {
@@ -85,7 +85,7 @@ public class DbInitializer
                 Description = "Activity 3 months in future",
                 Category = "drinks",
                 Room = "London",
-                Creator = users[1],
+                CreatorId = users[1].Id,
                 Organizers = [
                     new ActivityOrganizer
                     {
@@ -100,7 +100,7 @@ public class DbInitializer
                 Description = "Activity 4 months in future",
                 Category = "drinks",
                 Room = "London",
-                Creator = users[0]
+                CreatorId = users[0].Id
             },
             new()
             {
@@ -109,7 +109,7 @@ public class DbInitializer
                 Description = "Activity 5 months in future",
                 Category = "culture",
                 Room = "London",
-                Creator = users[1],
+                CreatorId = users[1].Id,
                 Organizers = [
                     new ActivityOrganizer
                     {
@@ -124,7 +124,7 @@ public class DbInitializer
                 Description = "Activity 6 months in future",
                 Category = "music",
                 Room = "London",
-                Creator = users[2],
+                CreatorId = users[2].Id,
                 Organizers = [
                     new ActivityOrganizer
                     {
@@ -139,7 +139,7 @@ public class DbInitializer
                 Description = "Activity 2 months ago",
                 Category = "travel",
                 Room = "London",
-                Creator = users[2]
+                CreatorId = users[2].Id
             },
             new()
             {
@@ -148,7 +148,7 @@ public class DbInitializer
                 Description = "Activity 8 months in future",
                 Category = "film",
                 Room = "London",
-                Creator = users[0],
+                CreatorId = users[0].Id,
                 Organizers = [
                     new ActivityOrganizer
                     {

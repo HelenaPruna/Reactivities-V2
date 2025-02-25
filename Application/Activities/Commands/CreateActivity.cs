@@ -25,7 +25,7 @@ public class CreateActivity
 
             var activity = mapper.Map<Activity>(request.ActivityDto);
 
-            activity.Creator = user;
+            activity.CreatorId = user.Id;
             context.Activities.Add(activity);
             var result = await context.SaveChangesAsync(cancellationToken) > 0;
             return !result ? Result<string>.Failure("Failed to create the activity", 400) : Result<string>.Success(activity.Id);

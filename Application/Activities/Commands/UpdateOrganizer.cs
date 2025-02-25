@@ -1,6 +1,5 @@
 using System;
 using Application.Core;
-using Application.Profiles.DTOs;
 using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -34,13 +33,12 @@ public class UpdateOrganizer
             foreach (var organizer in organizersToRemove) activity.Organizers.Remove(organizer);
 
             var idsToAdd = newOrganizerIds.Except(currentOrganizerIds).ToList();
-            var usersToAdd = await context.Users.Where(u => idsToAdd.Contains(u.Id)).ToListAsync(cancellationToken);
-            foreach (var user in usersToAdd)
+            foreach (var UserId in idsToAdd)
             {
                 var organizer = new ActivityOrganizer
                 {
-                    User = user,
-                    Activity = activity
+                    UserId = UserId,
+                    ActivityId = activity.Id
                 };
                 activity.Organizers.Add(organizer);
             }

@@ -25,9 +25,5 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
             .WithMany(x => x.Organizers)
             .HasForeignKey(x => x.ActivityId);
 
-        builder.Entity<Activity>()
-            .HasOne(x => x.Creator)
-            .WithMany(x => x.ActivitiesCreated)
-            .OnDelete(DeleteBehavior.Restrict);
     }
 }

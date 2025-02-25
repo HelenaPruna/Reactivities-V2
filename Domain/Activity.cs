@@ -11,6 +11,7 @@ public class Activity
     public required string Room { get; set; }
 
     //nav parameters
+    public required string CreatorId { get; set; }
     public User Creator { get; set; } = null!;
     public ICollection<ActivityOrganizer> Organizers { get; set; } = [];
 }
