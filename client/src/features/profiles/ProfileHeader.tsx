@@ -1,11 +1,13 @@
 import { Avatar, Box, Grid2, Paper, Stack, Typography } from "@mui/material";
 import { stringAvatar } from "../../lib/util/util";
+import { useParams } from "react-router";
+import { useProfiles } from "../../lib/hooks/useProfiles";
 
-type Props = {
-    profile: Profile
-}
 
-export default function ProfileHeader({ profile }: Props) {
+export default function ProfileHeader() {
+    const { id } = useParams();
+    const { profile } = useProfiles(id);
+    if (!profile) return null;
     return (
         <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
             <Grid2 container spacing={2}>

@@ -26,7 +26,7 @@ export default function ActivityCard({ activity }: Props) {
                     }
                 />
                 <Box display='flex' flexDirection='column' gap={1} mr={2}>
-                    {activity.isGoing &&
+                    {activity.isOrganizing &&
                         <Chip label={'Organitzes l\'activitat'}
                             color={'warning'} variant="outlined"
                             sx={{ borderRadius: 2, borderWidth: 2, fontWeight: 'bold' }}

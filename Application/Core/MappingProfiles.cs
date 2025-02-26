@@ -14,6 +14,7 @@ public class MappingProfiles : Profile
         CreateMap<CreateActivityDto, Activity>();
         CreateMap<EditActivityDto, Activity>();
         CreateMap<Activity, ActivityDto>();
+        CreateMap<Activity, UserActivityDto>();
 
         CreateMap<ActivityOrganizer, UserProfile>()
             .ForMember(d => d.DisplayName, o => o.MapFrom(s => s.User.DisplayName))
