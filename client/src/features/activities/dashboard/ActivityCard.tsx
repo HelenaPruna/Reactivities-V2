@@ -1,7 +1,7 @@
 import { AccessTime } from "@mui/icons-material";
 import { Avatar, Box, Button, Card, CardContent, CardHeader, Chip, Divider, Typography } from "@mui/material"
 import { Link } from "react-router";
-import { formatDate } from "../../../lib/util/util";
+import { formatDate, stringAvatar } from "../../../lib/util/util";
 
 type Props = {
     activity: Activity;
@@ -12,7 +12,11 @@ export default function ActivityCard({ activity }: Props) {
         <Card sx={{ borderRadius: 3 }}>
             <Box display='flex' alignItems='center' justifyContent='space-between'>
                 <CardHeader
-                    avatar={<Avatar sx={{ height: 80, width: 80 }} />}
+                    avatar={<Avatar 
+                        sx={{ height: 60, width: 60, ...stringAvatar(activity.creator.displayName).sx }} 
+                        children={stringAvatar(activity.creator.displayName).children} 
+                      />
+                      }
                     title={activity.title}
                     slotProps={{ title: { fontWeight: 'bold', fontSize: 20 } }}
                     subheader={

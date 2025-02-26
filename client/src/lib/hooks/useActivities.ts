@@ -81,7 +81,7 @@ export const useActivities = (id?: string) => {
         mutationFn: async (organizerIds: string[]) => {
           await agent.post(`/activities/${id}/organizers`, organizerIds);
         },
-        onSuccess: async () => { //to improve this should/could be opt updating
+        onSuccess: async () => { //TODO: seria millor si fos ser optimistic updating 
             await queryClient.invalidateQueries({
                 queryKey: ['activities', id]
             })

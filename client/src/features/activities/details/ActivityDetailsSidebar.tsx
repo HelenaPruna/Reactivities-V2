@@ -5,6 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import MultiSelectInput from "../../../app/shared/components/MultiSelectInput";
 import { SubmitHandler, useForm } from "react-hook-form";
 import CloseIcon from '@mui/icons-material/Close';
+import { stringAvatar } from "../../../lib/util/util";
 
 type Props = {
     activity: Activity
@@ -80,9 +81,9 @@ export default function ActivityDetailsSidebar({ activity }: Props) {
                                     <ListItemAvatar>
                                         <Avatar
                                             variant="rounded"
-                                            alt={organizer.displayName + ' image'}
-                                            src={'/assets/user.png'}
-                                            sx={{ width: 50, height: 50, mr: 3 }}
+                                            alt={organizer.displayName + ' initials'}
+                                            sx={{ width: 50, height: 50, mr: 3, ...stringAvatar(organizer.displayName).sx }}
+                                            children={stringAvatar(organizer.displayName).children}
                                         />
                                     </ListItemAvatar>
                                     <ListItemText>

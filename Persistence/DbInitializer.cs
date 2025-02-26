@@ -10,9 +10,9 @@ public class DbInitializer
     {
         var users = new List<User>
         {
-            new() {DisplayName = "Maria", UserName = "maria@test.com", Email = "maria@test.com"},
-            new() {DisplayName = "Tatiana", UserName = "tatiana@test.com", Email = "tatiana@test.com"},
-            new() {DisplayName = "Roser", UserName = "roser@test.com", Email = "roser@test.com"}
+            new() {DisplayName = "Maria Robles", UserName = "maria@test.com", Email = "maria@test.com"},
+            new() {DisplayName = "Tatiana Prim", UserName = "tatiana@test.com", Email = "tatiana@test.com"},
+            new() {DisplayName = "Roser Fabra", UserName = "roser@test.com", Email = "roser@test.com"}
         };
 
         if (!userManager.Users.Any())
@@ -38,7 +38,7 @@ public class DbInitializer
                 Organizers = [
                     new ActivityOrganizer
                     {
-                        User = users[0]
+                        UserId = users[0].Id
                     }
                 ]
             },
@@ -52,7 +52,7 @@ public class DbInitializer
                 Organizers = [
                     new ActivityOrganizer
                     {
-                        User = users[2]
+                        UserId = users[2].Id
                     }
                 ]
             },
@@ -74,7 +74,7 @@ public class DbInitializer
                 Organizers = [
                     new ActivityOrganizer
                     {
-                        User = users[0]
+                        UserId = users[0].Id
                     }
                 ]
             },
@@ -89,7 +89,7 @@ public class DbInitializer
                 Organizers = [
                     new ActivityOrganizer
                     {
-                        User = users[2]
+                        UserId = users[2].Id
                     }
                 ]
             },
@@ -113,7 +113,7 @@ public class DbInitializer
                 Organizers = [
                     new ActivityOrganizer
                     {
-                        User = users[0]
+                        UserId = users[0].Id
                     }
                 ]
             },
@@ -128,7 +128,7 @@ public class DbInitializer
                 Organizers = [
                     new ActivityOrganizer
                     {
-                        User = users[1]
+                        UserId = users[1].Id
                     }
                 ]
             },
@@ -152,7 +152,7 @@ public class DbInitializer
                 Organizers = [
                     new ActivityOrganizer
                     {
-                        User = users[0]
+                        UserId = users[0].Id
                     }
                 ]
             }
