@@ -9,6 +9,9 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
 {
     public required DbSet<Activity> Activities { get; set; }
     public required DbSet<ActivityOrganizer> ActivityOrganizers { get; set; }
+    public required DbSet<Attendee> Attendees { get; set; }
+    public required DbSet<Attendance> Attendances { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

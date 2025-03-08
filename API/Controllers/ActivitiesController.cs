@@ -2,7 +2,6 @@ using Application.Activities.Commands;
 using Application.Activities.DTOs;
 using Application.Activities.Queries;
 using Application.Core;
-using Application.Profiles.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +13,7 @@ public class ActivitiesController : BaseApiController
     [HttpGet]
     public async Task<ActionResult<PagedList<ActivityDto, DateTime?>>> GetActivities([FromQuery] ActivityParams activityParams)
     {
-        return HandleResult(await Mediator.Send(new GetActivityList.Query{Params = activityParams}));
+        return HandleResult(await Mediator.Send(new GetActivityList.Query { Params = activityParams }));
     }
 
     [HttpGet("{id}")]
@@ -48,7 +47,43 @@ public class ActivitiesController : BaseApiController
     public async Task<ActionResult> UpdateOrganizers(string id, string[] profilesIds)
     {
         return HandleResult(await Mediator.Send(new UpdateOrganizer.Command
-            { ActivityId = id, ProfilesIds = profilesIds }));
+        { ActivityId = id, ProfilesIds = profilesIds }));
+    }
+
+    [HttpGet("{id}/attendees")]
+    public async Task<ActionResult<List<AttendeeDto>>> GetAttendees(string id, bool predicate)
+    {
+        return HandleResult(await Mediator.Send(new GetAttendeesList.Query
+        { Id = id, IsWaiting = predicate }));
+    }
+
+    [HttpPost("{id}/attendees")]
+    public async Task<ActionResult> CreateAttendee(string id, CreateAttendeeDto createAttendeeDto)
+    {
+        return HandleResult(await Mediator.Send(new CreateAttendee.Command
+        { ActivityId = id, CreateAttendeeDto = createAttendeeDto }));
+    }
+
+    [HttpDelete("{id}/attendees/{attendeeId}")]
+    public async Task<ActionResult> DeleteAttendee(string id, string attendeeId)
+    {
+        var _ = id;
+        return HandleResult(await Mediator.Send(new DeleteAttendee.Command
+        { AttendeeId = attendeeId }));
+    }
+
+    [HttpGet("{id}/attendance")]
+    public async Task<ActionResult<List<AttendeeAttendanceDto>>> GetAttendance(string id, DateOnly predicate)
+    {
+        return HandleResult(await Mediator.Send(new GetAttendeesAttendance.Query
+        { Id = id, Date = predicate }));
+    }
+
+    [HttpPost("{id}/attendance")]
+    public async Task<ActionResult> UpdateAttendance(string id, DateOnly predicate, AttendanceDto[] attendanceValues)
+    {
+        return HandleResult(await Mediator.Send(new UpdateAttendance.Command
+        { ActivityId = id, Date = predicate, AttendanceValues = attendanceValues }));
     }
 
 }

@@ -12,9 +12,11 @@ public class Activity
     public required string Category { get; set; }
     public bool IsCancelled { get; set; }
     public required string Room { get; set; }
+    public required int MaxParticipants { get; set; }
 
     //nav parameters
     public required string CreatorId { get; set; }
     public User Creator { get; set; } = null!;
     public ICollection<ActivityOrganizer> Organizers { get; set; } = [];
+    public ICollection<Attendee> Attendees { get; set; } = [];
 }
