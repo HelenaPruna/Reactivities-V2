@@ -12,6 +12,8 @@ public class ActivityDto
     public required string Category { get; set; }
     public bool IsCancelled { get; set; }
     public required string Room { get; set; }
+    public required int MaxParticipants { get; set; }
+    public required int AllowedMissedDays { get; set; }
     public UserProfile Creator { get; set; } = null!;
     public ICollection<UserProfile> Organizers { get; set; } = [];
 

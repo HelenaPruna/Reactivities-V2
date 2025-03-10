@@ -10,9 +10,9 @@ public class DbInitializer
     {
         var users = new List<User>
         {
-            new() {DisplayName = "Maria Robles", UserName = "maria@test.com", Email = "maria@test.com"},
-            new() {DisplayName = "Tatiana Prim", UserName = "tatiana@test.com", Email = "tatiana@test.com"},
-            new() {DisplayName = "Roser Fabra", UserName = "roser@test.com", Email = "roser@test.com"}
+            new() {Id = "User-1", DisplayName = "Maria Robles", UserName = "maria@test.com", Email = "maria@test.com"},
+            new() {Id = "User-2", DisplayName = "Tatiana Prim", UserName = "tatiana@test.com", Email = "tatiana@test.com"},
+            new() {Id = "User-3", DisplayName = "Roser Fabra", UserName = "roser@test.com", Email = "roser@test.com"}
         };
 
         if (!userManager.Users.Any())
@@ -37,6 +37,7 @@ public class DbInitializer
                 Room = "London",
                 CreatorId = users[0].Id,
                 MaxParticipants = 10,
+                AllowedMissedDays = 3,
                 Organizers = [
                     new ActivityOrganizer
                     {
@@ -87,10 +88,10 @@ public class DbInitializer
                             {
                                 Date = new DateOnly(2024, 12, 26),
                                 HasAttended = 1
-                            }                 
+                            }
                         ]
                     }
-                    
+
                 ]
             },
             new() {
@@ -102,6 +103,7 @@ public class DbInitializer
                 Room = "Paris",
                 CreatorId = users[0].Id,
                 MaxParticipants = 10,
+                AllowedMissedDays = 3,
                 Organizers = [
                     new ActivityOrganizer
                     {
@@ -129,7 +131,7 @@ public class DbInitializer
                             {
                                 Date = new DateOnly(2024, 12, 26),
                                 HasAttended = 1
-                            }                 
+                            }
                         ]
                     }
                 ]
@@ -143,6 +145,7 @@ public class DbInitializer
                 Room = "London",
                 CreatorId = users[2].Id,
                 MaxParticipants = 10,
+                AllowedMissedDays = 3,
                 Attendees = [
                     new Attendee
                     {
@@ -164,7 +167,7 @@ public class DbInitializer
                             {
                                 Date = new DateOnly(2024, 12, 26),
                                 HasAttended = 1
-                            }                 
+                            }
                         ]
                     }
                 ]
@@ -179,6 +182,7 @@ public class DbInitializer
                 Room = "London",
                 CreatorId = users[0].Id,
                 MaxParticipants = 1,
+                AllowedMissedDays = 3,
                 Organizers = [
                     new ActivityOrganizer
                     {
@@ -209,7 +213,7 @@ public class DbInitializer
                         Identifier = "Laura",
                         IsWaiting = true
                     }
-                    
+
                 ]
             },
             new()
@@ -222,6 +226,7 @@ public class DbInitializer
                 Room = "London",
                 CreatorId = users[1].Id,
                 MaxParticipants = 10,
+                AllowedMissedDays = 3,
                 Organizers = [
                     new ActivityOrganizer
                     {
@@ -272,10 +277,10 @@ public class DbInitializer
                             {
                                 Date = new DateOnly(2024, 12, 26),
                                 HasAttended = 1
-                            }                 
+                            }
                         ]
                     }
-                    
+
                 ]
             },
             new()
@@ -287,7 +292,8 @@ public class DbInitializer
                 Category = "drinks",
                 Room = "London",
                 CreatorId = users[0].Id,
-                MaxParticipants = 10
+                MaxParticipants = 10,
+                AllowedMissedDays = 3
             },
             new()
             {
@@ -299,6 +305,7 @@ public class DbInitializer
                 Room = "London",
                 CreatorId = users[1].Id,
                 MaxParticipants = 10,
+                AllowedMissedDays = 3,
                 Organizers = [
                     new ActivityOrganizer
                     {
@@ -316,6 +323,7 @@ public class DbInitializer
                 Room = "London",
                 CreatorId = users[2].Id,
                 MaxParticipants = 10,
+                AllowedMissedDays = 3,
                 Organizers = [
                     new ActivityOrganizer
                     {
@@ -332,7 +340,8 @@ public class DbInitializer
                 Category = "travel",
                 Room = "London",
                 CreatorId = users[2].Id,
-                MaxParticipants = 10
+                MaxParticipants = 10,
+                AllowedMissedDays = 3,
             },
             new()
             {
@@ -344,6 +353,7 @@ public class DbInitializer
                 Room = "London",
                 CreatorId = users[0].Id,
                 MaxParticipants = 10,
+                AllowedMissedDays = 3,
                 Organizers = [
                     new ActivityOrganizer
                     {

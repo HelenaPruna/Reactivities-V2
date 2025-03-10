@@ -13,6 +13,7 @@ public class Activity
     public bool IsCancelled { get; set; }
     public required string Room { get; set; }
     public required int MaxParticipants { get; set; }
+    public required int AllowedMissedDays { get; set; }
 
     //nav parameters
     public required string CreatorId { get; set; }

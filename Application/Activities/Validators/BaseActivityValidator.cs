@@ -14,5 +14,7 @@ public class BaseActivityValidator<T, TDto> : AbstractValidator<T> where TDto : 
         RuleFor(x => selector(x).Date).NotEmpty().WithMessage("Date must be in the future");
         RuleFor(x => selector(x).Category).NotEmpty().WithMessage("Category is required");
         RuleFor(x => selector(x).Room).NotEmpty().WithMessage("Room is required");
+        RuleFor(x => selector(x).MaxParticipants).NotEmpty().WithMessage("MaxParticipants is required");
+        RuleFor(x => selector(x).AllowedMissedDays).NotEmpty().WithMessage("AllowedMissedDays is required");
     }
 }
