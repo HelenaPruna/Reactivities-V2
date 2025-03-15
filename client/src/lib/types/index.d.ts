@@ -15,6 +15,11 @@ type Activity = {
     organizers: Profile[]
     isOrganizing: boolean
     isCreator: boolean
+    maxParticipants: number
+    allowedMissedDays: number
+    numberAttendees: number
+    numberWaiting: number
+    isFull: boolean
 }
 
 type Profile = {
@@ -29,10 +34,37 @@ type FieldActivity = {
     description: string
     category: string
     room: string
+    maxParticipants: number
+    allowedMissedDays: number
 }
 
 type User = {
     id: string
     email: string
     displayName: string
+}
+
+type Attendee = {
+    id: string
+    identifier: string
+    comments: string
+    isWaiting: boolean
+    skippedDays: number
+    isSkipped: boolean
+}
+
+type AttendeeVal = {
+    identifier: string
+    comments?: string
+}
+
+type Attendance = {
+    id: string
+    identifier: string
+    hasAttended: number //0=pendent,1=present,2=falta
+}
+
+type AttendanceValues = {
+    id: string
+    hasAttended: number
 }

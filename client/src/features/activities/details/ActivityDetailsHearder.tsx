@@ -24,6 +24,13 @@ export default function ActivityDetailsHeader({ activity }: Props) {
                     label="CANCEL·LADA"
                 />
             )}
+            {activity.isFull && !activity.isCancelled && (
+                <Chip
+                    sx={{ position: 'absolute', left: 30, top: 20, zIndex: 1000, fontWeight: 'bold', borderRadius: 1 }}
+                    color="success"
+                    label="COMPLETA"
+                />
+            )}
             <CardMedia
                 component="img"
                 height="300"

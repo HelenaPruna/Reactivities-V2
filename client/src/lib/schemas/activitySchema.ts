@@ -9,7 +9,13 @@ export const activitySchema = z.object({
     date: z.coerce.date({
         message: 'Camp obligatori'
     }),
-    room: requiredString()
+    room: requiredString(),
+    maxParticipants: z.coerce.number({
+        message: 'Camp obligatori'
+    }).int().positive({message: 'El número màxim de participants ha de ser postiu'}),
+    allowedMissedDays: z.coerce.number({
+        message: 'Camp obligatori'
+    }).int().positive({message: 'El número màxim de faltes ha de ser postiu'})   
 })
 
 export type ActivitySchema = z.infer<typeof activitySchema>;

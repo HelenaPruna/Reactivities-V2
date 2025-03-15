@@ -4,6 +4,7 @@ import { useActivities } from "../../../lib/hooks/useActivities";
 import ActivityDetailsHearder from "./ActivityDetailsHearder";
 import ActivityDetailsInfo from "./ActivityDetailsInfo";
 import ActivityDetailsSidebar from "./ActivityDetailsSidebar";
+import ActivityDetailsAttendees from "./ActivityDetailsAttendees";
 
 export default function ActivityDetailPage() {
     const { id } = useParams();
@@ -15,6 +16,7 @@ export default function ActivityDetailPage() {
             <Grid2 size={8}>
                 <ActivityDetailsHearder activity={activity} />
                 <ActivityDetailsInfo activity={activity} />
+                <ActivityDetailsAttendees activity={activity} />
             </Grid2>
             <Grid2 size={4}>
                 <ActivityDetailsSidebar activity={activity} />

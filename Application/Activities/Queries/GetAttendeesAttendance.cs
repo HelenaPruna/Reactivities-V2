@@ -23,8 +23,6 @@ public class GetAttendeesAttendance
             {
                 Id = a.Id,
                 Identifier = a.Identifier,
-                Comments = a.Comments,
-                SkippedDays = a.SkippedDays,
                 // If there's an attendance record for the given date, use its value, otherwise default to 0
                 HasAttended = a.AttendanceList
                         .Where(att => att.Date == request.Date)
@@ -32,7 +30,7 @@ public class GetAttendeesAttendance
                         .FirstOrDefault()
             })
                 .ToListAsync(cancellationToken);
-
+            //no carrego la db si no existeixen
             return attendees == null
                 ? Result<List<AttendeeAttendanceDto>>.Failure("Attendees not found", 404)
                 : Result<List<AttendeeAttendanceDto>>.Success(attendees);

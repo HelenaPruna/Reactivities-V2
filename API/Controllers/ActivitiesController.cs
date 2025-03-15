@@ -69,7 +69,7 @@ public class ActivitiesController : BaseApiController
     {
         var _ = id;
         return HandleResult(await Mediator.Send(new DeleteAttendee.Command
-        { AttendeeId = attendeeId }));
+        { ActivityId = id,  AttendeeId = attendeeId }));
     }
 
     [HttpGet("{id}/attendance")]

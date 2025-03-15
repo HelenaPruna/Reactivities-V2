@@ -5,7 +5,7 @@ import { useAccount } from "./useAccount";
 import { useStore } from "./useStore";
 
 export const useActivities = (id?: string) => {
-    const {activityStore: {filter, startDate}} = useStore()
+    const { activityStore: { filter, startDate } } = useStore()
     const queryClient = useQueryClient();
     const { currentUser } = useAccount();
     const location = useLocation();
@@ -16,7 +16,7 @@ export const useActivities = (id?: string) => {
             const response = await agent.get<PagedList<Activity, string>>('/activities', {
                 params: {
                     cursor: pageParam,
-                    pageSize: 3,
+                    pageSize: 10,
                     filter,
                     startDate
                 }
@@ -36,7 +36,8 @@ export const useActivities = (id?: string) => {
                     return {
                         ...activity,
                         isCreator: currentUser?.id === activity.creator.id,
-                        isOrganizing: activity.organizers.some(x => x.id === currentUser?.id)
+                        isOrganizing: activity.organizers.some(x => x.id === currentUser?.id),
+                        isFull: activity.maxParticipants <= activity.numberAttendees
                     }
                 })
             }))
@@ -54,9 +55,9 @@ export const useActivities = (id?: string) => {
             return {
                 ...data,
                 isCreator: currentUser?.id === data.creator.id,
-                isOrganizing: data.organizers.some(x => x.id === currentUser?.id)
+                isOrganizing: data.organizers.some(x => x.id === currentUser?.id),
+                isFull: data.maxParticipants <= data.numberAttendees
             }
-
         }
     })
 

@@ -3,8 +3,8 @@ import { SelectInputProps } from "@mui/material/Select/SelectInput";
 import { FieldValues, useController, UseControllerProps } from "react-hook-form"
 
 type Props<T extends FieldValues> = {
-    items: { text: string, value: string }[];
-    label: string;
+    items: { text: string, value: string | number}[];
+    label?: string;
 } & UseControllerProps<T> & Partial<SelectInputProps>
 
 export default function SelectInput<T extends FieldValues>(props: Props<T>) {
@@ -13,7 +13,7 @@ export default function SelectInput<T extends FieldValues>(props: Props<T>) {
         <FormControl fullWidth error={!!fieldState.error}>
             <InputLabel>{props.label}</InputLabel>
             <Select
-                value={field.value || ''}
+                value={field.value ?? ""}
                 label={props.label}
                 onChange={field.onChange}
             >

@@ -42,10 +42,10 @@ public class UpdateAttendance
                 attendance = new Attendance
                 {
                     Date = request.Date,
-                    HasAttended = Attendee.ValueAtt,
+                    HasAttended = Attendee.HasAttended,
                     AttendeeId = Attendee.Id
                 };
-                if (Attendee.ValueAtt == 2) att.SkippedDays += 1;
+                if (Attendee.HasAttended == 2) att.SkippedDays += 1;
                 att.AttendanceList.Add(attendance);
             }
 

@@ -12,20 +12,16 @@ export default function ActivityCard({ activity }: Props) {
         <Card sx={{ borderRadius: 3 }}>
             <Box display='flex' alignItems='center' justifyContent='space-between'>
                 <CardHeader
-                    avatar={<Avatar 
-                        sx={{ height: 60, width: 60, ...stringAvatar(activity.creator.displayName).sx }} 
-                        children={stringAvatar(activity.creator.displayName).children} 
-                      />
-                      }
+                    avatar={<Avatar
+                        sx={{ height: 60, width: 60, ...stringAvatar(activity.creator.displayName).sx }}
+                        children={stringAvatar(activity.creator.displayName).children}
+                    />
+                    }
                     title={activity.title}
                     slotProps={{ title: { fontWeight: 'bold', fontSize: 20 } }}
-                    subheader={
-                        <>
-                            Activitat creada per {' '} <Link to={`/profiles/${activity.creator.id}`}>{activity.creator.displayName}</Link>
-                        </>
-                    }
+                    subheader={activity.isCreator &&<>Ets la creadora</>}
                 />
-                <Box display='flex' flexDirection='column' gap={1} mr={2}>
+                <Box display='flex' flexDirection='column' gap={0.5} mr={2}>
                     {activity.isOrganizing &&
                         <Chip label={'Organitzes l\'activitat'}
                             color={'warning'} variant="outlined"
@@ -34,6 +30,9 @@ export default function ActivityCard({ activity }: Props) {
                     }
                     {activity.isCancelled &&
                         <Chip label='CANCEL·LADA' color='error' sx={{ borderRadius: 2, fontWeight: 'bold' }} />
+                    }
+                    {activity.isFull &&
+                        <Chip label='COMPLETA' color='success' sx={{ borderRadius: 2, fontWeight: 'bold' }} />
                     }
                 </Box>
             </Box>
@@ -47,12 +46,14 @@ export default function ActivityCard({ activity }: Props) {
 
             </CardContent>
             <CardContent sx={{ pb: 2 }}>
-                <Typography variant="body2">{activity.description}</Typography>
+                <Typography variant="body1" sx={{ml: 1}}>Participants: {activity.numberAttendees} / {activity.maxParticipants} </Typography>
+                <Typography variant="body1"sx={{ml: 1, mt: 0.5}}>Llista d'espera: {activity.numberWaiting}</Typography>
+                
                 <Button
                     component={Link}
                     to={`/activities/${activity.id}`}
                     size="medium" variant="contained"
-                    sx={{ display: 'flex', justifySelf: 'self-end', borderRadius: 3 }}
+                    sx={{ display: 'flex', borderRadius: 3, mt: 1 }}
                 >
                     Visualitza
                 </Button>

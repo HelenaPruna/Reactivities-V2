@@ -49,11 +49,16 @@ export default function ActivityForm() {
             <Box component='form' onSubmit={handleSubmit(onSubmit)} display='flex' flexDirection='column' gap={3}>
                 <TextInput label='Title' control={control} name='title' />
                 <TextInput label='Description' control={control} name='description' multiline rows={3} />
-                <SelectInput items={categoryOptions} label='Category' control={control} name='category' />
                 <DateTimeInput label='Date' control={control} name='date' />
                 <TextInput label='Room' control={control} name='room' />
+                <Box display='flex' gap={3}>
+                    <SelectInput items={categoryOptions} label='Category' control={control} name='category' />
+                    <TextInput label='MaxParticipants' control={control} name='maxParticipants' type="number" />
+                    <TextInput label='Màxim de faltes permeses' control={control} name='allowedMissedDays' type="number" />
+                </Box>
+
                 <Box display='flex' justifyContent='end' gap={3}>
-                    <Button color="inherit">Cancel</Button>
+                    <Button onClick={() => navigate(-1)} color="inherit">Cancel</Button>
                     <Button type="submit" color="success" variant="contained"
                         disabled={updateActivity.isPending || createActivity.isPending}>
                         Submit

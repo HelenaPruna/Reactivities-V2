@@ -16,5 +16,7 @@ public class ActivityDto
     public required int AllowedMissedDays { get; set; }
     public UserProfile Creator { get; set; } = null!;
     public ICollection<UserProfile> Organizers { get; set; } = [];
+    public required int NumberAttendees { get; set; }
+    public required int NumberWaiting { get; set; }
 
 }

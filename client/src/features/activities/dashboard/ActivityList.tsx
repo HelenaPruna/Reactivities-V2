@@ -24,19 +24,18 @@ const ActivityList = observer(function ActivityList() {
         <Box sx={{ display: "flex", flexDirection: 'column', gap: 3 }}>
             {activitiesGroup.pages.map((activities, index) => (
                 <Box
-                    key={index}
-                    ref={index === activitiesGroup.pages.length - 1 ? ref : null}
-                    display='flex'
-                    flexDirection='column'
-                    gap={3}
-                >
-                    {activities.items.map((activity) => (
-                        <ActivityCard
-                            key={activity.id}
-                            activity={activity}
-                        />
-                    ))}
-                </Box>
+                key={index}
+                ref={index === activitiesGroup.pages.length - 1 ? ref : null}
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(2, 1fr)", // 2 columns, each 1 fraction unit
+                  gap: 3
+                }}
+              >
+                {activities.items.map((activity) => (
+                  <ActivityCard key={activity.id} activity={activity} />
+                ))}
+              </Box>
             ))}
 
         </Box>

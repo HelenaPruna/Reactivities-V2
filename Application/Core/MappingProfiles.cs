@@ -12,7 +12,9 @@ public class MappingProfiles : Profile
         CreateMap<Activity, Activity>();
         CreateMap<CreateActivityDto, Activity>();
         CreateMap<EditActivityDto, Activity>();
-        CreateMap<Activity, ActivityDto>();
+        CreateMap<Activity, ActivityDto>()
+            .ForMember(x => x.NumberAttendees, o => o.MapFrom(s => s.Attendees.Where(att => att.IsWaiting == false).Count()))
+            .ForMember(x => x.NumberWaiting, o => o.MapFrom(s => s.Attendees.Where(att => att.IsWaiting == true).Count()));
         CreateMap<Activity, UserActivityDto>();
         CreateMap<Attendee, AttendeeDto>();
         CreateMap<Attendee, AttendeeAttendanceDto>();
