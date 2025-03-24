@@ -15,7 +15,7 @@ const ActivityFilters = observer(function ActivityFilters() {
                         sx={{ display: 'flex', alignItems: 'center', mb: 1, color: 'primary.main' }}
                     >
                         <FilterList sx={{ mr: 1 }} />
-                        Filters
+                        Filtres
                     </Typography>
                     <MenuList>
                         <MenuItem
@@ -43,9 +43,9 @@ const ActivityFilters = observer(function ActivityFilters() {
                 <Typography variant="h6"
                     sx={{ display: 'flex', alignItems: 'center', mb: 1, color: 'primary.main' }}>
                     <Event sx={{ mr: 1 }} />
-                    Select date
+                    Sel·lecciona una data
                 </Typography>
-                <Calendar value={startDate} onChange={date => setStartDate(date as Date)} />
+                <Calendar value={startDate} onChange={date => setStartDate(date as Date)} locale="ca" />
             </Box>
         </Box>
     )

@@ -1,4 +1,4 @@
-using Application.Activities.DTOs;
+using Application.Attendances.DTOs;
 using Application.Core;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application.Activities.Queries;
+namespace Application.Attendances.Queries;
 
 public class GetAttendeesList
 {

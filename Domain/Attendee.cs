@@ -12,7 +12,6 @@ public class Attendee
 
     //nav properties
     public string? ActivityId { get; set; }
-    public ICollection<Attendance> AttendanceList { get; set; } = [];
 
     [JsonIgnore]
     public Activity Activity { get; set; } = null!;

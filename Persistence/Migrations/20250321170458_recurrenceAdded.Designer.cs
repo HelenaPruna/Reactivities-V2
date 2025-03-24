@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -10,9 +11,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250321170458_recurrenceAdded")]
+    partial class recurrenceAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.2");
@@ -33,11 +36,11 @@ namespace Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
+                    b.Property<DateTime>("Date")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FirstDateId")
+                    b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsCancelled")
@@ -58,8 +61,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("CreatorId");
 
-                    b.HasIndex("FirstDateId")
-                        .IsUnique();
+                    b.HasIndex("Date");
 
                     b.ToTable("Activities");
                 });
@@ -87,17 +89,15 @@ namespace Persistence.Migrations
                     b.Property<string>("AttendeeId")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("HasAttended")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("RecurId")
-                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AttendeeId");
-
-                    b.HasIndex("RecurId");
 
                     b.ToTable("Attendances");
                 });
@@ -153,8 +153,6 @@ namespace Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ActivityId");
-
-                    b.HasIndex("Date");
 
                     b.ToTable("Recurrences");
                 });
@@ -362,14 +360,7 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.RecurrenceActivity", "FirstDate")
-                        .WithOne()
-                        .HasForeignKey("Domain.Activity", "FirstDateId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.Navigation("Creator");
-
-                    b.Navigation("FirstDate");
                 });
 
             modelBuilder.Entity("Domain.ActivityOrganizer", b =>
@@ -394,16 +385,10 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.Attendance", b =>
                 {
                     b.HasOne("Domain.Attendee", "Attendee")
-                        .WithMany()
+                        .WithMany("AttendanceList")
                         .HasForeignKey("AttendeeId");
 
-                    b.HasOne("Domain.RecurrenceActivity", "Recur")
-                        .WithMany("Attendances")
-                        .HasForeignKey("RecurId");
-
                     b.Navigation("Attendee");
-
-                    b.Navigation("Recur");
                 });
 
             modelBuilder.Entity("Domain.Attendee", b =>
@@ -484,9 +469,9 @@ namespace Persistence.Migrations
                     b.Navigation("Recurrences");
                 });
 
-            modelBuilder.Entity("Domain.RecurrenceActivity", b =>
+            modelBuilder.Entity("Domain.Attendee", b =>
                 {
-                    b.Navigation("Attendances");
+                    b.Navigation("AttendanceList");
                 });
 
             modelBuilder.Entity("Domain.User", b =>

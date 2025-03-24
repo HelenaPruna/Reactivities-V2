@@ -1,4 +1,4 @@
-using Application.Activities.DTOs;
+using Application.Attendances.DTOs;
 using Application.Core;
 using AutoMapper;
 using Domain;
@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application.Activities.Commands;
+namespace Application.Attendances.Commands;
 
 public class CreateAttendee
 {
@@ -24,8 +24,7 @@ public class CreateAttendee
             .FirstOrDefaultAsync(x => x.Id == request.ActivityId, cancellationToken);
             if (activity == null) return Result<Unit>.Failure("Activity not found", 404);
             var capacity = activity.Attendees.Where(x => x.IsWaiting == false).Count();
-            var IsWaiting = false;
-            if (capacity >= activity.MaxParticipants) IsWaiting = true;
+            var IsWaiting = capacity >= activity.MaxParticipants;
 
             var attendee = mapper.Map<Attendee>(request.CreateAttendeeDto);
             attendee.ActivityId = request.ActivityId;

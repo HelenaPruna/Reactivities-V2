@@ -1,9 +1,8 @@
-using System.Diagnostics;
 using Application.Core;
 using MediatR;
 using Persistence;
 
-namespace Application.Activities.Commands;
+namespace Application.Attendances.Commands;
 
 public class DeleteAttendee
 {

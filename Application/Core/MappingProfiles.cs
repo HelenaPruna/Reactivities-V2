@@ -1,4 +1,5 @@
 using Application.Activities.DTOs;
+using Application.Attendances.DTOs;
 using Application.Profiles.DTOs;
 using AutoMapper;
 using Domain;
@@ -14,10 +15,16 @@ public class MappingProfiles : Profile
         CreateMap<EditActivityDto, Activity>();
         CreateMap<Activity, ActivityDto>()
             .ForMember(x => x.NumberAttendees, o => o.MapFrom(s => s.Attendees.Where(att => att.IsWaiting == false).Count()))
-            .ForMember(x => x.NumberWaiting, o => o.MapFrom(s => s.Attendees.Where(att => att.IsWaiting == true).Count()));
-        CreateMap<Activity, UserActivityDto>();
+            .ForMember(x => x.NumberWaiting, o => o.MapFrom(s => s.Attendees.Where(att => att.IsWaiting == true).Count()))
+            .ForMember(x => x.DateStart, o => o.MapFrom(s => s.FirstDate.Date))
+            .ForMember(x => x.DateEnd, o => o.MapFrom(s => s.Recurrences.Where(x => x.IsRecurrent).Max(recur => recur.Date)))
+            .ForMember(x => x.TimeStart, o => o.MapFrom(s => s.FirstDate.TimeStart))
+            .ForMember(x => x.TimeEnd, o => o.MapFrom(s => s.FirstDate.TimeEnd));
+        CreateMap<Activity, ActivityDetailsDto>();
+
+        CreateMap<Activity, UserActivityDto>()
+            .ForMember(x => x.Date, o => o.MapFrom(s => s.FirstDate.Date));
         CreateMap<Attendee, AttendeeDto>();
-        CreateMap<Attendee, AttendeeAttendanceDto>();
         CreateMap<CreateAttendeeDto, Attendee>();
 
         CreateMap<ActivityOrganizer, UserProfile>()

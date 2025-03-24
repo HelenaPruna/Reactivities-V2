@@ -1,4 +1,3 @@
-using System;
 using Application.Activities.DTOs;
 using Application.Core;
 using Application.Interfaces;
@@ -16,15 +15,26 @@ public class CreateActivity
         public required CreateActivityDto ActivityDto { get; set; }
     }
 
-    public class Handler(AppDbContext context, IMapper mapper, IUserAccessor userAccessor) 
+    public class Handler(AppDbContext context, IMapper mapper, IUserAccessor userAccessor)
         : IRequestHandler<Command, Result<string>>
     {
         public async Task<Result<string>> Handle(Command request, CancellationToken cancellationToken)
         {
             var user = await userAccessor.GetUserAsync();
+            var dto = request.ActivityDto;
 
             var activity = mapper.Map<Activity>(request.ActivityDto);
-
+            for (var date = dto.DateStart; date <= dto.DateEnd; date = date.AddDays(dto.Interval))
+            {
+                var recur = new RecurrenceActivity
+                {
+                    Date = date,
+                    TimeStart = dto.TimeStart,
+                    TimeEnd = dto.TimeEnd
+                };
+                activity.Recurrences.Add(recur);
+            };
+            activity.FirstDateId = activity.Recurrences.First(x => x.Date == dto.DateStart).Id;
             activity.CreatorId = user.Id;
             context.Activities.Add(activity);
             var result = await context.SaveChangesAsync(cancellationToken) > 0;

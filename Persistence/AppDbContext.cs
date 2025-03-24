@@ -11,6 +11,7 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
     public required DbSet<ActivityOrganizer> ActivityOrganizers { get; set; }
     public required DbSet<Attendee> Attendees { get; set; }
     public required DbSet<Attendance> Attendances { get; set; }
+    public required DbSet<RecurrenceActivity> Recurrences { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -28,6 +29,17 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
             .HasOne(x => x.Activity)
             .WithMany(x => x.Organizers)
             .HasForeignKey(x => x.ActivityId);
+
+        builder.Entity<Activity>() //per si un cas not sure if necessary al afegir la dependencia d'abaix 
+            .HasMany(a => a.Recurrences)
+            .WithOne(r => r.Activity)
+            .HasForeignKey(r => r.ActivityId);
+
+        builder.Entity<Activity>()
+            .HasOne(a => a.FirstDate)
+            .WithOne() 
+            .HasForeignKey<Activity>(a => a.FirstDateId)
+            .OnDelete(DeleteBehavior.Restrict); //?: nss si es el format correcte
 
         var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
             v => v.ToUniversalTime(),

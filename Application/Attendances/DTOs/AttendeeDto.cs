@@ -1,4 +1,4 @@
-namespace Application.Activities.DTOs;
+namespace Application.Attendances.DTOs;
 
 public class AttendeeDto
 {
