@@ -1,5 +1,5 @@
-import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Skeleton, Button } from "@mui/material"
-import { attendanceOptions } from "../form/categoryOptions"
+import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Skeleton, Button, Grid2 } from "@mui/material"
+import { attendanceOptions } from "../form/selectOptions"
 import SelectInput from "../../../app/shared/components/SelectInput"
 import { useForm } from "react-hook-form"
 import { useEffect } from "react"
@@ -7,11 +7,12 @@ import { useAttendees } from "../../../lib/hooks/useAttendees"
 
 type Props = {
     activity: Activity,
+    recurId: string
     setCheckAtt: (bool: boolean) => void
 }
 
-export default function AttendanceForm({ activity: { id, date }, setCheckAtt }: Props) {
-    const { activityAttendance, loadingAttendance, updateAttendance , refetchingAttendance} = useAttendees(id, undefined, date)
+export default function AttendanceForm({ activity: { id }, recurId, setCheckAtt }: Props) {
+    const { activityAttendance, loadingAttendance, updateAttendance, refetchingAttendance } = useAttendees(id, undefined, recurId)
     const { control, handleSubmit, reset } = useForm({
         defaultValues: { attendances: [] as Attendance[] }
     });
@@ -23,8 +24,8 @@ export default function AttendanceForm({ activity: { id, date }, setCheckAtt }: 
     }, [activityAttendance, reset]);
 
     const onSubmit = (data: { attendances: Attendance[] }) => {
-        const payload = data.attendances.map(({ id, hasAttended }) => ({
-            id,
+        const payload = data.attendances.map(({ attendeeId, hasAttended }) => ({
+            id: attendeeId,
             hasAttended
         }));
         updateAttendance.mutate(payload, {
@@ -35,7 +36,7 @@ export default function AttendanceForm({ activity: { id, date }, setCheckAtt }: 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <TableContainer >
-                <Table aria-label="attendance table">
+                <Table size="small" aria-label="attendance table">
                     <TableHead>
                         <TableRow>
                             <TableCell>NOM</TableCell>
@@ -74,10 +75,19 @@ export default function AttendanceForm({ activity: { id, date }, setCheckAtt }: 
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Button type="submit" variant="contained" color="primary" sx={{ mt: 1, mb: 2 }}
-                        disabled={loadingAttendance || activityAttendance?.length === 0}>
-                Guarda
-            </Button>
+
+            <Grid2 container spacing={2}>
+                <Button type="submit" variant="contained" color="primary" sx={{ mt: 1, mb: 2 }}
+                    disabled={loadingAttendance || activityAttendance?.length === 0}>
+                    Guarda
+                </Button>
+                <Button variant="outlined" color="primary" sx={{ mt: 1, mb: 2 }}
+                    disabled={loadingAttendance || activityAttendance?.length === 0}
+                    onClick={() => setCheckAtt(false)}>
+                    Cancel·la
+                </Button>
+            </Grid2>
+
         </form>
 
     )

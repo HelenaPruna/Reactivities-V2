@@ -35,6 +35,13 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
             .WithOne(r => r.Activity)
             .HasForeignKey(r => r.ActivityId);
 
+        builder.Entity<Attendance>()
+            .HasOne(a => a.Attendee)
+            .WithMany()
+            .HasForeignKey(a => a.AttendeeId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        
         builder.Entity<Activity>()
             .HasOne(a => a.FirstDate)
             .WithOne() 

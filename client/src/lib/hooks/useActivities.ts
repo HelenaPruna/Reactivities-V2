@@ -3,6 +3,7 @@ import agent from "../api/agent";
 import { useLocation } from "react-router";
 import { useAccount } from "./useAccount";
 import { useStore } from "./useStore";
+import dayjs from "dayjs";
 
 export const useActivities = (id?: string) => {
     const { activityStore: { filter, startDate } } = useStore()
@@ -56,7 +57,10 @@ export const useActivities = (id?: string) => {
                 ...data,
                 isCreator: currentUser?.id === data.creator.id,
                 isOrganizing: data.organizers.some(x => x.id === currentUser?.id),
-                isFull: data.maxParticipants <= data.numberAttendees
+                isFull: data.maxParticipants <= data.numberAttendees,
+                dates: data.recurrences.map(r => new Date(r.composedTime)),
+                isOneDay: data.dateStart === data.dateEnd,
+                interval: data.dateStart === data.dateEnd ? 1 : dayjs(data.dateEnd).diff(dayjs(data.dateStart), 'day') / (data.recurrences.length - 1)
             }
         }
     })
@@ -99,7 +103,7 @@ export const useActivities = (id?: string) => {
         mutationFn: async (organizerIds: string[]) => {
             await agent.post(`/activities/${id}/organizers`, organizerIds);
         },
-        onSuccess: async () => { //TODO: seria millor si fos ser optimistic updating 
+        onSuccess: async () => {  
             await queryClient.invalidateQueries({
                 queryKey: ['activities', id]
             })

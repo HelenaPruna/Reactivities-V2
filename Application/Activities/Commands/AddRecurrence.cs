@@ -11,7 +11,7 @@ public class AddRecurrence
     public class Command : IRequest<Result<Unit>>
     {
         public required string ActivityId { get; set; }
-        public required RecurrenceDto RecurrenceDto { get; set; }
+        public required CreateRecurrenceDto RecurrenceDto { get; set; }
     }
     public class Handler(AppDbContext context) : IRequestHandler<Command, Result<Unit>>
     {

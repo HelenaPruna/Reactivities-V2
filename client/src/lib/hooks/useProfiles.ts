@@ -9,7 +9,6 @@ export const useProfiles = (id?: string) => {
     const { data: profiles, isLoading: isLoadingProfiles } = useQuery({
         queryKey: ['profiles'],
         queryFn: async () => {
-            console.log("is loading profiles");
             const response = await agent.get<Profile[]>('/profiles');
             return response.data;
         },

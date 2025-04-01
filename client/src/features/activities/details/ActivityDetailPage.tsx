@@ -1,7 +1,7 @@
 import { Grid2, Typography } from "@mui/material"
 import { useParams } from "react-router";
 import { useActivities } from "../../../lib/hooks/useActivities";
-import ActivityDetailsHearder from "./ActivityDetailsHearder";
+import ActivityDetailsHeader from "./ActivityDetailsHeader";
 import ActivityDetailsInfo from "./ActivityDetailsInfo";
 import ActivityDetailsSidebar from "./ActivityDetailsSidebar";
 import ActivityDetailsAttendees from "./ActivityDetailsAttendees";
@@ -14,7 +14,7 @@ export default function ActivityDetailPage() {
     return (
         <Grid2 container spacing={3}>
             <Grid2 size={8}>
-                <ActivityDetailsHearder activity={activity} />
+                <ActivityDetailsHeader activity={activity} />
                 <ActivityDetailsInfo activity={activity} />
                 <ActivityDetailsAttendees activity={activity} />
             </Grid2>

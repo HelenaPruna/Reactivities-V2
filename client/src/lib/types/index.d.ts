@@ -6,9 +6,7 @@ type PagedList<T, TCursor> = {
 type Activity = {
     id: string
     title: string
-    date: Date
     description: string
-    category: string
     isCancelled: boolean
     room: string
     creator: Profile
@@ -20,6 +18,14 @@ type Activity = {
     numberAttendees: number
     numberWaiting: number
     isFull: boolean
+    dateStart: string
+    dateEnd: string
+    timeStart: string
+    timeEnd: string
+    recurrences: Recurrences[]
+    dates: Date[]
+    isOneDay: boolean
+    interval: number
 }
 
 type Profile = {
@@ -30,12 +36,16 @@ type Profile = {
 
 type FieldActivity = {
     title: string
-    date: Date
     description: string
-    category: string
     room: string
     maxParticipants: number
     allowedMissedDays: number
+    dateStart: string
+    dateEnd?: string
+    timeStart: string
+    timeEnd: string
+    interval: number
+    isOneDay: boolean
 }
 
 type User = {
@@ -47,24 +57,34 @@ type User = {
 type Attendee = {
     id: string
     identifier: string
-    comments: string
+    comments?: string
     isWaiting: boolean
     skippedDays: number
-    isSkipped: boolean
 }
 
 type AttendeeVal = {
     identifier: string
     comments?: string
+    isWaiting: boolean
 }
 
 type Attendance = {
     id: string
     identifier: string
+    attendeeId: string
     hasAttended: number //0=pendent,1=present,2=falta
 }
 
 type AttendanceValues = {
     id: string
     hasAttended: number
+}
+
+type Recurrences = {
+    id: string
+    date: string
+    timeStart: string
+    timeEnd: string
+    isRecurrent: boolean
+    composedTime: Date
 }

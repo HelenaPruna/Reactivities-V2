@@ -55,7 +55,7 @@ public class ActivitiesController : BaseApiController
     }
 
     [HttpPost("{id}/recurrence")]
-    public async Task<ActionResult> AddOneTimeRecurrence(string id, RecurrenceDto recurrenceDto)
+    public async Task<ActionResult> AddOneTimeRecurrence(string id, CreateRecurrenceDto recurrenceDto)
     {
         return HandleResult(await Mediator.Send(new AddRecurrence.Command
         { ActivityId = id, RecurrenceDto = recurrenceDto }));
@@ -76,7 +76,7 @@ public class ActivitiesController : BaseApiController
     }
 
     [HttpPost("{id}/attendees")]
-    public async Task<ActionResult> CreateAttendee(string id, CreateAttendeeDto createAttendeeDto)
+    public async Task<ActionResult<string>> CreateAttendee(string id, CreateAttendeeDto createAttendeeDto)
     {
         return HandleResult(await Mediator.Send(new CreateAttendee.Command
         { ActivityId = id, CreateAttendeeDto = createAttendeeDto }));
@@ -96,17 +96,17 @@ public class ActivitiesController : BaseApiController
         { ActivityId = id,  AttendeeId = attendeeId }));
     }
 
-    [HttpGet("{id}/attendance")]
-    public async Task<ActionResult<List<Attendance>>> GetAttendance(string id, DateTime predicate)
+    [HttpGet("{id}/attendance/{recurrenceId}")]
+    public async Task<ActionResult<List<Attendance>>> GetAttendance(string id, string recurrenceId)
     {
         return HandleResult(await Mediator.Send(new GetAttendeesAttendance.Query
-        { Id = id, Date = predicate }));
+        { Id = id, RecurrenceId = recurrenceId  }));
     }
 
-    [HttpPost("{id}/attendance")]
-    public async Task<ActionResult> UpdateAttendance(string id, DateTime predicate, AttendanceDto[] attendanceValues)
+    [HttpPut("{id}/attendance/{recurrenceId}")]
+    public async Task<ActionResult> UpdateAttendance(string id, string recurrenceId, AttendanceDto[] attendanceValues)
     {
         return HandleResult(await Mediator.Send(new UpdateAttendance.Command
-        { ActivityId = id, Date = predicate, AttendanceValues = attendanceValues }));
+        { ActivityId = id, RecurrenceId = recurrenceId, AttendanceValues = attendanceValues }));
     }
 }

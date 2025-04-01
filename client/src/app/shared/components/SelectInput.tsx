@@ -3,7 +3,7 @@ import { SelectInputProps } from "@mui/material/Select/SelectInput";
 import { FieldValues, useController, UseControllerProps } from "react-hook-form"
 
 type Props<T extends FieldValues> = {
-    items: { text: string, value: string | number}[];
+    items: { text: string, value: string | number }[];
     label?: string;
 } & UseControllerProps<T> & Partial<SelectInputProps>
 

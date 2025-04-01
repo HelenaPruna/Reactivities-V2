@@ -22,7 +22,7 @@ public class GetActivityList
     {
         public async Task<Result<PagedList<ActivityDto, DateOnly?>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var query = context.Activities.OrderBy(x => x.FirstDate.Date)
+            var query = context.Activities.Include(x => x.FirstDate).OrderBy(x => x.FirstDate.Date)
                 .Where(x => x.FirstDate.Date >= (request.Params.Cursor ?? request.Params.StartDate)).AsQueryable();
 
             if (!string.IsNullOrEmpty(request.Params.Filter))

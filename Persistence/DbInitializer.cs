@@ -32,7 +32,6 @@ public class DbInitializer
                 Id = "activitat-1",
                 Title = "Past Activity 1",
                 Description = "Activity 2 months ago",
-                Category = "drinks",
                 Room = "London",
                 CreatorId = users[0].Id,
                 MaxParticipants = 10,
@@ -57,7 +56,6 @@ public class DbInitializer
                 Id = "activitat-2",
                 Title = "Past Activity 2",
                 Description = "Activity 1 month ago",
-                Category = "culture",
                 Room = "Paris",
                 CreatorId = users[0].Id,
                 MaxParticipants = 10,
@@ -81,7 +79,6 @@ public class DbInitializer
                 Id = "activitat-3",
                 Title = "Risoterapia",
                 Description = "Activity 1 month in future",
-                Category = "culture",
                 Room = "London",
                 CreatorId = users[2].Id,
                 MaxParticipants = 10,
@@ -132,7 +129,6 @@ public class DbInitializer
                 Id = "activitat-4",
                 Title = "Pintura 1",
                 Description = "Activity 2 months in future",
-                Category = "music",
                 Room = "London",
                 CreatorId = users[0].Id,
                 MaxParticipants = 1,
@@ -183,7 +179,6 @@ public class DbInitializer
                 Id = "activitat-5",
                 Title = "Nutrició",
                 Description = "Activity 3 months in future",
-                Category = "drinks",
                 Room = "London",
                 CreatorId = users[1].Id,
                 MaxParticipants = 10,
@@ -234,7 +229,6 @@ public class DbInitializer
                 Id = "activitat-9",
                 Title = "Future Activity 7",
                 Description = "Activity 2 months ago",
-                Category = "travel",
                 Room = "London",
                 CreatorId = users[2].Id,
                 MaxParticipants = 10,
@@ -264,7 +258,6 @@ public class DbInitializer
             {
                 Title = "Cuina",
                 Description = "Activity 8 months in future",
-                Category = "film",
                 Room = "London",
                 CreatorId = users[rnd.Next(0,3)].Id,
                 MaxParticipants = rnd.Next(6,25),
@@ -311,7 +304,6 @@ public class DbInitializer
             {
                 Title = "Pintura",
                 Description = "Activity 8 months in future",
-                Category = "film",
                 Room = "London",
                 CreatorId = users[rnd.Next(0,3)].Id,
                 MaxParticipants = rnd.Next(6,25),
@@ -355,7 +347,6 @@ public class DbInitializer
             {
                 Title = "Costura",
                 Description = "Activity 8 months in future",
-                Category = "film",
                 Room = "London",
                 CreatorId = users[rnd.Next(0,3)].Id,
                 MaxParticipants = rnd.Next(6,25),
@@ -391,7 +382,6 @@ public class DbInitializer
             {
                 Title = "Yoga",
                 Description = "Activity 8 months in future",
-                Category = "film",
                 Room = "London",
                 CreatorId = users[rnd.Next(0,3)].Id,
                 MaxParticipants = rnd.Next(6,25),
@@ -415,7 +405,6 @@ public class DbInitializer
             {
                 Title = "Repàs",
                 Description = "Activity 8 months in future",
-                Category = "film",
                 Room = "London",
                 CreatorId = users[rnd.Next(0,3)].Id,
                 MaxParticipants = rnd.Next(6,25),
@@ -439,7 +428,6 @@ public class DbInitializer
             {
                 Title = "Reforç escolar",
                 Description = "Activity 8 months in future",
-                Category = "film",
                 Room = "London",
                 CreatorId = users[rnd.Next(0,3)].Id,
                 MaxParticipants = rnd.Next(6,25),
@@ -463,7 +451,6 @@ public class DbInitializer
             {
                 Title = "Crochet",
                 Description = "Activity 8 months in future",
-                Category = "film",
                 Room = "London",
                 CreatorId = users[rnd.Next(0,3)].Id,
                 MaxParticipants = rnd.Next(6,25),
@@ -487,7 +474,6 @@ public class DbInitializer
             {
                 Title = "Informàtica",
                 Description = "Activity 8 months in future",
-                Category = "film",
                 Room = "London",
                 CreatorId = users[rnd.Next(0,3)].Id,
                 MaxParticipants = rnd.Next(6,25),
@@ -511,7 +497,6 @@ public class DbInitializer
             {
                 Title = "Castellà",
                 Description = "Activity 8 months in future",
-                Category = "film",
                 Room = "London",
                 CreatorId = users[rnd.Next(0,3)].Id,
                 MaxParticipants = rnd.Next(6,25),
@@ -535,7 +520,6 @@ public class DbInitializer
             {
                 Title = "Català",
                 Description = "Activity 8 months in future",
-                Category = "film",
                 Room = "London",
                 CreatorId = users[rnd.Next(0,3)].Id,
                 MaxParticipants = rnd.Next(6,25),

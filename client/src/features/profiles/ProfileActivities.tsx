@@ -2,7 +2,7 @@ import { SyntheticEvent, useEffect, useState } from "react";
 import { Box, Card, CardContent, Grid2, Tab, Tabs, Typography } from "@mui/material";
 import { Link, useParams } from "react-router";
 import { useProfiles } from "../../lib/hooks/useProfiles.ts";
-import { formatDate } from "../../lib/util/util.ts";
+import { formatDateOnly } from "../../lib/util/util.ts";
 
 type Props = {
     stringAction: string
@@ -61,7 +61,7 @@ export default function ProfileActivities({stringAction}: Props) {
                                         display='flex'
                                         flexDirection='column'
                                     >
-                                        <span>{ formatDate(activity.date)}</span>
+                                        <span>{ formatDateOnly(activity.dateStart)}</span>
                                     </Typography>
                                 </CardContent>
                             </Card>

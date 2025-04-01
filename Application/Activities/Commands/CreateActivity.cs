@@ -23,22 +23,32 @@ public class CreateActivity
             var user = await userAccessor.GetUserAsync();
             var dto = request.ActivityDto;
 
-            var activity = mapper.Map<Activity>(request.ActivityDto);
+            var activity = mapper.Map<Activity>(dto);
+            activity.CreatorId = user.Id;
+
+            context.Activities.Add(activity);
+            await context.SaveChangesAsync(cancellationToken); 
+
+            List<RecurrenceActivity> recurrences = [];
             for (var date = dto.DateStart; date <= dto.DateEnd; date = date.AddDays(dto.Interval))
             {
-                var recur = new RecurrenceActivity
+                var recurrence = new RecurrenceActivity
                 {
                     Date = date,
                     TimeStart = dto.TimeStart,
-                    TimeEnd = dto.TimeEnd
+                    TimeEnd = dto.TimeEnd,
+                    ActivityId = activity.Id 
                 };
-                activity.Recurrences.Add(recur);
-            };
-            activity.FirstDateId = activity.Recurrences.First(x => x.Date == dto.DateStart).Id;
-            activity.CreatorId = user.Id;
-            context.Activities.Add(activity);
-            var result = await context.SaveChangesAsync(cancellationToken) > 0;
-            return !result ? Result<string>.Failure("Failed to create the activity", 400) : Result<string>.Success(activity.Id);
+                recurrences.Add(recurrence);
+            }
+            context.Recurrences.AddRange(recurrences);
+            await context.SaveChangesAsync(cancellationToken); 
+
+            activity.FirstDateId = recurrences.First(x => x.Date == dto.DateStart).Id;
+            await context.SaveChangesAsync(cancellationToken); 
+
+            return Result<string>.Success(activity.Id);
         }
+
     }
 }

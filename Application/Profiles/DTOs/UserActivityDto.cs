@@ -5,6 +5,5 @@ public class UserActivityDto
     public required string Id { get; set; }
     public required string Title { get; set; }
     public DateOnly Date { get; set; }
-    public required string Category { get; set; }
 
 }

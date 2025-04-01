@@ -20,6 +20,8 @@ public class DeleteAttendee
             var attendee = await context.Attendees.FindAsync([request.AttendeeId], cancellationToken);
             if (attendee == null) return Result<Unit>.Failure("Attendee not found", 404);
             activity.Attendees.Remove(attendee);
+            await context.SaveChangesAsync(cancellationToken); 
+            context.Attendees.Remove(attendee); // Explicit removal
 
             var result = await context.SaveChangesAsync(cancellationToken) > 0;
             return !result

@@ -1,6 +1,6 @@
 import { CalendarToday, Info } from "@mui/icons-material";
 import { Divider, Grid2, Paper, Typography } from "@mui/material";
-import { formatDate } from "../../../lib/util/util";
+import { formatDateOnly } from "../../../lib/util/util";
 import RoomIcon from '@mui/icons-material/Room';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 
@@ -26,7 +26,8 @@ export default function ActivityDetailsInfo({ activity }: Props) {
                     <CalendarToday color="info" fontSize="large" />
                 </Grid2>
                 <Grid2 size={11}>
-                    <Typography>{formatDate(activity.date)}</Typography>
+                    <Typography>Data inicial: {formatDateOnly(activity.dateStart)}</Typography>
+                    <Typography>Data final: {formatDateOnly(activity.dateEnd)}</Typography>
                 </Grid2>
             </Grid2>
             <Divider />

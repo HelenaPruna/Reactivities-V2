@@ -12,7 +12,7 @@ public class UpdateAttendance
     public class Command : IRequest<Result<Unit>>
     {
         public required string ActivityId { get; set; }
-        public required DateTime Date { get; set; }
+        public required string RecurrenceId { get; set; }
         public required ICollection<AttendanceDto> AttendanceValues { get; set; }
     }
 
@@ -22,22 +22,20 @@ public class UpdateAttendance
         {
             var recur = await context.Recurrences.Include(x => x.Attendances).ThenInclude(x => x.Attendee)
                     .FirstOrDefaultAsync(x => x.ActivityId == request.ActivityId
-                    && x.Date == DateOnly.FromDateTime(request.Date)
-                    && x.TimeStart == TimeOnly.FromDateTime(request.Date),
-                    cancellationToken);
+                    && x.Id == request.RecurrenceId, cancellationToken);
             if (recur == null) return Result<Unit>.Failure("Activity not found", 404);
-            var attendances = recur.Attendances; 
+            var attendances = recur.Attendances;
             foreach (var attValue in request.AttendanceValues)
             {
-                //TODO: Nss si es la millor forma d'actualitzar l'assistencia. 
                 var attendance = attendances.FirstOrDefault(a => a.AttendeeId == attValue.Id);
-
                 if (attendance != null)
                 {
                     if (attendance.HasAttended == 2) attendance.Attendee.SkippedDays -= 1; //En cas de que actualitzem el valor i anteriorment s'havia posat que havia faltat
                     attendance.HasAttended = attValue.HasAttended;
+                    await context.SaveChangesAsync(cancellationToken);
+
                 }
-                else
+                else //no hauria d'arribar mai aquí pk sempre truquem primer al getattendance per aquest mateix valor i llavors el crea pero bueno 
                 {
                     attendance = new Attendance
                     {
@@ -45,13 +43,16 @@ public class UpdateAttendance
                         AttendeeId = attValue.Id
                     };
                     recur.Attendances.Add(attendance);
+                    await context.SaveChangesAsync(cancellationToken);
                 }
-                if (attValue.HasAttended == 2) attendance.Attendee.SkippedDays += 1;
+                if (attValue.HasAttended == 2)
+                {
+                    attendance.Attendee.SkippedDays += 1;
+                    await context.SaveChangesAsync(cancellationToken);
+                }
             }
-            
 
-            var result = await context.SaveChangesAsync(cancellationToken) > 0;
-            return !result ? Result<Unit>.Failure("Failed to update organizers", 400) : Result<Unit>.Success(Unit.Value);
+            return Result<Unit>.Success(Unit.Value);
 
         }
     }

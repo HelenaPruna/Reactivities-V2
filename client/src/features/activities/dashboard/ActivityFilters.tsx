@@ -1,6 +1,5 @@
 import { Event, FilterList } from "@mui/icons-material";
 import { Box, ListItemText, MenuItem, MenuList, Paper, Typography } from "@mui/material";
-import 'react-calendar/dist/Calendar.css';
 import Calendar from "react-calendar";
 import { useStore } from "../../../lib/hooks/useStore";
 import { observer } from "mobx-react-lite";

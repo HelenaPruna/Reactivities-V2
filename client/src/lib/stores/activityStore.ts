@@ -1,8 +1,9 @@
+import dayjs from "dayjs";
 import { makeAutoObservable } from "mobx";
 
 export class ActivityStore {
     filter = 'all';
-    startDate = new Date().toISOString();
+    startDate = dayjs().format("YYYY-MM-DD")
     
     constructor() {   
         makeAutoObservable(this)
@@ -12,6 +13,6 @@ export class ActivityStore {
         this.filter = filter
     }
     setStartDate = (date: Date) => {
-        this.startDate = date.toISOString();
+        this.startDate = dayjs(date).format("YYYY-MM-DD")
     }
 }

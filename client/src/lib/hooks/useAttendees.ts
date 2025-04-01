@@ -1,8 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import agent from "../api/agent";
-import { format } from "date-fns";
 
-export const useAttendees = (id: string, isWaiting?: boolean, date?: Date) => {
+
+export const useAttendees = (id: string, isWaiting?: boolean, recurId?: string | null) => {
     const queryClient = useQueryClient();
 
     const { data: activityAttendees, isLoading: loadingAttendees, isRefetching: refetchingAttendees } = useQuery({
@@ -15,45 +15,40 @@ export const useAttendees = (id: string, isWaiting?: boolean, date?: Date) => {
             });
             return response.data
         },
-        enabled: !date && !!id && isWaiting !== undefined
+        placeholderData: keepPreviousData,
+        enabled: recurId === undefined && !!id && isWaiting !== undefined
     })
 
     const { data: activityAttendance, isLoading: loadingAttendance, isRefetching: refetchingAttendance } = useQuery({
-        queryKey: [id, 'attendance', date],
+        queryKey: [id, 'attendance', recurId],
         queryFn: async () => {
-            const response = await agent.get<Attendance[]>(`/activities/${id}/attendance`, {
-                params: {
-                    predicate: format(date!, "yyyy-MM-dd")
-                }
-            });
+            const response = await agent.get<Attendance[]>(`/activities/${id}/attendance/${recurId}`);
             return response.data
         },
-        enabled: !!id && !!date && isWaiting === undefined
+        enabled: !!id && !!recurId && isWaiting === undefined
     })
 
     const updateAttendance = useMutation({
         mutationFn: async (attendanceValues: AttendanceValues[]) => {
-            await agent.post(`/activities/${id}/attendance`, attendanceValues, {
-                params: {
-                    predicate: format(date!, "yyyy-MM-dd")
-                }
-            });
-        },
-        onSuccess: async () => {
-            queryClient.invalidateQueries({
-                queryKey: [id, 'attendees', isWaiting]
-            })
+            await agent.put(`/activities/${id}/attendance/${recurId}`, attendanceValues);
         }
     })
 
-    const deleteAttendee = useMutation({ //?: Aqui def quedaria millor opt updating 
-        mutationFn: async (attendee: Attendee) => {
-            await agent.delete(`/activities/${id}/attendees/${attendee.id}`)
+    const deleteAttendee = useMutation({
+        mutationFn: async (attendeeId: string) => {
+            await agent.delete(`/activities/${id}/attendees/${attendeeId}`)
         },
-        onSuccess: async () => {
-            queryClient.invalidateQueries({
-                queryKey: [id, 'attendees', isWaiting]
-            })
+        onMutate: async (attendeeId: string) => {
+            await queryClient.cancelQueries({ queryKey: [id, 'attendees', isWaiting] });
+            const previousAttendees = queryClient.getQueryData<Attendee[]>([id, 'attendees', isWaiting]);
+
+            queryClient.setQueryData<Attendee[]>([id, 'attendees', isWaiting], (old = []) =>
+                old.filter((attendee) => attendee.id !== attendeeId)
+            );
+            return { previousAttendees };
+        },
+        onError: (_, __, context) => {
+            queryClient.setQueryData([id, 'attendees', isWaiting], context?.previousAttendees);
         }
     })
 
@@ -61,6 +56,33 @@ export const useAttendees = (id: string, isWaiting?: boolean, date?: Date) => {
         mutationFn: async (attendee: AttendeeVal) => {
             const response = await agent.post(`/activities/${id}/attendees`, attendee)
             return response.data;
+        },
+        onMutate: async (newAttendee) => {
+            await queryClient.cancelQueries({ queryKey: [id, 'attendees', newAttendee.isWaiting] });
+            const prevAttendees = queryClient.getQueryData<Attendee[]>([id, 'attendees', newAttendee.isWaiting]);
+
+            const optAttendee = { ...newAttendee, id: 'temp-id', skippedDays: 0 };
+
+            queryClient.setQueryData<Attendee[]>([id, 'attendees', newAttendee.isWaiting], (old = []) => [
+                ...old,
+                optAttendee,
+            ]);
+
+            return { prevAttendees };
+        },
+        onError: (_, newAttendee, context) => {
+            queryClient.setQueryData([id, 'attendees', newAttendee.isWaiting], context?.prevAttendees);
+        },
+        onSuccess: (data, newAttendee) => {
+            queryClient.setQueryData<Attendee[]>([id, 'attendees', newAttendee.isWaiting], (old = []) =>
+                old.map(att => (att.id === 'temp-id' ? { ...att, id: data } : att))
+            );
+        }
+    })
+
+    const activateAttendee = useMutation({
+        mutationFn: async (attendeeId: string) => {
+            await agent.put(`/activities/${id}/attendees/${attendeeId}`)
         },
         onSuccess: async () => {
             queryClient.invalidateQueries({
@@ -78,6 +100,7 @@ export const useAttendees = (id: string, isWaiting?: boolean, date?: Date) => {
         refetchingAttendance,
         refetchingAttendees,
         deleteAttendee,
-        addAttendee
+        addAttendee,
+        activateAttendee
     }
 }

@@ -7,7 +7,6 @@ public class ActivityDto
     public required string Id { get; set; }
     public required string Title { get; set; }
     public required string Description { get; set; }
-    public required string Category { get; set; }
     public bool IsCancelled { get; set; }
     public required string Room { get; set; }
     public required int MaxParticipants { get; set; }
@@ -19,7 +18,7 @@ public class ActivityDto
 
     //Time info
     public DateOnly DateStart { get; set; }
-    public DateOnly? DateEnd { get; set; }
+    public DateOnly DateEnd { get; set; }
     public TimeOnly TimeStart { get; set; }
     public TimeOnly TimeEnd { get; set; }
 }

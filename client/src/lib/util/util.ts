@@ -1,12 +1,18 @@
-import { DateArg, format } from "date-fns";
-import { ca } from "date-fns/locale";
+import dayjs from "dayjs";
 import { z } from 'zod'
 
 
+export function formatDateOnly(dateOnly: string) {
+    if (!dateOnly) return "Invalid date";
 
-export function formatDate(date: DateArg<Date>) {
-    return format(date, "dd MMMMMM yyyy, HH:mm", { locale: ca });
+    const date = dayjs(dateOnly);
+    if (!date.isValid()) {
+      console.error("Error formatting date:", dateOnly);
+      return "Invalid date";
+    }
+    return date.locale("ca").format("DD [de] MMMM [del] YYYY");
 }
+
 
 export const requiredString = () => z
     .string({ required_error: 'Camp obligatori' })
