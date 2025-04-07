@@ -8,18 +8,24 @@ import CloseIcon from '@mui/icons-material/Close';
 import { stringAvatar } from "../../../lib/util/util";
 import EventCalendar from "./ActivityDetailsCalendar";
 import { Event } from '@mui/icons-material';
+import ActivityDetailsRecur from "./ActivityDetailsRecur";
+import DateInput from "../../../app/shared/components/DateInput";
+import TimeInput from "../../../app/shared/components/TimeInput";
+import { recurrenceSchema, RecurrenceSchema } from "../../../lib/schemas/recurrenceSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type Props = {
     activity: Activity
 }
 
 interface OrganizersFormInputs {
-    organizers: string[]; // array of selected profile ids
+    organizers: string[];
 }
 
 export default function ActivityDetailsSidebar({ activity }: Props) {
-    const { updateOrganizers } = useActivities(activity.id)
+    const { updateOrganizers, addRecur, deleteRecur } = useActivities(activity.id)
     const [updateOrg, setUpdateOrg] = useState(false);
+    const [addEvent, setAddEvent] = useState(false);
 
     const { control, handleSubmit } = useForm<OrganizersFormInputs>({
         defaultValues: { organizers: activity.organizers.map(o => o.id) }
@@ -40,10 +46,27 @@ export default function ActivityDetailsSidebar({ activity }: Props) {
         setUpdateOrg(false);
     };
 
+    const { control: controlRecur, handleSubmit: handleRecur, reset } = useForm<RecurrenceSchema>({
+        mode: 'onTouched',
+        resolver: zodResolver(recurrenceSchema)
+    })
 
+    const onSubmitRecur: SubmitHandler<CreateRecur> = (data) => {
+        resetingAddEvent()
+        addRecur.mutate(data)
+    }
+
+    const resetingAddEvent = () => {
+        setAddEvent(false)
+        reset()
+    }
+
+    const deleteRecurrence = (recurId: string) => {
+        deleteRecur.mutate(recurId)
+    }
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, borderRadius: 3 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, borderRadius: 3 }}>
             <Grid2>
                 <Paper
                     sx={{
@@ -51,16 +74,16 @@ export default function ActivityDetailsSidebar({ activity }: Props) {
                         border: 'none',
                         backgroundColor: 'primary.main',
                         color: 'white',
-                        p: 2,
+                        p: 1,
                     }}
                 >
-                    {!updateOrganizers.isPending ? (<Typography variant="h6">
+                    {!updateOrganizers.isPending ? (<Typography variant="subtitle1">
                         {!updateOrg && activity.organizers.length} {activity.organizers.length === 1 ? ' Organitzadora' : ' Organitzadores'}
                         {activity.isCreator && !activity.isCancelled && <IconButton aria-label="edit" onClick={() => setUpdateOrg(!updateOrg)}>
-                            {!updateOrg ? (<EditIcon sx={{ color: "white" }} />) : (<CloseIcon sx={{ color: "white" }} />)}
+                            {!updateOrg ? (<EditIcon sx={{ color: "white" }} fontSize="small" />) : (<CloseIcon sx={{ color: "white" }} fontSize="small" />)}
                         </IconButton>}
                     </Typography>
-                    ) : (<Typography variant="h6">Organitzadores</Typography>)}
+                    ) : (<Typography variant="subtitle1">Organitzadores</Typography>)}
 
                 </Paper>
                 <Paper sx={{ padding: 2 }}>
@@ -76,26 +99,24 @@ export default function ActivityDetailsSidebar({ activity }: Props) {
                             </Button>
                         </form>
                     }
-                    {!updateOrganizers.isPending && !updateOrg && activity.organizers.map(organizer => (
-                        <Grid2 key={organizer.id} container alignItems="center">
-                            <Grid2 size={8}>
-                                <List sx={{ display: 'flex', flexDirection: 'column' }}>
-                                    <ListItem>
-                                        <ListItemAvatar>
-                                            <Avatar
-                                                variant="rounded"
-                                                alt={organizer.displayName + ' initials'}
-                                                sx={{ width: 50, height: 50, mr: 3, ...stringAvatar(organizer.displayName).sx }}
-                                                children={stringAvatar(organizer.displayName).children}
-                                            />
-                                        </ListItemAvatar>
-                                        <ListItemText>
-                                            <Typography variant="h6">{organizer.displayName}</Typography>
-                                        </ListItemText>
-                                    </ListItem>
-                                </List>
-                            </Grid2>
-                            <Grid2 size={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
+                    {!updateOrganizers.isPending && !updateOrg && activity.organizers.map((organizer) => (
+                        <Grid2 key={organizer.id} container alignItems="center" justifyContent='space-between'>
+                            <List>
+                                <ListItem disablePadding>
+                                    <ListItemAvatar>
+                                        <Avatar
+                                            variant="rounded"
+                                            alt={organizer.displayName + ' initials'}
+                                            sx={{ fontSize: 'small', width: 25, height: 25, mr: 3, ...stringAvatar(organizer.displayName).sx }}
+                                            children={stringAvatar(organizer.displayName).children}
+                                        />
+                                    </ListItemAvatar>
+                                    <ListItemText>
+                                        <Typography>{organizer.displayName}</Typography>
+                                    </ListItemText>
+                                </ListItem>
+                            </List>
+                            <Grid2>
                                 {activity.creator.id === organizer.id && (
                                     <Chip
                                         label="Creadora"
@@ -118,6 +139,28 @@ export default function ActivityDetailsSidebar({ activity }: Props) {
                 </Typography>
                 <EventCalendar activity={activity} />
             </Box>
+            <Grid2 alignItems='center' pb={4}>
+                <ActivityDetailsRecur oneTimeRecur={activity.oneTimeRecur} addEvent={addEvent} setAddEvent={setAddEvent} deleteRecur={deleteRecurrence} />
+                {addEvent &&
+                    <Paper sx={{ padding: 2 }}>
+                        <Box component='form' display='flex' flexDirection='column' onSubmit={handleRecur(onSubmitRecur)} gap={1}>
+
+                            <DateInput label='Data' control={controlRecur} name='date' />
+                            <TimeInput label='TimeStart' control={controlRecur} name="timeStart" />
+                            <TimeInput label='TimeEnd' control={controlRecur} name="timeEnd" />
+                            <Box display='flex' justifyContent='end' gap={3}>
+                                <Button type="submit" variant="contained">
+                                    Confirma
+                                </Button>
+                                <Button color="inherit" onClick={() => resetingAddEvent()}>
+                                    Cancel·la
+                                </Button>
+                            </Box>
+                        </Box>
+                    </Paper>
+
+                }
+            </Grid2>
         </Box>
     );
 }

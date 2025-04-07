@@ -3,14 +3,9 @@
     border: none !important;
 }
 
-.react-calendar__tile--now {
-    background: #1976d2 !important;
-    color: white !important;
-}
-
 /*scrollbar sempre visible per accessibilitat*/
 ::-webkit-scrollbar {
-    overflow-y: visible;
+    overflow: visible;
 }
 
 ::-webkit-scrollbar-track {
@@ -19,13 +14,10 @@
 
 ::-webkit-scrollbar-thumb {
     background: #888;
-    border-radius: 6px;     /* Make it appear 'pill'-like */
+    border-radius: 6px;     
     border: 2px solid #f1f1f1; 
 }
 
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
-}
-:visited{
-    color: #1976d2;
 }

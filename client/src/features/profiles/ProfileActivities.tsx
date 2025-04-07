@@ -1,5 +1,5 @@
 import { SyntheticEvent, useEffect, useState } from "react";
-import { Box, Card, CardContent, Grid2, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Grid2, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, Typography } from "@mui/material";
 import { Link, useParams } from "react-router";
 import { useProfiles } from "../../lib/hooks/useProfiles.ts";
 import { formatDateOnly } from "../../lib/util/util.ts";
@@ -8,7 +8,7 @@ type Props = {
     stringAction: string
 }
 
-export default function ProfileActivities({stringAction}: Props) {
+export default function ProfileActivities({ stringAction }: Props) {
     const [activeTab, setActiveTab] = useState(0);
     const { id } = useParams();
     const { userActivities, setFilter, loadingUserActivities } = useProfiles(id);
@@ -19,7 +19,7 @@ export default function ProfileActivities({stringAction}: Props) {
 
     const tabs = [
         { menuItem: 'Activitats actuals', key: stringAction },
-        { menuItem: 'Activitats pasades', key:  stringAction + 'Past' },
+        { menuItem: 'Activitats pasades', key: stringAction + 'Past' },
     ];
 
     const handleTabChange = (_: SyntheticEvent, newValue: number) => {
@@ -31,10 +31,7 @@ export default function ProfileActivities({stringAction}: Props) {
         <Box>
             <Grid2 container spacing={2}>
                 <Grid2 size={12}>
-                    <Tabs
-                        value={activeTab}
-                        onChange={handleTabChange}
-                    >
+                    <Tabs value={activeTab} onChange={handleTabChange}>
                         {tabs.map((tab, index) => (
                             <Tab label={tab.menuItem} key={index} />
                         ))}
@@ -42,33 +39,46 @@ export default function ProfileActivities({stringAction}: Props) {
                 </Grid2>
             </Grid2>
             {(!userActivities || userActivities.length === 0) && !loadingUserActivities ? (
-                <Typography mt={2}>
-                    No activities to show
-                </Typography>
+                <Typography mt={2}>No hi ha cap activitat en aquesta categoria</Typography>
             ) : null}
-            <Grid2 container spacing={2} sx={{ marginTop: 2, height: 400, overflow: 'auto' }}>
-                {userActivities && userActivities.map((activity: Activity) => (
-                    <Grid2 size={2} key={activity.id}>
-                        <Link to={`/activities/${activity.id}`} style={{ textDecoration: 'none' }}>
-                            <Card elevation={4}>
-                                <CardContent> {/* TODO: arreglar el visuals */}
-                                    <Typography variant="h6" textAlign="center" mb={1}>
-                                        {activity.title}
+            <TableContainer sx={{ maxHeight: 500, overflowY: "auto", scrollbarGutter: "stable"}}>
+                <Table stickyHeader>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell align="center">
+                                <Typography variant="subtitle1" fontWeight="bold">ACTIVITATS</Typography>
+                            </TableCell>
+                            <TableCell align="center">
+                                <Typography variant="subtitle1" fontWeight="bold">DATA INICIAL</Typography>
+                            </TableCell>
+                            <TableCell align="center">
+                                <Typography variant="subtitle1" fontWeight="bold">DATA FINAL</Typography>
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {userActivities && userActivities.map((activity: Activity) => (
+                            <TableRow key={activity.id}>
+                                <TableCell align="center">
+                                    <Link to={`/activities/${activity.id}`} style={{ width: "100%", textDecoration: 'none', color: 'inherit'}}>
+                                        <Typography variant="body2">{activity.title.toLocaleUpperCase()}</Typography>
+                                    </Link>
+                                </TableCell>
+                                <TableCell align="center">
+                                    <Typography variant="body2">
+                                        {formatDateOnly(activity.dateStart)}
                                     </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        textAlign="center"
-                                        display='flex'
-                                        flexDirection='column'
-                                    >
-                                        <span>{ formatDateOnly(activity.dateStart)}</span>
+                                </TableCell>
+                                <TableCell align="center">
+                                    <Typography variant="body2">
+                                        {activity.dateEnd && formatDateOnly(activity.dateEnd)}
                                     </Typography>
-                                </CardContent>
-                            </Card>
-                        </Link>
-                    </Grid2>
-                ))}
-            </Grid2>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
         </Box>
     )
 }

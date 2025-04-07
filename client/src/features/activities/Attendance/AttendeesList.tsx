@@ -1,5 +1,5 @@
 import { Box, Button, Grid2, Skeleton, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, Typography } from "@mui/material";
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useState } from "react";
 import WarningTooltip from "../../../app/shared/components/WarningTooltip";
 import { useAttendees } from "../../../lib/hooks/useAttendees";
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
@@ -21,15 +21,12 @@ type Props = {
     setIsFull: (integer: number) => void
 }
 
-export default function AttendeesList({ activity, addingAtt , setIsFull}: Props) {
+export default function AttendeesList({ activity, addingAtt, setIsFull }: Props) {
     const [activeTab, setActiveTab] = useState(0);
-    const [isWaiting, setIsWaiting] = useState<boolean>();
+    const [isWaiting, setIsWaiting] = useState<boolean>(false);
     const [addAtt, setAddAtt] = useState(false);
     const { activityAttendees, loadingAttendees, refetchingAttendees, deleteAttendee, activateAttendee, addAttendee } = useAttendees(activity.id, isWaiting)
 
-    useEffect(() => {
-        setIsWaiting(false)
-    }, [setIsWaiting])
 
     const handleChange = (_: SyntheticEvent, newValue: number) => {
         setActiveTab(newValue);
@@ -39,21 +36,27 @@ export default function AttendeesList({ activity, addingAtt , setIsFull}: Props)
     const { control, handleSubmit, reset } = useForm<AttendeeSchema>({
         mode: 'onTouched',
         resolver: zodResolver(attendeeSchema),
-        defaultValues: {isWaiting: activity.isFull}
+        defaultValues: { isWaiting: activity.maxParticipants <= activity.numberAttendees }
     });
 
     const deleteAtt = (attendeeId: string) => {
-        setIsFull(-1)
         deleteAttendee.mutate(attendeeId)
+        reset({ isWaiting: activity.maxParticipants <= activityAttendees!.length - 1 })
+        setIsFull(-1)
+
     }
-    
+
     const activateAtt = (attendeeId: string) => activateAttendee.mutate(attendeeId)
     const onSubmit = (data: AttendeeSchema) => {
-        addAttendee.mutate(data)
-        setAddAtt(false)
-        setIsFull(1)
-        addingAtt(false)
-        reset()
+        addAttendee.mutate(data, {
+            onSettled: () => {
+                setAddAtt(false)
+                reset({ isWaiting: activity.maxParticipants <= activityAttendees!.length + 1 })
+                setIsFull(1)
+                addingAtt(false)
+            }
+        })
+
     }
 
     return (
@@ -71,7 +74,7 @@ export default function AttendeesList({ activity, addingAtt , setIsFull}: Props)
                         <Button variant="outlined" onClick={() => { setAddAtt(true); addingAtt(true) }} startIcon={<PersonAddAlt1Icon />}>Afegeix participant</Button>
                     </Grid2>
                 </Grid2>
-                <TableContainer sx={{maxHeight: 440, mt: 2}}>
+                <TableContainer sx={{ maxHeight: 440, mt: 2, mb: 2, border: '1px solid rgba(0,0,0,0.12)' }}>
                     <Table stickyHeader size='small'>
                         <TableHead>
                             <TableRow>
@@ -84,21 +87,25 @@ export default function AttendeesList({ activity, addingAtt , setIsFull}: Props)
                         <TableBody>
                             {loadingAttendees || refetchingAttendees
                                 ? (
-                                    <TableRow key={0}  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                    <TableRow key={0} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                         <TableCell component="th" scope="row"><Skeleton variant="text" /></TableCell>
                                         <TableCell><Skeleton variant="text" /></TableCell>
                                         <TableCell><Skeleton variant="text" /></TableCell>
                                         {!isWaiting && <TableCell><Skeleton variant="text" /></TableCell>}
                                     </TableRow>
-                                ) :  activityAttendees && <AttendeesTable activityAttendees={activityAttendees} isWaiting={isWaiting} allowedMissedDays={activity.allowedMissedDays} activateAtt={activateAtt} deleteAtt={deleteAtt} />
+                                ) : activityAttendees && <AttendeesTable activityAttendees={activityAttendees} isWaiting={isWaiting} allowedMissedDays={activity.allowedMissedDays} activateAtt={activateAtt} deleteAtt={deleteAtt} />
                             }
                         </TableBody>
-                        {!isWaiting
-                            ? <caption>Participants: {activityAttendees?.length} / {activity.maxParticipants} {activityAttendees !== undefined && activityAttendees.length > activity.maxParticipants &&
-                                <WarningTooltip title={'Hi ha més participants que places ofertes'} />}</caption>
-                            : <caption>Total: {activityAttendees?.length}</caption>}
                     </Table>
+
                 </TableContainer>
+                <Grid2 ml={1} mb={2}>
+                    {!isWaiting
+                        ? <Typography component='div' variant="body2">Participants: {activityAttendees?.length} / {activity.maxParticipants} {activityAttendees !== undefined && activityAttendees.length > activity.maxParticipants &&
+                            <WarningTooltip title={'Hi ha més participants que places ofertes'} />}</Typography>
+
+                        : <Typography variant="body2">Total: {activityAttendees?.length}</Typography>}
+                </Grid2>
             </> :
             <Grid2 container alignItems="center" paddingBottom={3}>
                 <Grid2 size={6.5}>

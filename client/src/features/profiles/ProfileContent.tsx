@@ -22,14 +22,14 @@ export default function ProfileContent() {
       mt={2}
       p={3}
       elevation={3}
-      height={500}
+      height={600}
       sx={{display: 'flex', alignItems: 'flex-start', borderRadius: 3}}
     >
       <Tabs
         orientation="vertical"
         value={value}
         onChange={handleChange}
-        sx={{borderRight: 1, height: 450, minWidth: 200}}
+        sx={{borderRight: 1, height: 550, minWidth: 200}}
       >
         {tabContent.map((tab, index) => (
           <Tab key={index} label={tab.label} sx={{mr: 3}} />

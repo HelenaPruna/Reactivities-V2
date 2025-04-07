@@ -13,12 +13,12 @@ export default function ActivityDetailPage() {
     if (!activity) return <Typography>Activity not found</Typography>
     return (
         <Grid2 container spacing={3}>
-            <Grid2 size={8}>
+            <Grid2 size={8.5}>
                 <ActivityDetailsHeader activity={activity} />
                 <ActivityDetailsInfo activity={activity} />
                 <ActivityDetailsAttendees activity={activity} />
             </Grid2>
-            <Grid2 size={4}>
+            <Grid2 size={3.5}>
                 <ActivityDetailsSidebar activity={activity} />
             </Grid2>
         </Grid2>

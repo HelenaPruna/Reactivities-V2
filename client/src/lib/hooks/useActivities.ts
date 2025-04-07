@@ -59,6 +59,7 @@ export const useActivities = (id?: string) => {
                 isOrganizing: data.organizers.some(x => x.id === currentUser?.id),
                 isFull: data.maxParticipants <= data.numberAttendees,
                 dates: data.recurrences.map(r => new Date(r.composedTime)),
+                oneTimeRecur: data.recurrences.filter(r => r.isRecurrent === false),
                 isOneDay: data.dateStart === data.dateEnd,
                 interval: data.dateStart === data.dateEnd ? 1 : dayjs(data.dateEnd).diff(dayjs(data.dateStart), 'day') / (data.recurrences.length - 1)
             }
@@ -110,6 +111,27 @@ export const useActivities = (id?: string) => {
         }
     })
 
+    const addRecur = useMutation({
+        mutationFn: async (recurrence:CreateRecur) => {
+            await agent.post(`/activities/${id}/recurrence`, recurrence)
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({
+                queryKey: ['activities', id]
+            })
+        }
+    })
+    const deleteRecur = useMutation({
+        mutationFn: async (recurId: string) => {
+            await agent.delete(`/activities/${id}/recurrence/${recurId}`)
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({
+                queryKey: ['activities', id]
+            })
+        }
+    })
+
 
     return {
         activitiesGroup,
@@ -122,6 +144,8 @@ export const useActivities = (id?: string) => {
         deleteActivity,
         activity,
         isLoadingActivity,
-        updateOrganizers
+        updateOrganizers,
+        addRecur,
+        deleteRecur
     }
 }

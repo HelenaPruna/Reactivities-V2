@@ -7,17 +7,19 @@ type Props<T extends FieldValues> = {
 } & UseControllerProps<T> & CheckboxProps
 
 export default function CheckBoxInput<T extends FieldValues>(props: Props<T>) {
+    const {  label, ...checkboxProps } = props;
     const { field } = useController({ ...props });
+
     return (
         <FormControlLabel
             control={
                 <Checkbox
-                    {...props}
+                    {...checkboxProps}
                     {...field}
-                    defaultChecked={field.value || false}
+                    checked={Boolean(field.value)}
                 />
             }
-            label={props.label}
+            label={label}
         />
     )
 }

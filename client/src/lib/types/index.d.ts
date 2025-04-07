@@ -23,6 +23,7 @@ type Activity = {
     timeStart: string
     timeEnd: string
     recurrences: Recurrences[]
+    oneTimeRecur: Recurrences[]
     dates: Date[]
     isOneDay: boolean
     interval: number
@@ -87,4 +88,10 @@ type Recurrences = {
     timeEnd: string
     isRecurrent: boolean
     composedTime: Date
+}
+
+type CreateRecur = {
+    date: string
+    timeStart: string
+    timeEnd: string
 }

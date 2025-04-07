@@ -22,6 +22,7 @@ public class GetActivityList
     {
         public async Task<Result<PagedList<ActivityDto, DateOnly?>>> Handle(Query request, CancellationToken cancellationToken)
         {
+            //TODO: revisar pagination pk si tinc moltes activitats que comencen pel mateix dia la paginació llavors les torna agafar
             var query = context.Activities.Include(x => x.FirstDate).OrderBy(x => x.FirstDate.Date)
                 .Where(x => x.FirstDate.Date >= (request.Params.Cursor ?? request.Params.StartDate)).AsQueryable();
 

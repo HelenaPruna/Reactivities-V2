@@ -30,7 +30,8 @@ public class MappingProfiles : Profile
         CreateMap<RecurrenceActivity, RecurrenceDto>();
 
         CreateMap<Activity, UserActivityDto>()
-            .ForMember(x => x.Date, o => o.MapFrom(s => s.FirstDate.Date));
+            .ForMember(x => x.DateStart, o => o.MapFrom(s => s.FirstDate.Date))
+            .ForMember(x => x.DateEnd, o => o.MapFrom(s => s.Recurrences.Where(x => x.IsRecurrent && x.Id != s.FirstDate.Id).Max(recur => recur.Date)));
         CreateMap<Attendee, AttendeeDto>();
         CreateMap<CreateAttendeeDto, Attendee>();
 

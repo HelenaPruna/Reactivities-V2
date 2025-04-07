@@ -12,15 +12,12 @@ export const activitySchema = z.object({
     allowedMissedDays: z.coerce.number({
         message: 'Camp obligatori'
     }).int().positive({ message: 'El número màxim de faltes ha de ser postiu' }).default(1),
-
-    // Date validation in YYYY-MM-DD format
     dateStart: requiredString().regex(/^\d{4}-\d{2}-\d{2}$/, {
         message: "La data d'inici ha de ser en format YYYY-MM-DD"
     }),
     dateEnd: requiredString().regex(/^\d{4}-\d{2}-\d{2}$/, {
         message: "La data de final ha de ser en format YYYY-MM-DD"
     }).optional(),
-    // Time validation in HH:mm or HH:mm:ss format
     timeStart: requiredString().regex(/^\d{2}:\d{2}(:\d{2})?$/, {
         message: "L'hora d'inici ha de ser en format HH:mm o HH:mm:ss"
     }),
@@ -33,9 +30,7 @@ export const activitySchema = z.object({
     isOneDay: z.coerce.boolean().default(false)
 
 }).superRefine((data, ctx) => {
-    // Only compare if dateEnd is provided
     if (data.dateEnd) {
-        // Convert ISO date strings to Date objects for comparison
         const start = new Date(data.dateStart);
         const end = new Date(data.dateEnd);
         if (end < start) {
@@ -46,14 +41,23 @@ export const activitySchema = z.object({
             });
         }
     }
-    // Validate that interval > 0 if isOneDay is false
     if (!data.isOneDay && data.interval <= 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "L'interval ha de ser major a 0 dies",
           path: ['intervalVal']
         });
-      }
+    }
+
+    const startDateTime = new Date(`${data.dateStart}T${(data.timeStart)}`);
+    const endDateTime = new Date(`${data.dateStart}T${(data.timeEnd)}`);
+    if (endDateTime <= startDateTime) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "L'hora de final ha de ser posterior a l'hora d'inici",
+            path: ["timeEnd"],
+        });
+    }
 });
 
 

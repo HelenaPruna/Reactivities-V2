@@ -9,6 +9,11 @@ export default function EventCalendar({ activity }: Props) {
     const hasEvent = (date: Date) => {
         return activity.dates.some(eventDate => dayjs(eventDate).isSame(date, 'day'));
     };
+
+    const colorEvent = (date: Date) => {
+        const recucurrence = activity.recurrences.find(r => dayjs(r.composedTime).isSame(date, 'day'));
+        return recucurrence?.isRecurrent ? 'blue' : 'green'
+    }
     
     return (
         <Calendar
@@ -18,10 +23,10 @@ export default function EventCalendar({ activity }: Props) {
                     return (
                         <div
                             style={{
-                                marginTop: '2px',
+                                marginTop: '1px',
                                 width: '6px',
                                 height: '6px',
-                                backgroundColor: 'red',
+                                backgroundColor: colorEvent(date),
                                 borderRadius: '50%',
                                 margin: '0 auto',
                             }}

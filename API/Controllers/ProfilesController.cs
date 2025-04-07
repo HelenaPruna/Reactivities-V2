@@ -1,4 +1,3 @@
-using System;
 using Application.Profiles.DTOs;
 using Application.Profiles.Queries;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +19,7 @@ public class ProfilesController : BaseApiController
     }
 
     [HttpGet("{userId}/activities")]
-    public async Task<ActionResult<UserProfile>> GetUserActivities(string userId, string filter)
+    public async Task<ActionResult<UserActivityDto>> GetUserActivities(string userId, string filter)
     {
         return HandleResult(await Mediator.Send(new GetUserActivities.Query { UserId = userId, Filter = filter }));
     }
