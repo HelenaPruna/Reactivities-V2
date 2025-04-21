@@ -1,4 +1,3 @@
-using System;
 using Application.Activities.DTOs;
 using FluentValidation;
 
@@ -15,7 +14,6 @@ public class BaseActivityValidator<T, TDto> : AbstractValidator<T> where TDto : 
         RuleFor(x => selector(x).DateEnd).NotEmpty().WithMessage("Date must be in the future");
         RuleFor(x => selector(x).TimeStart).NotEmpty().WithMessage("Date must be in the future");
         RuleFor(x => selector(x).TimeEnd).NotEmpty().WithMessage("Date must be in the future");
-        RuleFor(x => selector(x).Room).NotEmpty().WithMessage("Room is required");
         RuleFor(x => selector(x).MaxParticipants).NotEmpty().WithMessage("MaxParticipants is required");
         RuleFor(x => selector(x).AllowedMissedDays).NotEmpty().WithMessage("AllowedMissedDays is required");
     }

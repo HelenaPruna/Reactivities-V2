@@ -21,18 +21,17 @@ public class GetUserActivities
         public async Task<Result<List<UserActivityDto>>> Handle(Query request, CancellationToken cancellationToken)
         {
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            List<UserActivityDto> activities = [];
+            IQueryable<UserActivityDto> query;
 
-            var query = request.Filter switch
-            {
-                "creatorPast" => context.Activities.Where(x => x.CreatorId == request.UserId && x.FirstDate.Date < today),
-                "creator" => context.Activities.Where(x => x.CreatorId == request.UserId && x.FirstDate.Date >= today),
-                "organizingPast" => context.ActivityOrganizers.Where(u => u.User.Id == request.UserId && u.Activity.FirstDate.Date < today).Select(x => x.Activity),
-                _ => context.ActivityOrganizers.Where(u => u.User.Id == request.UserId && u.Activity.FirstDate.Date >= today).Select(x => x.Activity)
-            };
-
-            var projectedActivities = query.OrderBy(x => x.FirstDate.Date).ProjectTo<UserActivityDto>(mapper.ConfigurationProvider);
-
-            var activities = await projectedActivities.ToListAsync(cancellationToken);
+            if (request.Filter == "creatorPast" || request.Filter == "creator")
+                query = context.Activities.Where(x => x.CreatorId == request.UserId)
+                        .ProjectTo<UserActivityDto>(mapper.ConfigurationProvider);
+            else query = context.ActivityOrganizers.Where(u => u.User.Id == request.UserId)
+                        .Select(x => x.Activity).ProjectTo<UserActivityDto>(mapper.ConfigurationProvider);
+            if (request.Filter == "creatorPast" || request.Filter == "organizingPast")
+                activities = await query.Where(x => x.DateEnd < today).ToListAsync(cancellationToken);
+            else activities = await query.Where(x => x.DateEnd >= today).ToListAsync(cancellationToken);
 
             return Result<List<UserActivityDto>>.Success(activities);
         }

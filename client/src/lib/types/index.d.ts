@@ -1,6 +1,6 @@
-type PagedList<T, TCursor> = {
+type PagedList<T> = {
     items: T[],
-    nextCursor: TCursor
+    nextCursor?: string;
 }
 
 type Activity = {
@@ -8,7 +8,7 @@ type Activity = {
     title: string
     description: string
     isCancelled: boolean
-    room: string
+    room: Room
     creator: Profile
     organizers: Profile[]
     isOrganizing: boolean
@@ -22,9 +22,8 @@ type Activity = {
     dateEnd: string
     timeStart: string
     timeEnd: string
-    recurrences: Recurrences[]
-    oneTimeRecur: Recurrences[]
-    dates: Date[]
+    recurrences: Recurrence[]
+    oneTimeEvents: Recurrence[]
     isOneDay: boolean
     interval: number
 }
@@ -38,11 +37,10 @@ type Profile = {
 type FieldActivity = {
     title: string
     description: string
-    room: string
     maxParticipants: number
     allowedMissedDays: number
     dateStart: string
-    dateEnd?: string
+    dateEnd: string
     timeStart: string
     timeEnd: string
     interval: number
@@ -73,6 +71,7 @@ type Attendance = {
     id: string
     identifier: string
     attendeeId: string
+    recurId: string
     hasAttended: number //0=pendent,1=present,2=falta
 }
 
@@ -81,17 +80,29 @@ type AttendanceValues = {
     hasAttended: number
 }
 
-type Recurrences = {
+type Recurrence = {
     id: string
     date: string
     timeStart: string
     timeEnd: string
     isRecurrent: boolean
     composedTime: Date
+    activityId: string
+    activityTitle: string
+    numberAttendees: number
+    room: Room
 }
 
 type CreateRecur = {
     date: string
     timeStart: string
     timeEnd: string
+}
+
+type Room = {
+    id: string
+    name: string
+    numberFloor: number
+    capacity: number
+    recurrences: Recurrence[]
 }

@@ -2,7 +2,6 @@ using Application.Activities.DTOs;
 using Application.Core;
 using Application.Interfaces;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -11,49 +10,68 @@ namespace Application.Activities.Queries;
 
 public class GetActivityList
 {
-    public class Query : IRequest<Result<PagedList<ActivityDto, DateOnly?>>>
+    public class Query : IRequest<Result<PagedList<ActivityDto>>>
     {
         public required ActivityParams Params { get; set; }
-
     }
 
     public class Handler(AppDbContext context, IMapper mapper, IUserAccessor userAccessor)
-        : IRequestHandler<Query, Result<PagedList<ActivityDto, DateOnly?>>>
+        : IRequestHandler<Query, Result<PagedList<ActivityDto>>>
     {
-        public async Task<Result<PagedList<ActivityDto, DateOnly?>>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<Result<PagedList<ActivityDto>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            //TODO: revisar pagination pk si tinc moltes activitats que comencen pel mateix dia la paginació llavors les torna agafar
-            var query = context.Activities.Include(x => x.FirstDate).OrderBy(x => x.FirstDate.Date)
-                .Where(x => x.FirstDate.Date >= (request.Params.Cursor ?? request.Params.StartDate)).AsQueryable();
+            var userId = userAccessor.GetUserId();
+            var startDate = request.Params.StartDate;
+            string? lastId = request.Params.Cursor;
 
+            var baseQuery = context.Activities.Include(x => x.Recurrences)
+                .Where(a => a.Recurrences.Any(r => r.Date >= startDate))
+                .OrderBy(a => a.Id).AsQueryable();
+
+            if (!request.Params.IncludeCancelled) baseQuery = baseQuery.Where(x => !x.IsCancelled);
+
+            baseQuery = baseQuery.Include(x => x.Organizers);
             if (!string.IsNullOrEmpty(request.Params.Filter))
             {
-                query = request.Params.Filter switch
+                baseQuery = request.Params.Filter switch
                 {
-                    "isOrganizing" => query.Where(x => x.Organizers.Any(a => a.UserId == userAccessor.GetUserId())),
-                    "isCreator" => query.Where(x => x.CreatorId == userAccessor.GetUserId()),
-                    _ => query
+                    "isOrganizing" => baseQuery.Where(a => a.Organizers.Any(o => o.UserId == userId)),
+                    "isCreator" => baseQuery.Where(a => a.CreatorId == userId),
+                    _ => baseQuery
                 };
             }
-            var projectedActivities = query.ProjectTo<ActivityDto>(mapper.ConfigurationProvider);
 
-
-            var activities = await projectedActivities.Take(request.Params.PageSize + 1).ToListAsync(cancellationToken);
-
-            DateOnly? nextCursor = null;
-            if (activities.Count > request.Params.PageSize)
+            if (!string.IsNullOrWhiteSpace(request.Params.SearchTerm))
             {
-                nextCursor = activities.Last().DateStart;
-                activities.RemoveAt(activities.Count - 1);
+                var term = request.Params.SearchTerm.Trim().ToLower();
+                baseQuery = baseQuery.Where(a => a.Title.ToLower().Contains(term));
             }
 
-            return Result<PagedList<ActivityDto, DateOnly?>>.Success(
-                new PagedList<ActivityDto, DateOnly?>
-                {
-                    Items = activities,
-                    NextCursor = nextCursor
-                }
-            );
+            var inMemory = await baseQuery.Include(x => x.Creator).Include(x => x.Attendees).ToListAsync(cancellationToken);
+
+            var paged = inMemory
+                .Where(a => lastId == null || string.CompareOrdinal(a.Id, lastId) >= 0)
+                .Take(request.Params.PageSize + 1).ToList();
+
+            var pageSizePlusOne = request.Params.PageSize + 1;
+            var dtos = paged
+                .Select(a => mapper.Map<ActivityDto>(a, opts => opts.Items["CurrentUserId"] = userId))
+                .ToList();
+
+            string? nextCursor = null;
+            if (dtos.Count > request.Params.PageSize)
+            {
+                nextCursor = dtos[request.Params.PageSize].Id;
+                dtos.RemoveAt(request.Params.PageSize);
+            }
+
+            dtos = [.. dtos.OrderBy(x => x.DateStart)];
+
+            return Result<PagedList<ActivityDto>>.Success(new PagedList<ActivityDto>
+            {
+                Items = dtos,
+                NextCursor = nextCursor
+            });
         }
     }
 }

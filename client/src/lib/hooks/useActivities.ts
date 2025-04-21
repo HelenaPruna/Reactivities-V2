@@ -6,20 +6,22 @@ import { useStore } from "./useStore";
 import dayjs from "dayjs";
 
 export const useActivities = (id?: string) => {
-    const { activityStore: { filter, startDate } } = useStore()
+    const { activityStore: { filter, startDate, searchTerm, includeCancelled } } = useStore()
     const queryClient = useQueryClient();
     const { currentUser } = useAccount();
     const location = useLocation();
 
-    const { data: activitiesGroup, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery<PagedList<Activity, string>>({
-        queryKey: ['activities', filter, startDate],
+    const { data: activitiesGroup, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery<PagedList<Activity>>({
+        queryKey: ['activities', filter, startDate, searchTerm, includeCancelled],
         queryFn: async ({ pageParam = null }) => {
-            const response = await agent.get<PagedList<Activity, string>>('/activities', {
+            const response = await agent.get<PagedList<Activity>>('/activities', {
                 params: {
                     cursor: pageParam,
-                    pageSize: 10,
+                    pageSize: 9,
                     filter,
-                    startDate
+                    startDate,
+                    searchTerm,
+                    includeCancelled
                 }
             });
             return response.data;
@@ -37,7 +39,7 @@ export const useActivities = (id?: string) => {
                     return {
                         ...activity,
                         isCreator: currentUser?.id === activity.creator.id,
-                        isOrganizing: activity.organizers.some(x => x.id === currentUser?.id),
+                        isOneDay: activity.dateStart === activity.dateEnd,
                         isFull: activity.maxParticipants <= activity.numberAttendees
                     }
                 })
@@ -58,8 +60,6 @@ export const useActivities = (id?: string) => {
                 isCreator: currentUser?.id === data.creator.id,
                 isOrganizing: data.organizers.some(x => x.id === currentUser?.id),
                 isFull: data.maxParticipants <= data.numberAttendees,
-                dates: data.recurrences.map(r => new Date(r.composedTime)),
-                oneTimeRecur: data.recurrences.filter(r => r.isRecurrent === false),
                 isOneDay: data.dateStart === data.dateEnd,
                 interval: data.dateStart === data.dateEnd ? 1 : dayjs(data.dateEnd).diff(dayjs(data.dateStart), 'day') / (data.recurrences.length - 1)
             }
@@ -69,6 +69,17 @@ export const useActivities = (id?: string) => {
     const updateActivity = useMutation({
         mutationFn: async (activity: Activity) => {
             await agent.put(`/activities/${id}`, activity)
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({
+                queryKey: ['activities', id]
+            })
+        }
+    })
+
+    const toggleActivity = useMutation({
+        mutationFn: async () => {
+            await agent.put(`/activities/${id}/cancel`)
         },
         onSuccess: async () => {
             await queryClient.invalidateQueries({
@@ -140,6 +151,7 @@ export const useActivities = (id?: string) => {
         fetchNextPage,
         hasNextPage,
         updateActivity,
+        toggleActivity,
         createActivity,
         deleteActivity,
         activity,

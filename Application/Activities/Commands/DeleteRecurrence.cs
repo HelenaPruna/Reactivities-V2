@@ -1,4 +1,3 @@
-using System;
 using Application.Core;
 using MediatR;
 using Persistence;
@@ -21,11 +20,11 @@ public class DeleteRecurrence
             var recurrence = await context.Recurrences.FindAsync([request.RecurrenceId], cancellationToken);
             if (recurrence == null) return Result<Unit>.Failure("Recurrence not found", 404);
             activity.Recurrences.Remove(recurrence);
+            context.Recurrences.Remove(recurrence);
             var result = await context.SaveChangesAsync(cancellationToken) > 0;
             return !result
-                ? Result<Unit>.Failure("Failed to delete the recurrence", 400) 
+                ? Result<Unit>.Failure("Failed to delete the recurrence", 400)
                 : Result<Unit>.Success(Unit.Value);
         }
     }
-
 }

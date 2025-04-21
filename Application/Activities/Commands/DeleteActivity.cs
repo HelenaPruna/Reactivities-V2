@@ -1,6 +1,6 @@
-using System;
 using Application.Core;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Activities.Commands;
@@ -16,9 +16,12 @@ public class DeleteActivity
     {
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var activity = await context.Activities.FindAsync([request.Id], cancellationToken);
-
+            var activity = await context.Activities.Include(x => x.Recurrences)
+                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
             if (activity == null) return Result<Unit>.Failure("Activity not found", 404);
+            activity.FirstDateId = null;
+            await context.SaveChangesAsync(cancellationToken);
+            context.RemoveRange(activity.Recurrences);
 
             context.Remove(activity);
             var result = await context.SaveChangesAsync(cancellationToken) > 0;

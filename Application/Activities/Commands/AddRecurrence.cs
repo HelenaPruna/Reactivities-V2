@@ -8,17 +8,17 @@ namespace Application.Activities.Commands;
 
 public class AddRecurrence
 {
-    public class Command : IRequest<Result<Unit>>
+    public class Command : IRequest<Result<string>>
     {
         public required string ActivityId { get; set; }
         public required CreateRecurrenceDto RecurrenceDto { get; set; }
     }
-    public class Handler(AppDbContext context) : IRequestHandler<Command, Result<Unit>>
+    public class Handler(AppDbContext context) : IRequestHandler<Command, Result<string>>
     {
-        public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(Command request, CancellationToken cancellationToken)
         {
             var activity = await context.Activities.FindAsync([request.ActivityId], cancellationToken);
-            if (activity == null) return Result<Unit>.Failure("Activity not found", 404);
+            if (activity == null) return Result<string>.Failure("Activity not found", 404);
 
             var recur = new RecurrenceActivity
             {
@@ -29,9 +29,9 @@ public class AddRecurrence
             };
             activity.Recurrences.Add(recur);
             var result = await context.SaveChangesAsync(cancellationToken) > 0;
-            return !result ? Result<Unit>.Failure("Failed to add recurrence", 400) : Result<Unit>.Success(Unit.Value);
-            
-
+            return !result
+                ? Result<string>.Failure("Failed to add recurrence", 400) 
+                : Result<string>.Success(recur.Id);
         }
     }
 }

@@ -20,6 +20,7 @@ const ActivityList = observer(function ActivityList() {
   if (isLoading) return <Typography>Loading...</Typography>
   if (!activitiesGroup) return <Typography>No activities found</Typography>
 
+
   return (
     <Box sx={{ display: "flex", flexDirection: 'column', gap: 3 }}>
       {activitiesGroup.pages.map((activities, index) => (
@@ -28,7 +29,7 @@ const ActivityList = observer(function ActivityList() {
           ref={index === activitiesGroup.pages.length - 1 ? ref : null}
           sx={{
             display: "grid",
-            gridTemplateColumns: "repeat(2, 1fr)", // 2 columns, each 1 fraction unit
+            gridTemplateColumns: "repeat(3, 1fr)", // 2 columns, each 1 fraction unit
             gap: 3
           }}
         >

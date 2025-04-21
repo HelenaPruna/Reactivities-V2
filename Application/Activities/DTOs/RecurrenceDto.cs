@@ -6,7 +6,6 @@ public class RecurrenceDto
     public required DateOnly Date { get; set; }
     public required TimeOnly TimeStart { get; set; }
     public required TimeOnly TimeEnd { get; set; }
-    public bool IsRecurrent { get; set; } 
     public DateTime ComposedTime => new(Date, TimeStart);
 
 }

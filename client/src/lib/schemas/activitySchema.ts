@@ -4,14 +4,13 @@ import { requiredString } from '../util/util';
 
 export const activitySchema = z.object({
     title: requiredString(),
-    description: requiredString(),
-    room: requiredString(),
+    description: z.coerce.string().default("--"),
     maxParticipants: z.coerce.number({
         message: 'Camp obligatori'
     }).int().positive({ message: 'El número màxim de participants ha de ser postiu' }),
     allowedMissedDays: z.coerce.number({
         message: 'Camp obligatori'
-    }).int().positive({ message: 'El número màxim de faltes ha de ser postiu' }).default(1),
+    }).int().positive({ message: 'El número màxim de faltes ha de ser postiu' }).optional(),
     dateStart: requiredString().regex(/^\d{4}-\d{2}-\d{2}$/, {
         message: "La data d'inici ha de ser en format YYYY-MM-DD"
     }),
@@ -24,29 +23,45 @@ export const activitySchema = z.object({
     timeEnd: requiredString().regex(/^\d{2}:\d{2}(:\d{2})?$/, {
         message: "L'hora de final ha de ser en format HH:mm o HH:mm:ss"
     }),
-    interval: z.coerce.number().int().nonnegative(
-        { message: "L'interval de dates ha de ser positiu" }
-    ).default(1),
+    interval: z.coerce.number().int().positive(
+        { message: "L'interval de dies ha de ser positiu" }
+    ).optional(),
     isOneDay: z.coerce.boolean().default(false)
 
 }).superRefine((data, ctx) => {
-    if (data.dateEnd) {
+    if (data.dateEnd && !data.isOneDay) {
         const start = new Date(data.dateStart);
         const end = new Date(data.dateEnd);
-        if (end < start) {
+        if (end <= start) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
-                message: "La data de final no pot ser abans de la data d'inici",
+                message: "La data de final no pot ser la mateixa o anterior a l'inicial",
                 path: ['dateEnd']
             });
         }
     }
-    if (!data.isOneDay && data.interval <= 0) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "L'interval ha de ser major a 0 dies",
-          path: ['intervalVal']
-        });
+    if (!data.isOneDay) {
+        if (data.allowedMissedDays === undefined || data.allowedMissedDays === null) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "El nombre màxim de faltes és obligatori quan l'activitat no és d'un sol dia",
+                path: ["allowedMissedDays"],
+            });
+        }
+        if (data.interval === undefined || data.interval === null) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "L'interval en dies és obligatori quan l'activitat no és d'un sol dia",
+                path: ["interval"],
+            });
+        }
+        if (data.dateEnd === undefined || data.dateEnd === null) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "L'interval en dies és obligatori quan l'activitat no és d'un sol dia",
+                path: ["dateEnd"],
+            });
+        }
     }
 
     const startDateTime = new Date(`${data.dateStart}T${(data.timeStart)}`);

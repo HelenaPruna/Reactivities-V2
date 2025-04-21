@@ -1,9 +1,7 @@
-using System;
-
 namespace Application.Core;
 
-public class PagedList<T, TCursor>
+public class PagedList<T>
 {
     public List<T> Items { get; set; } = [];
-    public TCursor? NextCursor { get; set; }
+    public string? NextCursor { get; set; }
 }

@@ -140,7 +140,14 @@ export default function ActivityDetailsSidebar({ activity }: Props) {
                 <EventCalendar activity={activity} />
             </Box>
             <Grid2 alignItems='center' pb={4}>
-                <ActivityDetailsRecur oneTimeRecur={activity.oneTimeRecur} addEvent={addEvent} setAddEvent={setAddEvent} deleteRecur={deleteRecurrence} />
+                <ActivityDetailsRecur
+                    activityId={activity.id}
+                    isCancelled={activity.isCancelled}
+                    oneTimeRecur={activity.oneTimeEvents}
+                    addEvent={addEvent}
+                    setAddEvent={setAddEvent}
+                    deleteRecur={deleteRecurrence}
+                />
                 {addEvent &&
                     <Paper sx={{ padding: 2 }}>
                         <Box component='form' display='flex' flexDirection='column' onSubmit={handleRecur(onSubmitRecur)} gap={1}>
@@ -158,7 +165,6 @@ export default function ActivityDetailsSidebar({ activity }: Props) {
                             </Box>
                         </Box>
                     </Paper>
-
                 }
             </Grid2>
         </Box>

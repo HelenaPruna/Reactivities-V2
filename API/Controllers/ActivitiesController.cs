@@ -15,7 +15,7 @@ namespace API.Controllers;
 public class ActivitiesController : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<PagedList<ActivityDto, DateOnly?>>> GetActivities([FromQuery] ActivityParams activityParams)
+    public async Task<ActionResult<PagedList<ActivityDto>>> GetActivities([FromQuery] ActivityParams activityParams)
     {
         return HandleResult(await Mediator.Send(new GetActivityList.Query { Params = activityParams }));
     }
@@ -40,6 +40,13 @@ public class ActivitiesController : BaseApiController
         return HandleResult(await Mediator.Send(new EditActivity.Command { ActivityDto = activity }));
     }
 
+    [HttpPut("{id}/cancel")]
+    [Authorize(Policy = "IsActivityCreator")]
+    public async Task<ActionResult> ToggleCancelActivity(string id)
+    {
+        return HandleResult(await Mediator.Send(new CancelActivity.Command { Id = id }));
+    }
+
     [HttpDelete("{id}")]
     [Authorize(Policy = "IsActivityCreator")]
     public async Task<ActionResult> DeleteActivity(string id)
@@ -48,6 +55,7 @@ public class ActivitiesController : BaseApiController
     }
 
     [HttpPost("{id}/organizers")]
+    [Authorize(Policy = "IsActivityCreator")]
     public async Task<ActionResult> UpdateOrganizers(string id, string[] profilesIds)
     {
         return HandleResult(await Mediator.Send(new UpdateOrganizer.Command
@@ -55,18 +63,22 @@ public class ActivitiesController : BaseApiController
     }
 
     [HttpPost("{id}/recurrence")]
-    public async Task<ActionResult> AddOneTimeRecurrence(string id, CreateRecurrenceDto recurrenceDto)
+    [Authorize(Policy = "IsActivityCreator")]
+    public async Task<ActionResult<string>> AddOneTimeRecurrence(string id, CreateRecurrenceDto recurrenceDto)
     {
         return HandleResult(await Mediator.Send(new AddRecurrence.Command
         { ActivityId = id, RecurrenceDto = recurrenceDto }));
     }
 
     [HttpDelete("{id}/recurrence/{recurId}")]
-    public async Task<ActionResult> DeleteRecurrence(string id,  string recurId)
+    [Authorize(Policy = "IsActivityCreator")]
+    public async Task<ActionResult> DeleteRecurrence(string id, string recurId)
     {
         return HandleResult(await Mediator.Send(new DeleteRecurrence.Command
         { ActivityId = id, RecurrenceId = recurId }));
     }
+
+    #region Attendees
 
     [HttpGet("{id}/attendees")]
     public async Task<ActionResult<List<AttendeeDto>>> GetAttendees(string id, bool predicate)
@@ -93,14 +105,14 @@ public class ActivitiesController : BaseApiController
     public async Task<ActionResult> DeleteAttendee(string id, string attendeeId)
     {
         return HandleResult(await Mediator.Send(new DeleteAttendee.Command
-        { ActivityId = id,  AttendeeId = attendeeId }));
+        { ActivityId = id, AttendeeId = attendeeId }));
     }
 
     [HttpGet("{id}/attendance/{recurrenceId}")]
     public async Task<ActionResult<List<Attendance>>> GetAttendance(string id, string recurrenceId)
     {
         return HandleResult(await Mediator.Send(new GetAttendeesAttendance.Query
-        { Id = id, RecurrenceId = recurrenceId  }));
+        { Id = id, RecurrenceId = recurrenceId }));
     }
 
     [HttpPut("{id}/attendance/{recurrenceId}")]
@@ -109,4 +121,5 @@ public class ActivitiesController : BaseApiController
         return HandleResult(await Mediator.Send(new UpdateAttendance.Command
         { ActivityId = id, RecurrenceId = recurrenceId, AttendanceValues = attendanceValues }));
     }
+    #endregion Attendees
 }

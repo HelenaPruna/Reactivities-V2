@@ -1,5 +1,5 @@
 import { SyntheticEvent, useEffect, useState } from "react";
-import { Box, Grid2, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, Typography } from "@mui/material";
+import { Box, Grid2, Skeleton, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, Typography } from "@mui/material";
 import { Link, useParams } from "react-router";
 import { useProfiles } from "../../lib/hooks/useProfiles.ts";
 import { formatDateOnly } from "../../lib/util/util.ts";
@@ -15,6 +15,7 @@ export default function ProfileActivities({ stringAction }: Props) {
 
     useEffect(() => {
         setFilter(stringAction)
+        setActiveTab(0);
     }, [setFilter, stringAction])
 
     const tabs = [
@@ -38,10 +39,7 @@ export default function ProfileActivities({ stringAction }: Props) {
                     </Tabs>
                 </Grid2>
             </Grid2>
-            {(!userActivities || userActivities.length === 0) && !loadingUserActivities ? (
-                <Typography mt={2}>No hi ha cap activitat en aquesta categoria</Typography>
-            ) : null}
-            <TableContainer sx={{ maxHeight: 500, overflowY: "auto", scrollbarGutter: "stable"}}>
+            <TableContainer sx={{ maxHeight: 500, overflowY: "auto", scrollbarGutter: "stable" }}>
                 <Table stickyHeader>
                     <TableHead>
                         <TableRow>
@@ -56,29 +54,42 @@ export default function ProfileActivities({ stringAction }: Props) {
                             </TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody>
-                        {userActivities && userActivities.map((activity: Activity) => (
-                            <TableRow key={activity.id}>
-                                <TableCell align="center">
-                                    <Link to={`/activities/${activity.id}`} style={{ width: "100%", textDecoration: 'none', color: 'inherit'}}>
-                                        <Typography variant="body2">{activity.title.toLocaleUpperCase()}</Typography>
-                                    </Link>
-                                </TableCell>
-                                <TableCell align="center">
-                                    <Typography variant="body2">
-                                        {formatDateOnly(activity.dateStart)}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell align="center">
-                                    <Typography variant="body2">
-                                        {activity.dateEnd && formatDateOnly(activity.dateEnd)}
-                                    </Typography>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
+                    {(!userActivities || userActivities.length === 0) && !loadingUserActivities ? (
+                        <Typography mt={2}>No hi ha cap activitat en aquesta categoria</Typography>
+                    ) :
+                        loadingUserActivities ?
+                            <TableBody>
+                                <TableRow key={0}>
+                                    <TableCell component="th" scope="row"><Skeleton variant="text" /></TableCell>
+                                    <TableCell><Skeleton variant="text" /></TableCell>
+                                    <TableCell><Skeleton variant="text" /></TableCell>
+                                </TableRow>
+                            </TableBody>
+                            :
+                            <TableBody>
+                                {userActivities && userActivities.map((activity: Activity) => (
+                                    <TableRow key={activity.id}>
+                                        <TableCell align="center">
+                                            <Link to={`/activities/${activity.id}`} style={{ width: "100%", textDecoration: 'none', color: 'inherit' }}>
+                                                <Typography variant="body2">{activity.title.toLocaleUpperCase()}</Typography>
+                                            </Link>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Typography variant="body2">
+                                                {formatDateOnly(activity.dateStart)}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Typography variant="body2">
+                                                {activity.dateEnd && formatDateOnly(activity.dateEnd)}
+                                            </Typography>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                    }
                 </Table>
             </TableContainer>
-        </Box>
+        </Box >
     )
 }

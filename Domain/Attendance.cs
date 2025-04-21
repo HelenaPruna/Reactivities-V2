@@ -10,7 +10,7 @@ public class Attendance
     
     //nav properties
     public string? AttendeeId { get; set; }
-    public string? RecurId { get; set; }
+    public string RecurId { get; set; } = default!;
 
     [JsonIgnore]
     public Attendee Attendee { get; set; } = null!;

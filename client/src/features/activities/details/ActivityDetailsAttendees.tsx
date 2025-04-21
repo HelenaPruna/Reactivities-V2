@@ -17,14 +17,15 @@ export default function ActivityDetailsAttendees({ activity }: Props) {
     const [full, setFull] = useState(activity.isFull);
     const [recurId, setRecurId] = useState<string | null>(null);
 
-    const dateOptions: { text: Date, value: string }[] = activity.recurrences.map(r =>
-        ({ text: r.composedTime, value: r.id }))
+    const dateOptions: { text: Date, value: string }[] = activity.recurrences
+        .map(r => ({ text: new Date(r.composedTime), value: r.id }))
+        .sort((a, b) => a.text.getTime() - b.text.getTime());
 
     const handleChange = (event: SelectChangeEvent) => setRecurId(event.target.value);
     const setIsFull = (int: number) => {
         setFull(activity.maxParticipants <= numAtt + int)
-        activity.isFull = activity.maxParticipants <= numAtt + int 
-        setNumAtt( numAtt => numAtt + int)
+        activity.isFull = activity.maxParticipants <= numAtt + int
+        setNumAtt(numAtt => numAtt + int)
 
     }
 

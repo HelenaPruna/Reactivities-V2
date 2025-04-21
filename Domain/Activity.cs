@@ -6,7 +6,6 @@ public class Activity
     public required string Title { get; set; }
     public required string Description { get; set; }
     public bool IsCancelled { get; set; }
-    public required string Room { get; set; }
     public required int MaxParticipants { get; set; }
     public required int AllowedMissedDays { get; set; }
 
@@ -18,4 +17,6 @@ public class Activity
     public string? FirstDateId { get; set; }
     public RecurrenceActivity FirstDate { get; set; } = null!;
     public ICollection<RecurrenceActivity> Recurrences { get; set; } = [];
+    public string? RoomId { get; set; }
+    public Room Room { get; set; } = null!;
 }

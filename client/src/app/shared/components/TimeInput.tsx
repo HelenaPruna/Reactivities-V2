@@ -22,8 +22,20 @@ export default function TimeInput<T extends FieldValues>(props: Props<T>) {
                     error: !!fieldState.error,
                     helperText: fieldState.error?.message,
                 },
+                digitalClockSectionItem: {
+                    sx: {
+                        minWidth: 80, 
+                    },
+                },
+                popper: {
+                    sx: {
+                        '& .MuiMultiSectionDigitalClockSection-root': {
+                            minWidth: 80, 
+                        },
+                    },
+                }
             }}
-            ampm={false} // 24-hour format
+            ampm={false} 
         />
     );
 }

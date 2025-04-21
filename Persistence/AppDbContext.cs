@@ -12,7 +12,7 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
     public required DbSet<Attendee> Attendees { get; set; }
     public required DbSet<Attendance> Attendances { get; set; }
     public required DbSet<RecurrenceActivity> Recurrences { get; set; }
-
+    public required DbSet<Room> Rooms { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -40,11 +40,10 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
             .WithMany()
             .HasForeignKey(a => a.AttendeeId)
             .OnDelete(DeleteBehavior.Cascade);
-        
-        
+
         builder.Entity<Activity>()
             .HasOne(a => a.FirstDate)
-            .WithOne() 
+            .WithOne()
             .HasForeignKey<Activity>(a => a.FirstDateId)
             .OnDelete(DeleteBehavior.Restrict); //?: nss si es el format correcte
 

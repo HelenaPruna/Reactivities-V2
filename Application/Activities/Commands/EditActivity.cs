@@ -23,49 +23,99 @@ public class EditActivity
             if (activity == null) return Result<Unit>.Failure("Activity not found", 404);
             var dto = request.ActivityDto;
 
-            //nomes es modificaran les recurrences futures
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
-            var tmpRecurList = activity.Recurrences.Where(x => x.IsRecurrent && x.Date >= today).OrderBy(x => x.Date);
+            var tmpRecurList = activity.Recurrences.Where(x => x.IsRecurrent).OrderBy(x => x.Date).ToList();
             var firstRecur = activity.FirstDate;
             var lastDate = tmpRecurList.Last().Date;
-
-            var numberRecurances = tmpRecurList.Count();
             var counter = dto.Interval == 1 ? 1 : ((dto.DateEnd.DayNumber - dto.DateStart.DayNumber) / dto.Interval) + 1;
 
-            if (firstRecur.Date != dto.DateStart || lastDate != dto.DateEnd || numberRecurances != counter)
-            {
-                //TODO: elimino totes les ocurrences que existeixin que siguin recurrents, no crec que sigui la forma més correcta 
-                foreach (var recur in tmpRecurList) activity.Recurrences.Remove(recur);
+            var IsModRecurrences = false;
 
-                for (var date = dto.DateStart; date <= dto.DateEnd; date = date.AddDays(dto.Interval)) if (date >= today)
+            if (firstRecur.Date != dto.DateStart || lastDate != dto.DateEnd || tmpRecurList.Count != counter)
+            {
+                IsModRecurrences = true;
+                List<DateOnly> newDates = [];
+                for (var date = dto.DateStart; date <= dto.DateEnd; date = date.AddDays(dto.Interval))
+                {  newDates.Add(date); }
+
+                foreach (var newDate in newDates)
                 {
-                    var recur = new RecurrenceActivity
+                    var existingRecur = tmpRecurList.FirstOrDefault(x => x.Date == newDate);
+                    if (existingRecur != null)
                     {
-                        Date = date,
-                        TimeStart = dto.TimeStart,
-                        TimeEnd = dto.TimeEnd
-                    };
-                    activity.Recurrences.Add(recur);
+                        if (existingRecur.TimeStart != dto.TimeStart || existingRecur.TimeEnd != dto.TimeEnd)
+                        {
+                            existingRecur.TimeStart = dto.TimeStart;
+                            existingRecur.TimeEnd = dto.TimeEnd;
+                        }
+                        tmpRecurList.Remove(existingRecur);
+                    }
+                    else
+                    {
+                        var recur = new RecurrenceActivity { Date = newDate, TimeStart = dto.TimeStart, TimeEnd = dto.TimeEnd };
+                        activity.Recurrences.Add(recur);
+                    }
                 }
+                foreach (var obsoleteRecur in tmpRecurList) if(obsoleteRecur.Date >= today) //nomes s'eliminaran les que siguin futures, les passades es poden modificar pero no eliminar. 
+                {
+                    if (obsoleteRecur.Id == activity.FirstDateId)
+                    {
+                        activity.FirstDateId = null;
+                        await context.SaveChangesAsync(cancellationToken);
+                    }
+                    activity.Recurrences.Remove(obsoleteRecur);
+                    context.Recurrences.Remove(obsoleteRecur);
+                }
+                activity.FirstDateId = activity.Recurrences.Where(x => x.IsRecurrent).First(x => x.Date == dto.DateStart && x.TimeStart == dto.TimeStart).Id; 
+                await context.SaveChangesAsync(cancellationToken);
             }
             else
             {
-                //only time is modified then nomes actualitzem els temps
+                //only time is modified then nomes actualitzem els temps de les recurrences.
                 if (firstRecur.TimeStart != dto.TimeStart || firstRecur.TimeEnd != dto.TimeEnd)
                 {
+                    IsModRecurrences = true;
                     foreach (var recur in tmpRecurList)
-                        {
-                            recur.TimeStart = dto.TimeStart;
-                            recur.TimeEnd = dto.TimeEnd;
-                        }
+                    {
+                        recur.TimeStart = dto.TimeStart;
+                        recur.TimeEnd = dto.TimeEnd;
+                    }
+                    await context.SaveChangesAsync(cancellationToken);
                 }
             }
-            activity.FirstDateId = activity.Recurrences.First(x => x.Date == dto.DateStart).Id;
+
+            //ara revisar que la sala serveix per les recurrences noves
+            if (IsModRecurrences && activity.RoomId != null)
+            {
+                var room = await context.Rooms.Include(r => r.Recurrences)
+                    .FirstOrDefaultAsync(r => r.Id == activity.RoomId, cancellationToken);
+                if (room == null) return Result<Unit>.Failure("Failed to find room", 400);
+                var updatedRecur = activity.Recurrences.Where(x => x.IsRecurrent && x.Date >= today).ToList();
+
+                var IsRoomAvailable = updatedRecur.All(newRecur => !room.Recurrences.Any(exist =>
+                    exist.Date == newRecur.Date && exist.Id != newRecur.Id &&
+                    newRecur.TimeStart < exist.TimeEnd && newRecur.TimeEnd > exist.TimeStart));
+
+                if (!IsRoomAvailable)
+                {
+                    activity.RoomId = null;
+                    foreach (var recur in updatedRecur) recur.RoomId = null;
+                }
+                else
+                {
+                    var needRoomAssigned = updatedRecur.Where(x => x.RoomId == null).ToList();
+                    foreach (var recur in needRoomAssigned)
+                    {
+                        recur.RoomId = room.Id;
+                        room.Recurrences.Add(recur);
+                    }
+                }
+            }
 
             mapper.Map(request.ActivityDto, activity);
+            if (!context.ChangeTracker.HasChanges()) return Result<Unit>.Success(Unit.Value);
             var result = await context.SaveChangesAsync(cancellationToken) > 0;
-            return !result ? Result<Unit>.Failure("Failed to update the activity", 400) : Result<Unit>.Success(Unit.Value);
-
+            return result ? Result<Unit>.Success(Unit.Value) : Result<Unit>.Failure("Failed to update the activity", 400);
         }
     }
 

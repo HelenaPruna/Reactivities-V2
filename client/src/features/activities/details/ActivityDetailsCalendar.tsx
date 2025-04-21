@@ -6,13 +6,14 @@ type Props = {
 }
 
 export default function EventCalendar({ activity }: Props) {
+    const events = activity.recurrences.map(r => new Date(r.composedTime)).concat(activity.oneTimeEvents.map(r => new Date(r.composedTime)))
     const hasEvent = (date: Date) => {
-        return activity.dates.some(eventDate => dayjs(eventDate).isSame(date, 'day'));
+        return events.some(eventDate => dayjs(eventDate).isSame(date, 'day'));
     };
 
     const colorEvent = (date: Date) => {
         const recucurrence = activity.recurrences.find(r => dayjs(r.composedTime).isSame(date, 'day'));
-        return recucurrence?.isRecurrent ? 'blue' : 'green'
+        return recucurrence === undefined ? 'blue' : 'green'
     }
     
     return (

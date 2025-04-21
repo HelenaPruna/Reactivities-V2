@@ -1,9 +1,9 @@
-using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain;
 
 [Index(nameof(Date))]
+[Index(nameof(RoomId), nameof(Date), nameof(TimeStart), nameof(TimeEnd))]
 public class RecurrenceActivity
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -12,10 +12,10 @@ public class RecurrenceActivity
     public required TimeOnly TimeEnd { get; set; }
     public bool IsRecurrent { get; set; } = true; //activitat puntual extra, rollo una sessió especial 
 
-    [JsonIgnore]
+    //Nav parameters
     public ICollection<Attendance> Attendances { get; set; } = [];
-    [JsonIgnore]
     public string? ActivityId { get; set; }
-    [JsonIgnore]
     public Activity Activity { get; set; } = null!;
+    public string? RoomId { get; set; }
+    public Room Room { get; set; } = null!;
 }

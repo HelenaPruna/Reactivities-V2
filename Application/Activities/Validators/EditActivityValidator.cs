@@ -1,4 +1,3 @@
-using System;
 using Application.Activities.Commands;
 using Application.Activities.DTOs;
 using FluentValidation;
@@ -10,5 +9,6 @@ public class EditActivityValidator : BaseActivityValidator<EditActivity.Command,
     public EditActivityValidator() : base(x => x.ActivityDto)
     {
         RuleFor(x => x.ActivityDto.Id).NotEmpty().WithMessage("Id is required");
+        RuleFor(x => x.ActivityDto.IsCancelled).NotEqual(true).WithMessage("L'activitat esta cancel·lada, no es pot editar");
     }
 }

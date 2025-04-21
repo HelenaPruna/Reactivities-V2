@@ -14,7 +14,7 @@ export default function ActivityForm() {
     const { id } = useParams();
     const { updateActivity, createActivity, activity, isLoadingActivity } = useActivities(id);
     
-    const { control, handleSubmit, formState: {isDirty}} = useForm<ActivitySchema>({
+    const { control, handleSubmit, formState: {isDirty, isValid}} = useForm<ActivitySchema>({
         mode: 'onTouched',
         resolver: zodResolver(activitySchema),
         defaultValues: activity || {}
@@ -27,14 +27,19 @@ export default function ActivityForm() {
     });
 
     const onSubmit = (data: ActivitySchema) => {
-        if (data.isOneDay) data.dateEnd = data.dateStart
         try {
+            const activityData = {
+                ...data,
+                dateEnd: data.isOneDay ? data.dateStart : data.dateEnd ?? data.dateStart,
+                allowedMissedDays: data.isOneDay ? 1 : data.allowedMissedDays ?? 1,
+                interval: data.interval ? 1 : data.interval ?? 1
+              };
             if (activity) {
-                updateActivity.mutate({ ...activity, ...data }, {
+                updateActivity.mutate({ ...activity, ...activityData }, {
                     onSuccess: () => navigate(`/activities/${activity.id}`)
                 })
             } else {
-                createActivity.mutate(data, {
+                createActivity.mutate(activityData, {
                     onSuccess: (id) => navigate(`/activities/${id}`),
                 })
             }
@@ -51,27 +56,26 @@ export default function ActivityForm() {
                 {activity ? 'Edit activity' : 'Create activity'}
             </Typography>
             <Box component='form' onSubmit={handleSubmit(onSubmit)} display='flex' flexDirection='column' gap={3}>
-                <TextInput label='Title' control={control} name='title' />
-                <TextInput label='Description' control={control} name='description' multiline rows={3} />
-                <Box display='flex' gap={3}>
-                    <DateInput label='StartDate' control={control} name="dateStart" />
-                    {!oneDayValue && (<DateInput label='EndDate' control={control} name="dateEnd" />)}
-                    <TimeInput label='TimeStart' control={control} name="timeStart" />
-                    <TimeInput label='TimeEnd' control={control} name="timeEnd" />
-                </Box>
+                <TextInput label='Títol *' control={control} name='title' />
+                <TextInput label='Descripció' control={control} name='description' multiline rows={3} />
                 <CheckBoxInput label="Aquesta activitat no es repeteix" control={control} name="isOneDay" />
-
-                <TextInput label='Room' control={control} name='room' />
                 <Box display='flex' gap={3}>
-                    <TextInput label='Nombre màxim de participants' control={control} name='maxParticipants' type="number" />
-                    <TextInput label='Màxim de faltes permeses' control={control} name='allowedMissedDays' type="number" />
-                    {!oneDayValue && <TextInput label='Cada quants dies...' control={control} name='interval' type="number" />}
+                    <DateInput label='Data inicial *' control={control} name="dateStart" />
+                    {!oneDayValue && (<DateInput label='Data final *' control={control} name="dateEnd" />)}
+                    <TimeInput label='Hora inicial *' control={control} name="timeStart" />
+                    <TimeInput label='Hora final *' control={control} name="timeEnd" />
+                    {oneDayValue && <TextInput label='Nombre màxim de participants *' control={control} name='maxParticipants' type="number" />}
                 </Box>
+                {!oneDayValue && <Box display='flex' gap={3}>
+                    <TextInput label='Nombre màxim de participants *' control={control} name='maxParticipants' type="number" />
+                    <TextInput label='Màxim de faltes permeses *' control={control} name='allowedMissedDays' type="number" />
+                    <TextInput label='Interval en dies *' placeholder="Ex: 7 (un cop per setmana)" control={control} name='interval' type="number" />
+                </Box>}
 
                 <Box display='flex' justifyContent='end' gap={3}>
                     <Button onClick={() => navigate(-1)} color="inherit">Cancel</Button>
                     <Button type="submit" color="success" variant="contained"
-                        disabled={updateActivity.isPending || createActivity.isPending || !isDirty}>
+                        disabled={updateActivity.isPending || createActivity.isPending || !isDirty || !isValid}>
                         Submit
                     </Button>
                 </Box>

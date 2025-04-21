@@ -1,18 +1,68 @@
 import dayjs from "dayjs";
 import { z } from 'zod'
 
-
-export function formatDateOnly(dateOnly: string) {
+/**
+ * 
+ * @param dateOnly 
+ * @param format format opcional:  
+ *  - el default: 14 de Gener del 2025 / 14 d'Abril del 2025
+ *  - "withWeekday": Dilluns, 14 de Gener del 2025 / Dilluns, 14 d'Abril del 2025
+ *  - format diferent acceptat
+ * @returns retorna la data en el format especificat o el default
+ */
+export function formatDateOnly(dateOnly: string, format?: string) {
     if (!dateOnly) return "Invalid date";
-
     const date = dayjs(dateOnly);
     if (!date.isValid()) {
-      console.error("Error formatting date:", dateOnly);
-      return "Invalid date";
+        console.error("Error formatting date:", dateOnly);
+        return "Invalid date";
     }
-    return date.locale("ca").format("DD [de] MMMM [del] YYYY");
+    const month = date.format("MMMM");
+    const preposition = ['a', 'o'].includes(month[0].toLowerCase()) ? "d'" : "de "; // mes d'abril, agost i octubre
+
+    const formatType = format === undefined
+        ? `DD [${preposition}]MMMM [del] YYYY`
+        : format === "withWeekday"
+            ? `dddd[,] DD [${preposition}]MMMM [del] YYYY`
+            : format
+
+    return date.locale("ca").format(formatType);
 }
 
+export function dateInformation(dateOnlyStart:string, isOneTime: boolean, dateOnlyEnd: string) {
+    if (isOneTime) return formatDateOnly(dateOnlyStart, "withWeekday");
+    return `${formatDateOnly(dateOnlyStart)} - ${formatDateOnly(dateOnlyEnd)}`;
+}
+
+export function timeInformation(timeStart: string, timeEnd: string, dateStart: string, isOneTime: boolean) {
+    const timeLabel = `${trimSeconds(timeStart)} - ${trimSeconds(timeEnd)}`;
+    if (isOneTime) return timeLabel;
+    return `${getWeekday(dateStart)}, ${timeLabel}`;
+}
+
+export function trimSeconds(time: string) {
+    if (!/^\d\d:\d\d:\d\d$/.test(time)) {
+        return time
+    }
+    return time.slice(0, 5)
+}
+
+export function getWeekday(dateOnly: string) {
+    const rawWeekday = new Date(dateOnly).toLocaleDateString('ca-ES', { weekday: 'long' });
+    const weekday = rawWeekday.charAt(0).toUpperCase() + rawWeekday.slice(1);
+    return weekday;
+}
+
+export function getMonday(d: dayjs.Dayjs) {
+    const dayIndex = d.day(); 
+    const offset = dayIndex === 0 ? 6 : dayIndex - 1;
+    return d.subtract(offset, "day").startOf("day");
+}
+
+export function getMinutes(time: string){
+    const [hourStr, minuteStr] = time.split(':');
+    return parseInt(hourStr, 10) * 60 + parseInt(minuteStr, 10);
+};
 
 export const requiredString = () => z
     .string({ required_error: 'Camp obligatori' })
@@ -25,7 +75,7 @@ export function stringToColor(string: string) {
     for (i = 0; i < string.length; i += 1) {
         hash = string.charCodeAt(i) + ((hash << 5) - hash);
     }
-    
+
     let color = '#';
 
     for (i = 0; i < 3; i += 1) {

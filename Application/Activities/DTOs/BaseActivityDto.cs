@@ -1,12 +1,9 @@
-using System;
-
 namespace Application.Activities.DTOs;
 
 public class BaseActivityDto
 {
     public string Title { get; set; } = "";
     public string Description { get; set; } = "";
-    public string Room { get; set; } = "";
     public int MaxParticipants { get; set; }
     public int AllowedMissedDays { get; set; }
     public DateOnly DateStart { get; set; }

@@ -42,8 +42,7 @@ namespace Persistence.Migrations
                     b.Property<int>("MaxParticipants")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Room")
-                        .IsRequired()
+                    b.Property<string>("RoomId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
@@ -56,6 +55,8 @@ namespace Persistence.Migrations
 
                     b.HasIndex("FirstDateId")
                         .IsUnique();
+
+                    b.HasIndex("RoomId");
 
                     b.ToTable("Activities");
                 });
@@ -87,6 +88,7 @@ namespace Persistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("RecurId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -140,6 +142,9 @@ namespace Persistence.Migrations
                     b.Property<bool>("IsRecurrent")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("RoomId")
+                        .HasColumnType("TEXT");
+
                     b.Property<TimeOnly>("TimeEnd")
                         .HasColumnType("TEXT");
 
@@ -152,7 +157,29 @@ namespace Persistence.Migrations
 
                     b.HasIndex("Date");
 
+                    b.HasIndex("RoomId", "Date", "TimeStart", "TimeEnd");
+
                     b.ToTable("Recurrences");
+                });
+
+            modelBuilder.Entity("Domain.Room", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("NumberFloor")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Rooms");
                 });
 
             modelBuilder.Entity("Domain.User", b =>
@@ -363,9 +390,15 @@ namespace Persistence.Migrations
                         .HasForeignKey("Domain.Activity", "FirstDateId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Domain.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId");
+
                     b.Navigation("Creator");
 
                     b.Navigation("FirstDate");
+
+                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("Domain.ActivityOrganizer", b =>
@@ -396,7 +429,9 @@ namespace Persistence.Migrations
 
                     b.HasOne("Domain.RecurrenceActivity", "Recur")
                         .WithMany("Attendances")
-                        .HasForeignKey("RecurId");
+                        .HasForeignKey("RecurId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Attendee");
 
@@ -418,7 +453,13 @@ namespace Persistence.Migrations
                         .WithMany("Recurrences")
                         .HasForeignKey("ActivityId");
 
+                    b.HasOne("Domain.Room", "Room")
+                        .WithMany("Recurrences")
+                        .HasForeignKey("RoomId");
+
                     b.Navigation("Activity");
+
+                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -484,6 +525,11 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.RecurrenceActivity", b =>
                 {
                     b.Navigation("Attendances");
+                });
+
+            modelBuilder.Entity("Domain.Room", b =>
+                {
+                    b.Navigation("Recurrences");
                 });
 
             modelBuilder.Entity("Domain.User", b =>
