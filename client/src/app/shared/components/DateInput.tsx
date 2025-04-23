@@ -1,6 +1,7 @@
 import { DatePicker, DatePickerProps } from "@mui/x-date-pickers"
 import { FieldValues, useController, UseControllerProps } from "react-hook-form"
 import dayjs, { Dayjs } from "dayjs";
+import { isWeekend } from "../../../lib/util/util";
 
 
 type Props<T extends FieldValues> = {} & UseControllerProps<T> & DatePickerProps<Dayjs>
@@ -22,6 +23,7 @@ export default function DateInput<T extends FieldValues>(props: Props<T>) {
                     helperText: fieldState.error?.message
                 }
             }}
+            shouldDisableDate={isWeekend}
             dayOfWeekFormatter={(weekday) => `${weekday.format('dd')}.`}
         />
     )

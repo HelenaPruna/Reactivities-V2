@@ -1,5 +1,8 @@
 import dayjs from "dayjs";
 import { z } from 'zod'
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 /**
  * 
@@ -29,7 +32,11 @@ export function formatDateOnly(dateOnly: string, format?: string) {
     return date.locale("ca").format(formatType);
 }
 
-export function dateInformation(dateOnlyStart:string, isOneTime: boolean, dateOnlyEnd: string) {
+export function getDate(d: Date, format?: string) {
+    return dayjs.utc(d).locale("ca").format(format ?? "YYYY-MM-DD")
+}
+
+export function dateInformation(dateOnlyStart: string, isOneTime: boolean, dateOnlyEnd: string) {
     if (isOneTime) return formatDateOnly(dateOnlyStart, "withWeekday");
     return `${formatDateOnly(dateOnlyStart)} - ${formatDateOnly(dateOnlyEnd)}`;
 }
@@ -54,12 +61,18 @@ export function getWeekday(dateOnly: string) {
 }
 
 export function getMonday(d: dayjs.Dayjs) {
-    const dayIndex = d.day(); 
+    const dayIndex = d.day();
     const offset = dayIndex === 0 ? 6 : dayIndex - 1;
     return d.subtract(offset, "day").startOf("day");
 }
 
-export function getMinutes(time: string){
+export function isWeekend(date: dayjs.Dayjs) {
+    const day = date.day();
+
+    return day === 0 || day === 6;
+};
+
+export function getMinutes(time: string) {
     const [hourStr, minuteStr] = time.split(':');
     return parseInt(hourStr, 10) * 60 + parseInt(minuteStr, 10);
 };

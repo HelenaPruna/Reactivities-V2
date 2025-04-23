@@ -2,93 +2,122 @@ import dayjs from "dayjs";
 import isToday from "dayjs/plugin/isToday";
 import { useStore } from "../../lib/hooks/useStore";
 import { observer } from "mobx-react-lite";
-import { Card, Divider, Grid2, Typography } from "@mui/material";
+import { Box, Card, CardContent, Divider, Typography } from "@mui/material";
 import { Link } from "react-router";
 import { getMinutes, trimSeconds } from "../../lib/util/util";
+import { blue } from "@mui/material/colors";
 dayjs.extend(isToday);
 
-interface Props {
+const TIME_COL_WIDTH = 40;
+const START_HOUR = 8;
+const END_HOUR = 21;
+const TOTAL_MINUTES = (END_HOUR - START_HOUR) * 60;
+const CAL_HEIGHT = 365;
+const PIXEL_PER_MIN = CAL_HEIGHT / TOTAL_MINUTES;
+
+type Props = {
     room: Room;
 }
+
 const RoomCalendar = observer(function RoomCalendar({ room }: Props) {
     const { roomStore: { startDate } } = useStore();
     const events = room.recurrences.filter(r => r.date === startDate);
 
-    const startHour = 8;
-    const endHour = 21;
-
-    const totalVisibleMinutes = (endHour - startHour) * 60;
-    const calendarHeightPx = 350;
-    const scale = calendarHeightPx / totalVisibleMinutes;
-
     return (
-        <Grid2 container display='flex'>
-            <Grid2 style={{ width: '40px', borderRight: '1px solid rgba(0, 0, 0, 0.12)', position: 'relative' }}>
-                {Array.from({ length: endHour - startHour + 1 }, (_, i) => {
-                    const hour = startHour + i;
-                    const top = (i * 60 * scale);
+        <Box
+            sx={{
+                display: "grid",
+                gridTemplateColumns: `${TIME_COL_WIDTH}px 1fr`,
+                width: "100%",
+                height: CAL_HEIGHT,
+            }}
+        >
+            <Box
+                sx={{
+                    gridColumn: 1,
+                    position: "relative",
+                    borderRight: 1,
+                    borderColor: "divider",
+                }}
+            >
+                {Array.from({ length: END_HOUR - START_HOUR + 1 }, (_, i) => {
+                    const hour = START_HOUR + i;
                     return (
-                        <div
+                        <Typography
                             key={hour}
-                            style={{
-                                position: 'absolute',
-                                top: `${top}px`,
-                                fontSize: '10px'
+                            variant="caption"
+                            sx={{
+                                position: "absolute",
+                                top: i * 60 * PIXEL_PER_MIN,
+                                color: "text.secondary",
                             }}
                         >
-                            {(hour % 2 === 0) && `${hour}:00`}
-                        </div>
+                            {hour % 2 === 0 ? `${hour}:00` : ""}
+                        </Typography>
                     );
                 })}
-            </Grid2>
-            <Grid2 style={{ flex: 1, position: 'relative', height: `${calendarHeightPx}px`, borderRight: '1px solid rgba(0, 0, 0, 0.12)' }}>
-                {Array.from({ length: endHour - startHour + 1 }, (_, i) => {
-                    const top = i * 60 * scale;
-                    return (
-                        <Divider
-                            key={i}
-                            style={{ position: 'absolute', top, left: 0, right: 0 }}
-                        />
-                    );
-                })}
-                {events.map((event, idx) => {
-                    const startMinutes = getMinutes(event.timeStart);
-                    const endMinutes = getMinutes(event.timeEnd);
-                    if (startMinutes < startHour * 60 || startMinutes > endHour * 60) return null;
-                    const eventTop = (startMinutes - startHour * 60) * scale;
-                    const eventHeight = (endMinutes - startMinutes) * scale;
+            </Box>
+
+            {/* Events column */}
+            <Box
+                sx={{
+                    gridColumn: 2,
+                    position: "relative",
+                }}
+            >
+                {/* Horizontal grid lines */}
+                {Array.from({ length: END_HOUR - START_HOUR + 1 }, (_, i) => (
+                    <Divider
+                        key={i}
+                        sx={{
+                            position: "absolute",
+                            top: i * 60 * PIXEL_PER_MIN,
+                            width: "100%",
+                            opacity: 0.4,
+                        }}
+                    />
+                ))}
+
+                {/* Event cards */}
+                {events.map((evt, idx) => {
+                    const startMin = getMinutes(evt.timeStart);
+                    const endMin = getMinutes(evt.timeEnd);
+                    if (startMin < START_HOUR * 60 || endMin > END_HOUR * 60) return null;
+
+                    const top = (startMin - START_HOUR * 60) * PIXEL_PER_MIN;
+                    const height = (endMin - startMin) * PIXEL_PER_MIN;
 
                     return (
-                        <Link key={idx} to={`/activities/${event.activityId}`} style={{ textDecoration: 'none' }}>
+                        <Link
+                            key={`${evt.date}-${idx}`}
+                            to={`/activities/${evt.activityId}`}
+                            style={{ textDecoration: "none" }}
+                        >
                             <Card
-                                style={{
-                                    position: 'absolute',
-                                    top: eventTop,
-                                    left: '5px',
-                                    right: '5px',
-                                    height: eventHeight,
-                                    backgroundColor: 'rgb(228, 241, 255)',
-                                    borderRadius: '4px',
-                                    overflow: 'hidden',
-                                    paddingLeft: 5,
-                                    paddingTop: 2
+                                sx={{
+                                    position: "absolute",
+                                    top, height,
+                                    left: 4, right: 4,
+                                    bgcolor: blue[50],
+                                    borderRadius: 1,
+                                    overflow: "hidden",
                                 }}
                             >
-
-                                <Typography sx={{ fontSize: '12px' }}>
-                                    {trimSeconds(event.timeStart)} - {trimSeconds(event.timeEnd)}
-                                </Typography>
-                                <Typography sx={{ fontSize: '14px', color: "rgba(0, 0, 0, 0.6)" }}>
-                                    {event.activityTitle}
-                                </Typography>
+                                <CardContent sx={{ py: 0.5, px: 1 }}>
+                                    <Typography variant="caption" >
+                                        {trimSeconds(evt.timeStart)} – {trimSeconds(evt.timeEnd)}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        {evt.activityTitle}
+                                    </Typography>
+                                </CardContent>
                             </Card>
                         </Link>
-
                     );
                 })}
-            </Grid2>
-        </Grid2>
+            </Box>
+        </Box>
     );
-})
+});
 
 export default RoomCalendar;

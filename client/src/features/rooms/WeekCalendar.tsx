@@ -1,116 +1,141 @@
 import dayjs from "dayjs";
 import { Link } from "react-router";
-import { Card, Divider, Grid2, Typography } from "@mui/material";
+import { Box, Card, Divider, Typography } from "@mui/material";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../lib/hooks/useStore";
 import { getMinutes, getMonday, trimSeconds } from "../../lib/util/util";
+import { blue } from "@mui/material/colors";
 
-interface Props {
+const TIME_COL_WIDTH = 40;
+const DAY_COUNT = 5;
+const START_HOUR = 8;
+const END_HOUR = 21;
+const SLOT_MINUTES = (END_HOUR - START_HOUR) * 60;
+const HEADER_H = 15;
+const CAL_HEIGHT = 350;
+const PX_PER_MIN = (CAL_HEIGHT - HEADER_H) / SLOT_MINUTES;
+
+type Props = {
     room: Room;
 }
 
-const WeekCalendar = observer(function WeekCalendar({ room }: Props) {
+const WeekCalendar = observer(({ room }: Props) => {
     const { roomStore: { startDate } } = useStore();
-
-    const refDate = dayjs(startDate);
-    const monday = getMonday(refDate);
-    const days = Array.from({ length: 5 }, (_, i) => monday.add(i, "day"));
-
-    const startHour = 8;
-    const endHour = 21;
-    const totalVisibleMinutes = (endHour - startHour) * 60;
-
-    const headerHeight = 25; 
-    const calendarHeightPx = 375;
-    const contentHeight = calendarHeightPx - headerHeight;
-    const scale = contentHeight / totalVisibleMinutes;
+    const monday = getMonday(dayjs(startDate));
+    const days = Array.from({ length: DAY_COUNT }, (_, i) => monday.add(i, "day"));
 
     return (
-        <Grid2 container display='flex'>
-            <Grid2 style={{ width: '40px', borderRight: '1px solid rgba(0, 0, 0, 0.12)', position: 'relative' }}>
-                {Array.from({ length: endHour - startHour + 1 }, (_, i) => {
-                    const hour = startHour + i;
-                    const top = (i * 60 * scale) + headerHeight;
+        <Box
+            sx={{
+                display: "grid",
+                gridTemplateColumns: `${TIME_COL_WIDTH}px repeat(${DAY_COUNT}, 1fr)`,
+                gridTemplateRows: `${HEADER_H}px ${CAL_HEIGHT}px`,
+                width: "100%",
+            }}
+        >
+            <Box />
+            {days.map(day => (
+                <Box
+                    key={day.toString()}
+                    sx={{
+                        borderLeft: 1,
+                        borderColor: "divider",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    <Typography variant="subtitle2">
+                        {day.locale("ca").format("ddd D")}
+                    </Typography>
+                </Box>
+            ))}
+            <Box
+                sx={{
+                    gridColumn: 1,
+                    gridRow: 2,
+                    position: "relative",
+                    borderColor: "divider",
+                }}
+            >
+                {Array.from({ length: SLOT_MINUTES / 60 + 1 }, (_, i) => {
+                    const hour = START_HOUR + i;
                     return (
-                        <div
+                        <Typography
                             key={hour}
-                            style={{
-                                position: 'absolute',
-                                top: `${top}px`,
-                                fontSize: '10px'
+                            variant="caption"
+                            sx={{
+                                position: "absolute",
+                                top: HEADER_H + i * 60 * PX_PER_MIN,
+                                color: "text.secondary"
                             }}
                         >
-                            {(hour % 2 === 0) && `${hour}:00`}
-                        </div>
+                            {hour % 2 === 0 ? `${hour}:00` : ""}
+                        </Typography>
                     );
                 })}
-            </Grid2>
-            <Grid2 style={{ flex: 1, display: "flex" }}>
-                {days.map((day) => {
-                    const dayStr = day.format("YYYY-MM-DD");
-                    const dayEvents = room.recurrences.filter((r) => r.date === dayStr);
-                    return (
-                        <Grid2 key={dayStr}
-                            style={{
-                                flex: 1,
-                                position: "relative",
-                                height: calendarHeightPx,
-                                borderRight: "1px solid rgba(0, 0, 0, 0.12)"
-                            }}
-                        >
-                            <div style={{ textAlign: "center", fontSize: 12, margin: "2px 0" }}>
-                                <strong>{day.locale("ca").format("ddd DD")}</strong>
-                            </div>
-                            {Array.from({ length: endHour - startHour + 1 }, (_, i) => {
-                                const top = i * 60 * scale + headerHeight;
-                                return (
-                                    <Divider key={i} style={{ position: 'absolute', top, left: 0, right: 0 }} />
-                                );
-                            })}
+            </Box>
+            {days.map((day) => {
+                const dayStr = day.format("YYYY-MM-DD");
+                const evts = room.recurrences.filter(r => r.date === dayStr);
+                return (
+                    <Box
+                        key={dayStr}
+                        sx={{
+                            position: "relative",
+                            borderLeft: 1,
+                            borderColor: "divider",
+                        }}
+                    >
+                        {Array.from({ length: SLOT_MINUTES / 60 + 1 }, (_, i) => (
+                            <Divider
+                                key={i}
+                                sx={{
+                                    position: "absolute",
+                                    top: HEADER_H + i * 60 * PX_PER_MIN,
+                                    width: "100%",
+                                    opacity: 0.4,
+                                }}
+                            />
+                        ))}
+                        {evts.map((evt, i) => {
+                            const sMin = getMinutes(evt.timeStart);
+                            const eMin = getMinutes(evt.timeEnd);
+                            if (sMin < START_HOUR * 60 || eMin > END_HOUR * 60) return null;
 
-                            {dayEvents.map((evt, idx) => {
-                                const startMinutes = getMinutes(evt.timeStart);
-                                const endMinutes = getMinutes(evt.timeEnd);
-                                if (startMinutes < startHour * 60 || startMinutes >= endHour * 60) return null;
+                            const top = HEADER_H + (sMin - START_HOUR * 60) * PX_PER_MIN;
+                            const height = (eMin - sMin) * PX_PER_MIN;
 
-                                const eventTop = headerHeight + (startMinutes - startHour * 60) * scale;
-                                const eventHeight = (endMinutes - startMinutes) * scale;
-
-                                return (
-                                    <Link
-                                        key={`${dayStr}-${idx}`}
-                                        to={`/activities/${evt.activityId}`}
-                                        style={{ textDecoration: "none" }}
+                            return (
+                                <Link
+                                    key={`${dayStr}-${i}`}
+                                    to={`/activities/${evt.activityId}`}
+                                    style={{ textDecoration: "none" }}
+                                >
+                                    <Card
+                                        sx={{
+                                            position: "absolute",
+                                            top: top, height,
+                                            left: "1px", right: "1px",
+                                            backgroundColor: blue[50],
+                                            overflow: "hidden",
+                                            px: 1, py: 1
+                                        }}
                                     >
-                                        <Card
-                                            style={{
-                                                position: "absolute",
-                                                top: eventTop,
-                                                left: "3px",
-                                                right: "3px",
-                                                height: eventHeight,
-                                                backgroundColor: "rgb(228, 241, 255)",
-                                                borderRadius: "4px",
-                                                overflow: "hidden",
-                                                paddingLeft: 5,
-                                                paddingTop: 2
-                                            }}
-                                        >
-                                            <Typography sx={{ fontSize: "12px" }}>
-                                                {trimSeconds(evt.timeStart)} - {trimSeconds(evt.timeEnd)}
-                                            </Typography>
-                                            <Typography sx={{ fontSize: "14px", color: "rgba(0,0,0,0.6)" }}>
-                                                {evt.activityTitle}
-                                            </Typography>
-                                        </Card>
-                                    </Link>
-                                );
-                            })}
-                        </Grid2>
-                    );
-                })}
-            </Grid2>
-        </Grid2>
+                                        <Typography sx={{ fontSize: "11px" }}>
+                                            {trimSeconds(evt.timeStart)} - {trimSeconds(evt.timeEnd)}
+                                        </Typography>
+                                        <Typography sx={{ fontSize: "12px" }}>
+                                            {evt.activityTitle}
+                                        </Typography>
+                                    </Card>
+                                </Link>
+                            );
+                        })}
+                    </Box>
+                );
+            })}
+        </Box>
     );
 });
 

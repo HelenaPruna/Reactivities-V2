@@ -40,6 +40,9 @@ export default function NavBar() {
                   <MenuItemLink to='/rooms'>
                     Sales
                   </MenuItemLink>
+                  <MenuItemLink to='/laundry'>
+                    Rentadora
+                  </MenuItemLink>
                   <MenuItemLink to='/createActivity'>
                     <ListItemIcon>
                         <Add sx={{color: "white"}} />

@@ -4,14 +4,20 @@ import { useStore } from "../../lib/hooks/useStore";
 import { observer } from "mobx-react-lite";
 import RoomCalendar from "./RoomCalendar";
 import WeekCalendar from "./WeekCalendar";
+import RoomSkeleton from "./RoomSkeleton";
+
+const DAY_VIEW_COUNT = 5;
+const WEEK_VIEW_COUNT = 3;
 
 const RoomList = observer(function RoomList() {
     const { roomsList, loadingRooms } = useRooms()
     const { roomStore: { viewType } } = useStore()
 
-    const gridTemplateColumns = viewType[0] === "Dia" ? "repeat(5, 1fr)" : "repeat(3, 1fr)"
+    const isDayView = viewType[0] === "Dia"; // adjust to your actual viewType value
+    const gridTemplateColumns = isDayView ? `repeat(${DAY_VIEW_COUNT}, 1fr)` : `repeat(${WEEK_VIEW_COUNT}, 1fr)`;
+    const placeholderCount = isDayView ? DAY_VIEW_COUNT : WEEK_VIEW_COUNT;
 
-    if (loadingRooms) return <Typography>Loading...</Typography>
+    if (loadingRooms)  return <RoomSkeleton grid={gridTemplateColumns} placeholder={placeholderCount} />
     if (!roomsList) return <Typography>...</Typography>
 
     return (

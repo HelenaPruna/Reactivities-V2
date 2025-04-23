@@ -12,6 +12,7 @@ import RequireAuth from "./RequireAuth";
 import RegisterForm from "../../features/account/RegisterForm";
 import ProfilePage from "../../features/profiles/ProfilePage";
 import RoomDashboard from "../../features/rooms/RoomDashboard";
+import LaundryDashboard from "../../features/laundry/LaundryDashboard";
 
 export const router = createBrowserRouter([
     {
@@ -25,7 +26,8 @@ export const router = createBrowserRouter([
                     { path: 'createActivity', element: <ActivityForm key='create' /> },
                     { path: 'manage/:id', element: <ActivityForm /> },
                     { path: 'profiles/:id', element: <ProfilePage /> },
-                    { path: 'rooms', element: <RoomDashboard /> }
+                    { path: 'rooms', element: <RoomDashboard /> },
+                    { path: 'laundry', element: <LaundryDashboard /> }
                 ]
             },
             { path: '', element: <HomePage /> },

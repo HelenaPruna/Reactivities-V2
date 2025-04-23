@@ -13,6 +13,7 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
     public required DbSet<Attendance> Attendances { get; set; }
     public required DbSet<RecurrenceActivity> Recurrences { get; set; }
     public required DbSet<Room> Rooms { get; set; }
+    public required DbSet<LaundryBooking> LaundryBookings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

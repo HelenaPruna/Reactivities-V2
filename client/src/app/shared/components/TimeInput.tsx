@@ -7,7 +7,8 @@ type Props<T extends FieldValues> = {} & UseControllerProps<T> & TimePickerProps
 export default function TimeInput<T extends FieldValues>(props: Props<T>) {
     const { name, ...restProps } = props;
     const { field, fieldState } = useController({ name, ...restProps });
-
+    const minTime = dayjs("2020-10-10 8:00")
+    const maxTime = dayjs("2020-10-10 21:00")
     return (
         <TimePicker
             label={restProps.label}
@@ -35,6 +36,9 @@ export default function TimeInput<T extends FieldValues>(props: Props<T>) {
                     },
                 }
             }}
+            minTime={minTime}
+            maxTime={maxTime}
+            skipDisabled={true}
             ampm={false} 
         />
     );

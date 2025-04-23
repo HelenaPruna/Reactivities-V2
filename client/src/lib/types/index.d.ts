@@ -106,3 +106,16 @@ type Room = {
     capacity: number
     recurrences: Recurrence[]
 }
+
+type LaundryBooking = {
+    id: string
+    name: string
+    start: Date
+    end: Date
+} 
+
+type BookingFields = {
+    name: string
+    start: Date
+    isRecurrent: boolean
+} 
