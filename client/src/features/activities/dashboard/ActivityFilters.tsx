@@ -1,18 +1,34 @@
-import { Event, FilterList, Search } from "@mui/icons-material";
-import { Box, Checkbox, Divider, FormControlLabel, InputAdornment, ListItemText, MenuItem, MenuList, Paper, TextField, Typography } from "@mui/material";
+import { Add, Event, FilterList, Search } from "@mui/icons-material";
+import { Box, Button, Checkbox, Divider, FormControlLabel, InputAdornment, ListItemText, MenuItem, MenuList, Paper, TextField, Typography } from "@mui/material";
 import Calendar from "react-calendar";
 import { useStore } from "../../../lib/hooks/useStore";
 import { observer } from "mobx-react-lite";
+import { useAccount } from "../../../lib/hooks/useAccount";
+import { NavLink } from "react-router";
 
 const ActivityFilters = observer(function ActivityFilters() {
     const { activityStore: { setFilter, setStartDate, filter, startDate, searchTerm, setSearchTerm, includeCancelled, setIncludeCancelled } } = useStore();
+    const { currentUser } = useAccount()
+
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, borderRadius: 3 }}>
+            {currentUser?.role === 'Admin' && (
+                <Button
+                    component={NavLink}
+                    to="/createActivity"
+                    variant="contained"
+                    startIcon={<Add />}
+                    sx={{ p: 1, fontSize: '1.1rem', borderRadius: 3 }}
+                    
+                >
+                    Crea un taller nou
+                </Button>
+            )}
             <Paper sx={{ p: 3, borderRadius: 3 }}>
                 <Box mb={2}>
                     <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', mb: 2, color: 'primary.main' }}>
                         <Search sx={{ mr: 1 }} />
-                        Cerca activitats
+                        Cerca els tallers
                     </Typography>
                     <TextField
                         fullWidth
@@ -32,33 +48,33 @@ const ActivityFilters = observer(function ActivityFilters() {
                     />
                 </Box>
                 <Box sx={{ width: '100%' }}>
-                    <Typography variant="h6"
+                    {currentUser?.role !== "Observer" && <Typography variant="h6"
                         sx={{ display: 'flex', alignItems: 'center', mb: 1, color: 'primary.main' }}
                     >
                         <FilterList sx={{ mr: 1 }} />
                         Filtres
-                    </Typography>
-                    <MenuList>
+                    </Typography>}
+                    {currentUser?.role !== "Observer" && <MenuList>
                         <MenuItem
                             selected={filter === 'all'}
                             onClick={() => setFilter('all')}
                         >
-                            <ListItemText primary='Totes les activitats' />
+                            <ListItemText primary='Tots els tallers' />
                         </MenuItem>
                         <MenuItem
                             selected={filter === 'isOrganizing'}
                             onClick={() => setFilter('isOrganizing')}
                         >
-                            <ListItemText primary="Activitats que organitzo" />
+                            <ListItemText primary="Sóc organitzadora" />
                         </MenuItem>
-                        <MenuItem
+                        {currentUser?.role === "Admin" && <MenuItem
                             selected={filter === 'isCreator'}
                             onClick={() => setFilter('isCreator')}
                         >
-                            <ListItemText primary="Activitats que he creat" />
-                        </MenuItem>
-                    </MenuList>
-                    <Divider sx={{mb: 2}} />
+                            <ListItemText primary="Sóc la creadora" />
+                        </MenuItem>}
+                    </MenuList>}
+                    <Divider sx={{ mb: 1 }} />
                     <FormControlLabel
                         control={
                             <Checkbox
@@ -66,7 +82,7 @@ const ActivityFilters = observer(function ActivityFilters() {
                                 onChange={e => setIncludeCancelled(e.target.checked)}
                             />
                         }
-                        label="Inclou activitats cancel·lades"
+                        label="Inclou tallers cancel·lats"
                     />
                 </Box>
             </Paper>
@@ -75,7 +91,7 @@ const ActivityFilters = observer(function ActivityFilters() {
                 <Typography variant="h6"
                     sx={{ display: 'flex', alignItems: 'center', mb: 1, color: 'primary.main' }}>
                     <Event sx={{ mr: 1 }} />
-                    Sel·lecciona una data
+                    Filtra per data
                 </Typography>
                 <Calendar value={startDate} onChange={date => setStartDate(date as Date)} locale="ca" />
             </Box>

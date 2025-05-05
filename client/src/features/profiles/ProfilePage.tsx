@@ -1,15 +1,16 @@
-import { Grid2, Typography } from "@mui/material";
+import { Grid2 } from "@mui/material";
 import ProfileHeader from "./ProfileHeader";
-import { useParams } from "react-router";
+import { Navigate, useParams } from "react-router";
 import { useProfiles } from "../../lib/hooks/useProfiles";
 import ProfileContent from "./ProfileContent";
+import ProfilePageSkeleton from "../../app/shared/skeletons/ProfilePageSkeleton";
 
 export default function ProfilePage() {
     const { id } = useParams();
     const { profile, loadingProfile } = useProfiles(id);
 
-    if (loadingProfile) return <Typography>Loading profile...</Typography>
-    if (!profile) return <Typography>Profile not found</Typography>
+    if (loadingProfile) return <ProfilePageSkeleton />
+    if (!profile) return <Navigate to='/not-found' />
 
     return (
         <Grid2 container>

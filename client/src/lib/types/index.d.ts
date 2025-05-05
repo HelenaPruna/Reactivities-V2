@@ -26,6 +26,7 @@ type Activity = {
     oneTimeEvents: Recurrence[]
     isOneDay: boolean
     interval: number
+    requests: RequestSol[]
 }
 
 type Profile = {
@@ -51,6 +52,7 @@ type User = {
     id: string
     email: string
     displayName: string
+    role: string
 }
 
 type Attendee = {
@@ -119,3 +121,27 @@ type BookingFields = {
     start: Date
     isRecurrent: boolean
 } 
+
+type RequestSol = {
+    id: string
+    state: number
+    type: number
+    message: string
+    requestedBy: Profile
+    dateCreated: Date
+    approvedBy?: Profile
+    dateApproved?: Date
+    activityId?: string
+    activityTitle?: string
+}
+
+type RequestVal = {
+    type: number
+    message: string
+    activityId?: string
+}
+
+type ActivityOptions = {
+    id: string
+    title: string
+}

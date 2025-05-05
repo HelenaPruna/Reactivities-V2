@@ -1,5 +1,5 @@
-import { Add, Group } from "@mui/icons-material";
-import { Box, AppBar, Toolbar, Container, MenuItem, Typography, CircularProgress, ListItemIcon } from "@mui/material";
+import { Group } from "@mui/icons-material";
+import { Box, AppBar, Toolbar, Container, MenuItem, Typography, CircularProgress } from "@mui/material";
 import { NavLink } from "react-router";
 import MenuItemLink from "../shared/components/MenuItemLink";
 import { useStore } from "../../lib/hooks/useStore";
@@ -35,7 +35,7 @@ export default function NavBar() {
               <>
                 <Box sx={{ display: 'flex' }}>
                   <MenuItemLink to='/activities'>
-                    Activitats
+                    Tallers
                   </MenuItemLink>
                   <MenuItemLink to='/rooms'>
                     Sales
@@ -43,12 +43,14 @@ export default function NavBar() {
                   <MenuItemLink to='/laundry'>
                     Rentadora
                   </MenuItemLink>
-                  <MenuItemLink to='/createActivity'>
-                    <ListItemIcon>
-                        <Add sx={{color: "white"}} />
-                    </ListItemIcon>
-                    Crea activitat
-                </MenuItemLink>
+                  <MenuItemLink to='/requests'>
+                    Sol·licituds
+                  </MenuItemLink>
+                  {currentUser.role === "Admin" &&
+                    <MenuItemLink to='/users'>
+                      Usuaris
+                    </MenuItemLink>
+                  }
                 </Box>
                 <Box display='flex' alignItems='center'>
                   <UserMenu />
@@ -58,7 +60,6 @@ export default function NavBar() {
               <>
                 <Box display='flex' alignItems='center'>
                   <MenuItemLink to='/login'>Inicia sessió</MenuItemLink>
-                  <MenuItemLink to='/register'>Registra't</MenuItemLink>
                 </Box>
               </>
             )}

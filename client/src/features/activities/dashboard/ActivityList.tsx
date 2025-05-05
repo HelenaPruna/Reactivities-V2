@@ -4,7 +4,7 @@ import { useActivities } from "../../../lib/hooks/useActivities";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import ActivitySkeleton from "./ActivitySkeleton";
+import ActivityCardSkeleton from "./ActivityCardSkeleton";
 
 const ActivityList = observer(function ActivityList() {
   const { activitiesGroup, isLoading, hasNextPage, fetchNextPage } = useActivities();
@@ -16,7 +16,7 @@ const ActivityList = observer(function ActivityList() {
     }
   }, [inView, hasNextPage, fetchNextPage])
 
-  if (isLoading) return <ActivitySkeleton />
+  if (isLoading) return <ActivityCardSkeleton />
   if (!activitiesGroup) return <Typography>No hi ha cap activitat per els filtres actuals</Typography>
 
   return (

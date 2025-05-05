@@ -1,7 +1,35 @@
+/*mod estil calendari*/
 .react-calendar {
     width: 100% !important;
     border: none !important;
 }
+
+.react-calendar__tile--now:not(.react-calendar__tile--active) {
+    background: rgba(25, 118, 210, 0.5) !important;
+    color: inherit;
+}
+
+.react-calendar__tile--now:enabled:not(.react-calendar__tile--active):hover,
+.react-calendar__tile--now:enabled:not(.react-calendar__tile--active):focus {
+    background: rgba(25, 118, 210, 0.25) !important;
+}
+
+.react-calendar__navigation {
+    margin-bottom: 0 !important;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr[title] {
+    text-decoration: none;
+    color: #1976d2;
+}
+
+
+/* Calendari activitat info no interactuable amb els dies*/
+.event-calendar--wrapper .react-calendar__tile {
+    pointer-events: none;
+    cursor: default;
+}
+
 
 /*scrollbar sempre visible per accessibilitat*/
 ::-webkit-scrollbar {
@@ -14,10 +42,17 @@
 
 ::-webkit-scrollbar-thumb {
     background: #888;
-    border-radius: 6px;     
-    border: 2px solid #f1f1f1; 
+    border-radius: 6px;
+    border: 2px solid #f1f1f1;
 }
 
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+
+
+/* fer més gran tots els tooltips text per accessibiltat */
+.MuiTooltip-tooltip {
+    font-size: 0.9rem !important;
+  }
+  

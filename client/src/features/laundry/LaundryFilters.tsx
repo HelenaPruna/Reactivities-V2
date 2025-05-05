@@ -13,12 +13,15 @@ import DateTimeInput from "../../app/shared/components/DateTimeInput";
 import CheckBoxInput from "../../app/shared/components/CheckBoxInput";
 import { laundrySchema, LaundrySchema } from "../../lib/schemas/laundrySchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAccount } from "../../lib/hooks/useAccount";
 
 
 const LaundryFilters = observer(function LaundryFilters() {
     const { laundryStore: { startDate, endDate, setDate } } = useStore()
     const [open, setOpen] = useState(false);
     const { bookLaundry } = useLaundry(true)
+    const { currentUser } = useAccount()
+
 
     const { control, handleSubmit, reset, formState: { isDirty, isValid } } = useForm<LaundrySchema>({
         mode: 'onTouched',
@@ -35,24 +38,26 @@ const LaundryFilters = observer(function LaundryFilters() {
         <>
             <Paper sx={{
                 position: "relative",
-                p: 2, borderRadius: 3, display: "flex", backgroundColor: "background.paper"
+                p: 2, borderRadius: 3, display: "flex"
             }}>
                 <Stack direction="row" spacing={1} alignItems="center"
                     sx={{ width: "100%", justifyContent: "center" }}>
-                    <Button variant="outlined" onClick={() => setDate(false)} sx={{ minWidth: 40, p: 0 }} >
+                    <Button variant="outlined" onClick={() => setDate(false)} sx={{ minWidth: 40, px: 1}} >
                         <KeyboardArrowLeftIcon />
                     </Button>
                     <Typography variant="h6" color="primary">
                         {"Setmana: " + formatDateOnly(startDate.toString()) + " - " + formatDateOnly(endDate.toString())}
                     </Typography>
-                    <Button variant="outlined" onClick={() => setDate()} sx={{ minWidth: 40, p: 0 }} >
+                    <Button variant="outlined" onClick={() => setDate()} sx={{ minWidth: 40, px: 1 }} >
                         <KeyboardArrowRightIcon />
                     </Button>
                 </Stack>
-                <IconButton onClick={(e) => { e.currentTarget.blur(); setOpen(true) }} color="primary" sx={{ fontSize: 20, position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)" }}>
-                    <Add />
-                    Afegeix reserva
-                </IconButton>
+                {currentUser?.role !== "Observer" &&
+                    <IconButton onClick={(e) => { e.currentTarget.blur(); setOpen(true) }}
+                        color="primary" sx={{ fontSize: 18, position: "absolute", right: 20,  top: "50%", transform: "translateY(-50%)" }} >
+                        <Add />
+                        Afegeix reserva
+                    </IconButton>}
             </Paper>
             <Dialog onClose={() => { reset(); setOpen(false) }} open={open} sx={{ p: 3 }}>
                 <DialogTitle>Ageixeix reserva</DialogTitle>

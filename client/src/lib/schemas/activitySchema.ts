@@ -5,9 +5,10 @@ import { requiredString } from '../util/util';
 export const activitySchema = z.object({
     title: requiredString(),
     description: z.coerce.string().default("--"),
-    maxParticipants: z.coerce.number({
-        message: 'Camp obligatori'
-    }).int().positive({ message: 'El número màxim de participants ha de ser postiu' }),
+    maxParticipants: z.coerce
+        .number({ message: 'Camp obligatori' }).int()
+        .positive({ message: 'El nombre de participants ha de ser postiu' })
+        .max(40, { message: 'El nombre màxim de participants és de 40 persones' }),
     allowedMissedDays: z.coerce.number({
         message: 'Camp obligatori'
     }).int().positive({ message: 'El número màxim de faltes ha de ser postiu' }).optional(),

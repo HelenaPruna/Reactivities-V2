@@ -29,7 +29,7 @@ export default function ProfileActivities({ stringAction }: Props) {
     };
 
     return (
-        <Box>
+        <Box width={'100%'}>
             <Grid2 container spacing={2}>
                 <Grid2 size={12}>
                     <Tabs value={activeTab} onChange={handleTabChange}>
@@ -39,7 +39,7 @@ export default function ProfileActivities({ stringAction }: Props) {
                     </Tabs>
                 </Grid2>
             </Grid2>
-            <TableContainer sx={{ maxHeight: 500, overflowY: "auto", scrollbarGutter: "stable" }}>
+            <TableContainer sx={{  maxHeight: 500, overflowY: "auto", scrollbarGutter: "stable" }}>
                 <Table stickyHeader>
                     <TableHead>
                         <TableRow>
@@ -89,7 +89,7 @@ export default function ProfileActivities({ stringAction }: Props) {
                             </TableBody>
                     }
                 </Table>
-            </TableContainer>
+            </TableContainer>            
         </Box >
     )
 }

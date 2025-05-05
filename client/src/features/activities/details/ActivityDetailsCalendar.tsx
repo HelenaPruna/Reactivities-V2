@@ -15,30 +15,30 @@ export default function EventCalendar({ activity }: Props) {
         const recucurrence = activity.recurrences.find(r => dayjs(r.composedTime).isSame(date, 'day'));
         return recucurrence === undefined ? 'blue' : 'green'
     }
-    
-    return (
-        <Calendar
-            locale="ca"
-            tileContent={({ date, view }) => {
-                if (view === 'month' && hasEvent(date)) {
-                    return (
-                        <div
-                            style={{
-                                marginTop: '1px',
-                                width: '6px',
-                                height: '6px',
-                                backgroundColor: colorEvent(date),
-                                borderRadius: '50%',
-                                margin: '0 auto',
-                            }}
-                        />
-                    );
-                }
-                return null;
-            }}
-            defaultActiveStartDate={new Date(activity.dateStart)}
 
-        />
+    return (
+        <div className="event-calendar--wrapper">
+            <Calendar
+                locale="ca"
+                tileContent={({ date, view }) => {
+                    if (view === 'month' && hasEvent(date)) {
+                        return (
+                            <div
+                                style={{
+                                    width: '6px',
+                                    height: '6px',
+                                    backgroundColor: colorEvent(date),
+                                    borderRadius: '50%',
+                                    margin: '0 auto',
+                                }}
+                            />
+                        );
+                    }
+                    return null;
+                }}
+                defaultActiveStartDate={new Date(activity.dateStart)}
+            />
+        </div>
     );
 };
 

@@ -19,4 +19,5 @@ public class Activity
     public ICollection<RecurrenceActivity> Recurrences { get; set; } = [];
     public string? RoomId { get; set; }
     public Room Room { get; set; } = null!;
+    public ICollection<Request> Requests { get; set; } = [];
 }

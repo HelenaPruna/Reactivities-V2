@@ -1,8 +1,8 @@
 import { Box, Card, CardHeader, Skeleton, Divider, CardContent, Stack, CardActions } from "@mui/material";
 
-export default function ActivitySkeleton() {
+export default function ActivityCardSkeleton() {
     return (
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 3, mt: 2 }}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 3 }}>
             {Array.from({ length: 12 }).map((_, idx) => (
                 <Card key={idx} sx={{ borderRadius: 3 }}>
                     <CardHeader
@@ -12,7 +12,7 @@ export default function ActivitySkeleton() {
                     />
                     <Divider />
                     <CardContent sx={{ p: 0 }}>
-                        <Skeleton variant="rectangular" width="100%" height={64} />
+                        <Skeleton variant="rectangular" width="100%" height={70} />
                     </CardContent>
                     <CardContent sx={{ px: 3, py: 1 }}>
                         <Stack direction="row" spacing={4}>

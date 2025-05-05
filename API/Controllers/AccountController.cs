@@ -1,5 +1,5 @@
-using System;
 using API.DTOs;
+using Application.Users;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -9,8 +9,8 @@ namespace API.Controllers;
 
 public class AccountController(SignInManager<User> signInManager) : BaseApiController
 {
-    [AllowAnonymous]
     [HttpPost("register")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> RegisterUser(RegisterDto registerDto)
     {
         var user = new User
@@ -20,15 +20,24 @@ public class AccountController(SignInManager<User> signInManager) : BaseApiContr
             DisplayName = registerDto.DisplayName
         };
 
-        var result = await signInManager.UserManager.CreateAsync(user, registerDto.Password);
-        if (result.Succeeded) return Ok();
-
-        foreach (var error in result.Errors)
+        var userResult = await signInManager.UserManager.CreateAsync(user, registerDto.Password);
+        if (!userResult.Succeeded)
         {
-            ModelState.AddModelError(error.Code, error.Description);
+            foreach (var error in userResult.Errors)
+                ModelState.AddModelError(error.Code, error.Description);
+
+            return ValidationProblem(ModelState);
         }
 
-        return ValidationProblem();
+        var roleResult = await signInManager.UserManager.AddToRoleAsync(user, registerDto.Role);
+        if (roleResult.Succeeded) return Ok();
+
+        await signInManager.UserManager.DeleteAsync(user);
+
+        foreach (var error in roleResult.Errors)
+            ModelState.AddModelError(error.Code, error.Description);
+
+        return ValidationProblem(ModelState);
     }
 
     [AllowAnonymous]
@@ -39,12 +48,16 @@ public class AccountController(SignInManager<User> signInManager) : BaseApiContr
 
         var user = await signInManager.UserManager.GetUserAsync(User);
         if (user == null) return Unauthorized();
+        var roles = await signInManager.UserManager.GetRolesAsync(user);
+        var role = roles.SingleOrDefault()
+           ?? throw new InvalidOperationException("User has no role assigned.");
 
         return Ok(new
         {
             user.DisplayName,
             user.Email,
-            user.Id
+            user.Id,
+            Role = role
         });
     }
 
@@ -55,4 +68,17 @@ public class AccountController(SignInManager<User> signInManager) : BaseApiContr
         return NoContent();
     }
 
+    [HttpGet("users")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<List<UserDto>>> GetUsers()
+    {
+        return HandleResult(await Mediator.Send(new GetUsers.Query()));
+    }
+
+    [HttpDelete("users/{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult> DeleteUser(string id)
+    {
+        return HandleResult(await Mediator.Send(new DeleteUser.Command { Id = id }));
+    }
 }

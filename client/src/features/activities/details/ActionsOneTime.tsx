@@ -37,16 +37,16 @@ export default function ActionsOneTime({ deleteEvent, activityId, recurId }: Pro
                 anchorEl={anchorEl}
                 open={openMenu}
                 onClose={handleClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                  }}
+              
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
             >
-                <MenuItem component="dialog" onClick={() => {
-                    setOpen(true);
-                    handleClose();
-                }}>
-                    <ListItemIcon>
-                        <DeleteIcon color="error" />
-                    </ListItemIcon>
-                    <ListItemText>Elimina esdeveniment</ListItemText>
-                </MenuItem>
                 <MenuItem onClick={() => {
                     setBookRoom(true);
                     handleClose();
@@ -56,6 +56,17 @@ export default function ActionsOneTime({ deleteEvent, activityId, recurId }: Pro
                     </ListItemIcon>
                     <ListItemText>Assigna a una sala</ListItemText>
                 </MenuItem>
+                <MenuItem component="dialog" onClick={(e) => {
+                    e.currentTarget.blur();
+                    setOpen(true);
+                    handleClose();
+                }}>
+                    <ListItemIcon>
+                        <DeleteIcon color="error" />
+                    </ListItemIcon>
+                    <ListItemText>Elimina esdeveniment</ListItemText>
+                </MenuItem>
+                
             </Menu>
             <Dialog onClose={() => setOpen(false)} open={open}>
                 <DialogTitle>Estàs segura d'eliminar l'esdeveniment?</DialogTitle>

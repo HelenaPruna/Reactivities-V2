@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import { getDate, getMinutes } from "../../lib/util/util";
 import { useState } from "react";
 import { blue } from "@mui/material/colors";
+import { useAccount } from "../../lib/hooks/useAccount";
 
 const TIME_COL_WIDTH = 60;
 const DAY_COUNT = 5;
@@ -22,6 +23,7 @@ const LaundryCalendar = observer(function LaundryCalendar() {
     const { bookings, loadingBookings, deleteBooking } = useLaundry();
     const [toDeleteId, setToDeleteId] = useState<string | null>(null);
     const open = Boolean(toDeleteId);
+    const { currentUser } = useAccount()
 
     const days = Array.from({ length: DAY_COUNT }, (_, i) =>
         dayjs(startDate).add(i, "day")
@@ -133,7 +135,7 @@ const LaundryCalendar = observer(function LaundryCalendar() {
                                                 slotProps={{ title: { fontSize: 16 } }}
                                                 sx={{ padding: 1.5 }}
                                                 subheader={booking.name}
-                                                action={
+                                                action={ currentUser?.role === 'Admin' &&
                                                     <IconButton onClick={(e) => { e.currentTarget.blur(); setToDeleteId(booking.id) }}>
                                                         <DeleteIcon color="error" />
                                                     </IconButton>

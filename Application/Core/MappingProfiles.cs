@@ -1,6 +1,7 @@
 using Application.Activities.DTOs;
 using Application.Attendances.DTOs;
 using Application.Profiles.DTOs;
+using Application.Requests.DTOs;
 using Application.Rooms.DTOs;
 using AutoMapper;
 using Domain;
@@ -33,6 +34,7 @@ public class MappingProfiles : Profile
         CreateMap<Activity, UserActivityDto>()
             .ForMember(x => x.DateStart, o => o.MapFrom(s => s.FirstDate.Date))
             .ForMember(x => x.DateEnd, o => o.MapFrom(s => s.Recurrences.Where(x => x.IsRecurrent && x.Id != s.FirstDate.Id).Max(recur => recur.Date)));
+        CreateMap<Activity, ActivitiesOptionsDto>();
 
         CreateMap<RecurrenceActivity, RecurrenceDto>();
         CreateMap<RecurrenceActivity, OneTimeDto>();
@@ -50,5 +52,9 @@ public class MappingProfiles : Profile
 
         CreateMap<Room, RoomDto>();
         CreateMap<Room, ActivityRoomDto>();
+
+        CreateMap<Request, ActivityRequestDto>();
+        CreateMap<Request, RequestDto>()
+            .ForMember(d => d.ActivityTitle, o => o.MapFrom(s => s.Activity.Title));
     }
 }

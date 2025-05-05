@@ -1,6 +1,6 @@
 import { keepPreviousData, useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import agent from "../api/agent";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useAccount } from "./useAccount";
 import { useStore } from "./useStore";
 import dayjs from "dayjs";
@@ -10,6 +10,8 @@ export const useActivities = (id?: string) => {
     const queryClient = useQueryClient();
     const { currentUser } = useAccount();
     const location = useLocation();
+    const navigate = useNavigate()
+
 
     const { data: activitiesGroup, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery<PagedList<Activity>>({
         queryKey: ['activities', filter, startDate, searchTerm, includeCancelled],
@@ -101,13 +103,11 @@ export const useActivities = (id?: string) => {
     })
 
     const deleteActivity = useMutation({
-        mutationFn: async (id: string) => {
+        mutationFn: async () => {
             await agent.delete(`/activities/${id}`)
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({
-                queryKey: ['activities']
-            })
+            navigate('/activities')
         }
     })
 
@@ -115,15 +115,38 @@ export const useActivities = (id?: string) => {
         mutationFn: async (organizerIds: string[]) => {
             await agent.post(`/activities/${id}/organizers`, organizerIds);
         },
-        onSuccess: async () => {  
-            await queryClient.invalidateQueries({
-                queryKey: ['activities', id]
-            })
-        }
-    })
+        onMutate: async (organizerIds) => {
+            await queryClient.cancelQueries({ queryKey: ['activities', id] });
+            const previousActivity = queryClient.getQueryData<Activity>(['activities', id]);
+
+            if (previousActivity) {
+                const profiles = queryClient.getQueryData<Profile[]>(['profiles']) ?? [];
+                const nameById = Object.fromEntries(
+                    profiles.map(p => [p.id, p.displayName])
+                );
+                const optOrg: Profile[] = organizerIds.map(
+                    uid => ({ id: uid, displayName: nameById[uid] }));
+
+                queryClient.setQueryData<Activity>(['activities', id],
+                    { ...previousActivity, organizers: optOrg });
+            }
+            return { previousActivity };
+        },
+        onError: (_, _organizerIds, context: { previousActivity?: Activity } | undefined) => {
+            if (context?.previousActivity) {
+                queryClient.setQueryData<Activity>(
+                    ['activities', id],
+                    context.previousActivity
+                );
+            }
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['activities', id] });
+        },
+    });
 
     const addRecur = useMutation({
-        mutationFn: async (recurrence:CreateRecur) => {
+        mutationFn: async (recurrence: CreateRecur) => {
             await agent.post(`/activities/${id}/recurrence`, recurrence)
         },
         onSuccess: async () => {

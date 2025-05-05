@@ -2,6 +2,7 @@ using Application.Laundry.Commands;
 using Application.Laundry.DTOs;
 using Application.Laundry.Queries;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -16,6 +17,7 @@ public class LaundryController : BaseApiController
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin, Regular")]
     public async Task<ActionResult> BookingLaundry(BookingDto bookingDto)
     {
         return HandleResult(await Mediator.Send(new CreateBooking.Command
@@ -23,9 +25,10 @@ public class LaundryController : BaseApiController
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> DeleteBooking(string id)
     {
         return HandleResult(await Mediator.Send(new DeleteBooking.Command
-        { BookingId = id}));
+        { BookingId = id }));
     }
 }

@@ -14,6 +14,7 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
     public required DbSet<RecurrenceActivity> Recurrences { get; set; }
     public required DbSet<Room> Rooms { get; set; }
     public required DbSet<LaundryBooking> LaundryBookings { get; set; }
+    public required DbSet<Request> Requests { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -31,11 +32,6 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
             .WithMany(x => x.Organizers)
             .HasForeignKey(x => x.ActivityId);
 
-        builder.Entity<Activity>() //per si un cas not sure if necessary al afegir la dependencia d'abaix 
-            .HasMany(a => a.Recurrences)
-            .WithOne(r => r.Activity)
-            .HasForeignKey(r => r.ActivityId);
-
         builder.Entity<Attendance>()
             .HasOne(a => a.Attendee)
             .WithMany()
@@ -47,6 +43,30 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
             .WithOne()
             .HasForeignKey<Activity>(a => a.FirstDateId)
             .OnDelete(DeleteBehavior.Restrict); //?: nss si es el format correcte
+
+        builder.Entity<RecurrenceActivity>()
+            .HasOne(r => r.Activity)
+            .WithMany(a => a.Recurrences)
+            .HasForeignKey(r => r.ActivityId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Attendee>()
+            .HasOne(a => a.Activity)
+            .WithMany(a => a.Attendees)
+            .HasForeignKey(a => a.ActivityId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Request>()
+            .HasOne(r => r.Activity)
+            .WithMany(a => a.Requests)
+            .HasForeignKey(r => r.ActivityId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Request>()
+            .HasOne(r => r.RequestedBy)
+            .WithMany(u => u.RequestsMade)
+            .HasForeignKey(r => r.RequestedById)
+            .OnDelete(DeleteBehavior.Cascade);
 
         var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
             v => v.ToUniversalTime(),

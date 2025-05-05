@@ -1,5 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace Domain;
 
+[Index(nameof(Start))]
 public class LaundryBooking
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();

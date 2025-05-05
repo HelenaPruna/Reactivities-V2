@@ -13,6 +13,8 @@ import RegisterForm from "../../features/account/RegisterForm";
 import ProfilePage from "../../features/profiles/ProfilePage";
 import RoomDashboard from "../../features/rooms/RoomDashboard";
 import LaundryDashboard from "../../features/laundry/LaundryDashboard";
+import RequestDashboard from "../../features/requests/RequestDashboard";
+import UsersPage from "../../features/users/UsersPage";
 
 export const router = createBrowserRouter([
     {
@@ -24,10 +26,13 @@ export const router = createBrowserRouter([
                     { path: 'activities', element: <ActivityDashboard /> },
                     { path: 'activities/:id', element: <ActivityDetailPage /> },
                     { path: 'createActivity', element: <ActivityForm key='create' /> },
+                    { path: 'register', element: <RegisterForm /> }, //Els admins registren a les persones
                     { path: 'manage/:id', element: <ActivityForm /> },
                     { path: 'profiles/:id', element: <ProfilePage /> },
                     { path: 'rooms', element: <RoomDashboard /> },
-                    { path: 'laundry', element: <LaundryDashboard /> }
+                    { path: 'laundry', element: <LaundryDashboard /> },
+                    { path: 'requests', element: <RequestDashboard /> },
+                    { path: 'users', element: <UsersPage /> }
                 ]
             },
             { path: '', element: <HomePage /> },
@@ -35,9 +40,7 @@ export const router = createBrowserRouter([
             { path: 'not-found', element: <NotFound /> },
             { path: 'server-error', element: <ServerError /> },
             { path: 'login', element: <LoginForm /> },
-            { path: 'register', element: <RegisterForm /> },
             { path: '*', element: <Navigate replace to='/not-found' /> }
-
         ]
     }
 ])

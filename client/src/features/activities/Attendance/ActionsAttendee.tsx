@@ -37,8 +37,18 @@ export default function ActionsAttendee({ deleteAtt, activateAtt, isWaiting }: P
                 anchorEl={anchorEl}
                 open={openMenu}
                 onClose={handleClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                  }}
+              
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
             >
-                <MenuItem component="dialog" onClick={() => {
+                <MenuItem component="dialog" onClick={(e) => {
+                    e.currentTarget.blur();
                     setOpen(true);
                     handleClose();
                 }}>

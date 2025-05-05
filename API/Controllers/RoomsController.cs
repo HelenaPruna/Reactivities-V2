@@ -1,6 +1,7 @@
 using Application.Rooms.Commands;
 using Application.Rooms.DTOs;
 using Application.Rooms.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -8,10 +9,10 @@ namespace API.Controllers;
 public class RoomsController : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<List<RoomDto>>> GetRoomsList( DateOnly fromDate, DateOnly toDate)
+    public async Task<ActionResult<List<RoomDto>>> GetRoomsList(DateOnly fromDate, DateOnly toDate)
     {
         return HandleResult(await Mediator.Send(new GetRoomsList.Query
-        { FromDate = fromDate, ToDate = toDate}));
+        { FromDate = fromDate, ToDate = toDate }));
     }
 
     [HttpGet("{activityId}")]
@@ -22,6 +23,7 @@ public class RoomsController : BaseApiController
     }
 
     [HttpPost("{roomId}/book/{activityId}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> BookActivity(string activityId, string roomId, bool isOneTime, string? recurId)
     {
         return HandleResult(await Mediator.Send(new BookRoom.Command

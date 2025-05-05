@@ -11,8 +11,8 @@ type Props = {
     setCheckAtt: (bool: boolean) => void
 }
 
-export default function AttendanceForm({ activity: { id }, recurId, setCheckAtt }: Props) {
-    const { activityAttendance, loadingAttendance, updateAttendance, refetchingAttendance } = useAttendees(id, undefined, recurId)
+export default function AttendanceForm({ activity,  recurId, setCheckAtt }: Props) {
+    const { activityAttendance, loadingAttendance, updateAttendance } = useAttendees(activity.id, undefined, recurId)
     const { control, handleSubmit, reset } = useForm({
         defaultValues: { attendances: [] as Attendance[] }
     });
@@ -35,8 +35,8 @@ export default function AttendanceForm({ activity: { id }, recurId, setCheckAtt 
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <TableContainer >
-                <Table size="small" aria-label="attendance table">
+            <TableContainer sx={{ maxHeight: 440, m: 1, minWidth: 120 }} >
+                <Table stickyHeader size="small">
                     <TableHead>
                         <TableRow>
                             <TableCell>NOM</TableCell>
@@ -44,12 +44,17 @@ export default function AttendanceForm({ activity: { id }, recurId, setCheckAtt 
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {loadingAttendance || refetchingAttendance
-                            ? (
-                                <TableRow key={0} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                    <TableCell component="th" scope="row"><Skeleton variant="text" /></TableCell>
-                                    <TableCell><Skeleton variant="text" /></TableCell>
+                        {loadingAttendance
+                            ? (Array.from({length: activity.numberAttendees}, (_, i) => (
+                                <TableRow key={i} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                    <TableCell component="th" scope="row">
+                                        <Skeleton variant="text" />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Skeleton variant="rounded" height={59} />
+                                    </TableCell>
                                 </TableRow>
+                            ))
                             ) : (activityAttendance && activityAttendance.length > 0
                                 ? activityAttendance.map((att, index) => (
                                     <TableRow key={att.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
@@ -66,29 +71,32 @@ export default function AttendanceForm({ activity: { id }, recurId, setCheckAtt 
                                         </TableCell>
                                     </TableRow>
                                 ))
-                                : (<TableRow key={0} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                    <TableCell component="th" scope="row">-</TableCell>
-                                    <TableCell>-</TableCell>
+                                :
+                                <TableRow key={0} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                    <TableCell component="th" scope="row">
+                                        -
+                                    </TableCell>
+                                    <TableCell>
+                                        -
+                                    </TableCell>
                                 </TableRow>
-                                ))
+                            )
                         }
                     </TableBody>
                 </Table>
             </TableContainer>
 
-            <Grid2 container spacing={2}>
+            <Grid2 container spacing={2} mt={2}>
                 <Button type="submit" variant="contained" color="primary" sx={{ mt: 1, mb: 2 }}
                     disabled={loadingAttendance || activityAttendance?.length === 0}>
                     Guarda
                 </Button>
                 <Button variant="outlined" color="primary" sx={{ mt: 1, mb: 2 }}
-                    disabled={loadingAttendance || activityAttendance?.length === 0}
+                    disabled={loadingAttendance}
                     onClick={() => setCheckAtt(false)}>
                     Cancel·la
                 </Button>
             </Grid2>
-
         </form>
-
     )
 }

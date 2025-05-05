@@ -145,6 +145,8 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Start");
+
                     b.ToTable("LaundryBookings");
                 });
 
@@ -180,6 +182,47 @@ namespace Persistence.Migrations
                     b.HasIndex("RoomId", "Date", "TimeStart", "TimeEnd");
 
                     b.ToTable("Recurrences");
+                });
+
+            modelBuilder.Entity("Domain.Request", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ActivityId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ApprovedById")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DateApproved")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RequestedById")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("State")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActivityId");
+
+                    b.HasIndex("ApprovedById");
+
+                    b.HasIndex("RequestedById");
+
+                    b.ToTable("Requests");
                 });
 
             modelBuilder.Entity("Domain.Room", b =>
@@ -462,7 +505,8 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.Activity", "Activity")
                         .WithMany("Attendees")
-                        .HasForeignKey("ActivityId");
+                        .HasForeignKey("ActivityId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Activity");
                 });
@@ -471,7 +515,8 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.Activity", "Activity")
                         .WithMany("Recurrences")
-                        .HasForeignKey("ActivityId");
+                        .HasForeignKey("ActivityId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Domain.Room", "Room")
                         .WithMany("Recurrences")
@@ -480,6 +525,29 @@ namespace Persistence.Migrations
                     b.Navigation("Activity");
 
                     b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("Domain.Request", b =>
+                {
+                    b.HasOne("Domain.Activity", "Activity")
+                        .WithMany("Requests")
+                        .HasForeignKey("ActivityId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Domain.User", "ApprovedBy")
+                        .WithMany()
+                        .HasForeignKey("ApprovedById");
+
+                    b.HasOne("Domain.User", "RequestedBy")
+                        .WithMany("RequestsMade")
+                        .HasForeignKey("RequestedById")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Activity");
+
+                    b.Navigation("ApprovedBy");
+
+                    b.Navigation("RequestedBy");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -540,6 +608,8 @@ namespace Persistence.Migrations
                     b.Navigation("Organizers");
 
                     b.Navigation("Recurrences");
+
+                    b.Navigation("Requests");
                 });
 
             modelBuilder.Entity("Domain.RecurrenceActivity", b =>
@@ -557,6 +627,8 @@ namespace Persistence.Migrations
                     b.Navigation("ActivitiesCreated");
 
                     b.Navigation("ActivitiesOrganized");
+
+                    b.Navigation("RequestsMade");
                 });
 #pragma warning restore 612, 618
         }

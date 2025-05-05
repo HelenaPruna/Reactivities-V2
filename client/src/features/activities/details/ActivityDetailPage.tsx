@@ -1,17 +1,19 @@
-import { Grid2, Typography } from "@mui/material"
-import { useParams } from "react-router";
+import { Grid2 } from "@mui/material"
+import { Navigate, useParams } from "react-router";
 import { useActivities } from "../../../lib/hooks/useActivities";
 import ActivityDetailsHeader from "./ActivityDetailsHeader";
 import ActivityDetailsInfo from "./ActivityDetailsInfo";
 import ActivityDetailsSidebar from "./ActivityDetailsSidebar";
 import ActivityDetailsAttendees from "./ActivityDetailsAttendees";
+import ActivityDetailSkeleton from "../../../app/shared/skeletons/ActivityDetailSkeleton";
 
 export default function ActivityDetailPage() {
     const { id } = useParams();
+
     const { activity, isLoadingActivity } = useActivities(id);
-    if (isLoadingActivity) return <Typography>Loading...</Typography>
-    if (!activity) return <Typography>Activity not found</Typography>
-    return (
+    if (isLoadingActivity) return <ActivityDetailSkeleton />
+    if (!activity) return <Navigate to='/not-found' />
+    else return (
         <Grid2 container spacing={3}>
             <Grid2 size={8.5}>
                 <ActivityDetailsHeader activity={activity} />

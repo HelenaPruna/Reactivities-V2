@@ -65,7 +65,7 @@ public class GetActivityList
                 dtos.RemoveAt(request.Params.PageSize);
             }
 
-            dtos = [.. dtos.OrderBy(x => x.DateStart)];
+            dtos = [.. dtos.OrderBy(x => x.DateStart).ThenBy(x => x.DateEnd)];
 
             return Result<PagedList<ActivityDto>>.Success(new PagedList<ActivityDto>
             {

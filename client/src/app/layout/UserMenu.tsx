@@ -5,7 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
 import { useAccount } from '../../lib/hooks/useAccount';
 import { Link } from 'react-router';
-import { Add, Logout, Person } from '@mui/icons-material';
+import { Logout, Person } from '@mui/icons-material';
 import { stringAvatar } from '../../lib/util/util';
 
 export default function UserMenu() {
@@ -49,18 +49,12 @@ export default function UserMenu() {
                     'aria-labelledby': 'basic-button',
                 }}
             >
-                <MenuItem component={Link} to='/createActivity' onClick={handleClose}>
-                    <ListItemIcon>
-                        <Add />
-                    </ListItemIcon>
-                    <ListItemText>Crea activitat</ListItemText>
-                </MenuItem>
-                <MenuItem component={Link} to={`/profiles/${currentUser?.id}`} onClick={handleClose}>
+                {currentUser?.role != "Observer" && <MenuItem component={Link} to={`/profiles/${currentUser?.id}`} onClick={handleClose}>
                     <ListItemIcon>
                         <Person />
                     </ListItemIcon>
                     <ListItemText>El meu perfil</ListItemText>
-                </MenuItem>
+                </MenuItem>}
                 <MenuItem onClick={() => {
                     logoutUser.mutate();
                     handleClose();

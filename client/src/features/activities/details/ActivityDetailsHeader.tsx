@@ -1,21 +1,22 @@
 import { Box, Typography, Button, Chip, Paper, Grid2, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
-import { Link } from "react-router";
 import { useActivities } from "../../../lib/hooks/useActivities";
 import StyledButton from "../../../app/shared/components/StyledButton";
 import { useState } from "react";
+import { useAccount } from "../../../lib/hooks/useAccount";
+import DeleteComponent from "../../../app/shared/components/DeleteComponent";
+import { useNavigate } from "react-router";
 
 type Props = {
     activity: Activity
 }
 
 export default function ActivityDetailsHeader({ activity }: Props) {
-    const { toggleActivity } = useActivities(activity.id)
+    const { toggleActivity, deleteActivity } = useActivities(activity.id)
     const [open, setOpen] = useState(false);
+    const { currentUser } = useAccount()
+    const navigate = useNavigate()
 
-    const cancelToggle = () => {
-        if (activity.room === null || activity.isCancelled) toggleActivity.mutate()
-        else setOpen(true)
-    }
+    const delAct = () => deleteActivity.mutate()
 
     return (
         <>
@@ -23,11 +24,8 @@ export default function ActivityDetailsHeader({ activity }: Props) {
                 <Grid2 container justifyContent='space-between' alignItems='center'>
                     <Grid2 container alignItems='center' spacing={2} direction='row'>
                         <Box>
-                            <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 'bold' }}>{activity.title}</Typography>
-                            <Typography variant="subtitle2">
-                                Creada per <Link to={`/profiles/${activity.creator.id}`} style={{ color: '#1976d2', fontWeight: 'bold' }}>
-                                    {activity.creator.displayName}
-                                </Link>
+                            <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 'bold' }}>
+                                {activity.title}
                             </Typography>
                         </Box>
                         {activity.isCancelled && <Grid2>
@@ -39,38 +37,43 @@ export default function ActivityDetailsHeader({ activity }: Props) {
                         </Grid2>}
                     </Grid2>
                     <Box sx={{ display: 'flex', gap: 2 }}>
-                        {activity.isCreator && (
+                        {currentUser?.role === "Admin" && (
                             <>
                                 {!activity.isCancelled && !toggleActivity.isPending && <Button
                                     variant="contained"
                                     color="primary"
-                                    component={Link}
-                                    to={`/manage/${activity.id}`}
+                                    onClick={() =>
+                                        navigate(`/manage/${activity.id}`)
+                                    }
                                 >
-                                    Edita l'activitat
+                                    Edita el taller
                                 </Button>}
                                 <StyledButton
                                     variant='contained'
                                     color={activity.isCancelled ? 'success' : 'error'}
-                                    onClick={cancelToggle}
+                                    onClick={(e) => {
+                                        e.currentTarget.blur();
+                                        if (activity.room === null || activity.isCancelled) toggleActivity.mutate()
+                                        else setOpen(true)
+                                    }}
                                     disabled={toggleActivity.isPending}
                                 >
-                                    {activity.isCancelled ? 'Activa l\'ctivitat' : 'Cancel·la l\'activitat'}
+                                    {activity.isCancelled ? 'Activa el taller' : 'Cancel·la el taller'}
                                 </StyledButton>
-
+                                <DeleteComponent delActivity={delAct} />
                             </>
                         )}
                     </Box>
                 </Grid2>
             </Paper>
             <Dialog onClose={() => setOpen(false)} open={open}>
-                <DialogTitle>Estàs segura vols cancel·lar?</DialogTitle>
+                <DialogTitle>Estàs segura vols cancel·lar-la?</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Tens una sala reservada que s'eliminarà
                     </DialogContentText>
                 </DialogContent>
-                <DialogActions sx={{pb: 2, px: 2}}>
+                <DialogActions sx={{ pb: 2, px: 2 }}>
                     <Button variant="contained" onClick={() => setOpen(false)}>Torna enrere</Button>
                     <Button onClick={() => { setOpen(false); toggleActivity.mutate() }} color="error">Cancel·la l'activitat</Button>
                 </DialogActions>

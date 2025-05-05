@@ -23,4 +23,5 @@ public class ActivityDetailsDto
     public TimeOnly TimeEnd { get; set; }
     public ICollection<RecurrenceDto> Recurrences { get; set; } = [];
     public ICollection<OneTimeDto> OneTimeEvents { get; set; } = [];
+    public ICollection<ActivityRequestDto> Requests { get; set; } = [];
 }

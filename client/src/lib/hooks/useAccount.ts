@@ -3,9 +3,8 @@ import { LoginSchema } from "../schemas/loginSchema"
 import agent from "../api/agent"
 import { useNavigate } from "react-router";
 import { RegisterSchema } from "../schemas/registerSchema";
-import { toast } from "react-toastify";
 
-export const useAccount = () => {
+export const useAccount = (usersPage?: boolean, userId?: string) => {
     const queryClient = useQueryClient();
     const navigate = useNavigate()
 
@@ -25,8 +24,7 @@ export const useAccount = () => {
             await agent.post('/account/register', creds)
         }, 
         onSuccess: () => {
-            toast.success('Registre correcte - ja pots iniciar sessió') 
-            navigate('/login')
+            navigate('/users', {replace: true})
         }
     }) 
 
@@ -51,11 +49,42 @@ export const useAccount = () => {
         enabled: !queryClient.getQueryData(['user']) 
     })
 
+    const { data: usersList , isLoading: loadingUsers} = useQuery({
+        queryKey: ['usersList'],
+        queryFn: async () => {
+            const response = await agent.get<User[]>('/account/users');
+            return response.data;
+        },
+        enabled: usersPage === true 
+    })
+
+    const deleteUser = useMutation({
+        mutationFn: async () => {
+            await agent.delete(`/account/users/${userId}`)
+        },
+        onMutate: async () => {
+            await queryClient.cancelQueries({ queryKey: ['usersList'] })
+            const prevUsers = queryClient.getQueryData<User[]>(['usersList'])
+            queryClient.setQueryData<User[]>(['usersList'], (old = []) =>
+                old.filter(u => u.id !== userId)) 
+            return { prevUsers };
+        },
+        onError: (_, __, context) => {
+            queryClient.setQueryData(['usersList'], context?.prevUsers)
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({queryKey: ['usersList']})
+        }
+    })
+
     return {
         loginUser, 
         currentUser,
         logoutUser,
         loadingUserInfo,
-        registerUser
+        registerUser, 
+        usersList,
+        loadingUsers,
+        deleteUser
     }
 }

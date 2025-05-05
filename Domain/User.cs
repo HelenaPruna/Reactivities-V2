@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Identity;
 
 namespace Domain;
@@ -10,5 +9,5 @@ public class User : IdentityUser
     //nav parameters
     public ICollection<Activity> ActivitiesCreated { get; set; } = [];
     public ICollection<ActivityOrganizer> ActivitiesOrganized { get; set; } = [];
-
+    public ICollection<Request> RequestsMade { get; set; } = [];
 }

@@ -8,7 +8,7 @@ type Props<T extends FieldValues> = {
 } & UseControllerProps<T> & Partial<SelectInputProps>;
 
 export default function MultiSelectInput<T extends FieldValues>(props: Props<T>) {
-  const { profiles } = useProfiles(); // options from profiles API
+  const { profiles } = useProfiles(); // només carrego els profiles aquí i no sempre 
   const { field, fieldState } = useController({ ...props });
   
   return (

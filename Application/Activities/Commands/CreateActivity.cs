@@ -49,6 +49,5 @@ public class CreateActivity
 
             return Result<string>.Success(activity.Id);
         }
-
     }
 }

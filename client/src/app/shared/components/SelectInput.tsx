@@ -10,7 +10,7 @@ type Props<T extends FieldValues> = {
 export default function SelectInput<T extends FieldValues>(props: Props<T>) {
     const {field, fieldState} = useController({...props});
     return (
-        <FormControl fullWidth error={!!fieldState.error}>
+        <FormControl fullWidth error={!!fieldState.error} size="small">
             <InputLabel>{props.label}</InputLabel>
             <Select
                 value={field.value ?? ""}

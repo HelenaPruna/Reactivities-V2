@@ -5,7 +5,7 @@ import agent from "../api/agent";
 export const useAttendees = (id: string, isWaiting?: boolean, recurId?: string | null) => {
     const queryClient = useQueryClient();
 
-    const { data: activityAttendees, isLoading: loadingAttendees, isRefetching: refetchingAttendees } = useQuery({
+    const { data: activityAttendees, isLoading: loadingAttendees } = useQuery({
         queryKey: [id, 'attendees', isWaiting],
         queryFn: async () => {
             const response = await agent.get<Attendee[]>(`/activities/${id}/attendees`, {
@@ -16,21 +16,26 @@ export const useAttendees = (id: string, isWaiting?: boolean, recurId?: string |
             return response.data
         },
         placeholderData: keepPreviousData,
-        enabled: recurId === undefined && !!id && isWaiting !== undefined
+        enabled: recurId === undefined && isWaiting !== undefined
     })
 
-    const { data: activityAttendance, isLoading: loadingAttendance, isRefetching: refetchingAttendance } = useQuery({
+    const { data: activityAttendance, isLoading: loadingAttendance } = useQuery({
         queryKey: [id, 'attendance', recurId],
         queryFn: async () => {
             const response = await agent.get<Attendance[]>(`/activities/${id}/attendance/${recurId}`);
             return response.data
         },
-        enabled: !!id && !!recurId && isWaiting === undefined
+        enabled: !!recurId && isWaiting === undefined
     })
 
     const updateAttendance = useMutation({
         mutationFn: async (attendanceValues: AttendanceValues[]) => {
             await agent.put(`/activities/${id}/attendance/${recurId}`, attendanceValues);
+        },
+        onSuccess: async () => {
+            queryClient.invalidateQueries({
+                queryKey: [id, 'attendees', false]
+            })
         }
     })
 
@@ -49,6 +54,9 @@ export const useAttendees = (id: string, isWaiting?: boolean, recurId?: string |
         },
         onError: (_, __, context) => {
             queryClient.setQueryData([id, 'attendees', isWaiting], context?.previousAttendees);
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: [id, 'attendees', isWaiting] });
         }
     })
 
@@ -73,11 +81,15 @@ export const useAttendees = (id: string, isWaiting?: boolean, recurId?: string |
         onError: (_, newAttendee, context) => {
             queryClient.setQueryData([id, 'attendees', newAttendee.isWaiting], context?.prevAttendees);
         },
-        onSuccess: (data, newAttendee) => {
+        onSuccess: (returnedId, newAttendee) => {
             queryClient.setQueryData<Attendee[]>([id, 'attendees', newAttendee.isWaiting], (old = []) =>
-                old.map(att => (att.id === 'temp-id' ? { ...att, id: data } : att))
+                old.map(att => (att.id === 'temp-id' ? { ...att, id: returnedId } : att))
             );
-        }
+        },
+        onSettled: (_, _err, newAtt) => {
+            const waitKey = newAtt.isWaiting;
+            queryClient.invalidateQueries({ queryKey: [id, 'attendees', waitKey] });
+        },
     })
 
     const activateAttendee = useMutation({
@@ -97,8 +109,6 @@ export const useAttendees = (id: string, isWaiting?: boolean, recurId?: string |
         activityAttendance,
         loadingAttendance,
         updateAttendance,
-        refetchingAttendance,
-        refetchingAttendees,
         deleteAttendee,
         addAttendee,
         activateAttendee
