@@ -627,7 +627,7 @@ public class DbInitializer
                 Title = "Crochet",
                 Description = "---",
                 CreatorId = users[rnd.Next(0, 4)].Id,
-                MaxParticipants = rnd.Next(6, 12),
+                MaxParticipants = 11,
                 RoomId = rooms[12].Id,
                 AllowedMissedDays = rnd.Next(1, 3),
                 Organizers = [

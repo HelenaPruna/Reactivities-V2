@@ -1,5 +1,6 @@
 using Application.Core;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Attendances.Commands;
@@ -19,6 +20,12 @@ public class DeleteAttendee
             if (activity == null) return Result<Unit>.Failure("Activity not found", 404);
             var attendee = await context.Attendees.FindAsync([request.AttendeeId], cancellationToken);
             if (attendee == null) return Result<Unit>.Failure("Attendee not found", 404);
+            var attendances = context.Attendances.Where(x => x.AttendeeId == attendee.Id);
+            if (attendances != null)
+            {
+                context.Attendances.RemoveRange(attendances);
+                await context.SaveChangesAsync(cancellationToken);
+            }
             activity.Attendees.Remove(attendee);
             await context.SaveChangesAsync(cancellationToken); 
             context.Attendees.Remove(attendee); // Explicit removal

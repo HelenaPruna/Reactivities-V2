@@ -25,18 +25,13 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
         builder.Entity<ActivityOrganizer>()
             .HasOne(x => x.User)
             .WithMany(x => x.ActivitiesOrganized)
-            .HasForeignKey(x => x.UserId);
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<ActivityOrganizer>()
             .HasOne(x => x.Activity)
             .WithMany(x => x.Organizers)
             .HasForeignKey(x => x.ActivityId);
-
-        builder.Entity<Attendance>()
-            .HasOne(a => a.Attendee)
-            .WithMany()
-            .HasForeignKey(a => a.AttendeeId)
-            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<Activity>()
             .HasOne(a => a.FirstDate)
@@ -66,7 +61,7 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
             .HasOne(r => r.RequestedBy)
             .WithMany(u => u.RequestsMade)
             .HasForeignKey(r => r.RequestedById)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
             v => v.ToUniversalTime(),

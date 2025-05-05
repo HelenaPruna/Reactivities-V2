@@ -26,6 +26,20 @@ public class DeleteUser
             if (hasRecent)
                 return Result<Unit>.Failure("Aquest usuari té tallers creats recents, no es pot eliminar", 400);
 
+            var actOrganizer = context.ActivityOrganizers.Where(x => x.UserId == user.Id);
+            if (actOrganizer != null)
+            {
+                context.ActivityOrganizers.RemoveRange(actOrganizer);
+                await context.SaveChangesAsync(cancellationToken);
+            }
+            var userRequests = context.Requests.Where(x => x.RequestedById == user.Id);
+            if (userRequests != null)
+            {
+                context.Requests.RemoveRange(userRequests);
+                await context.SaveChangesAsync(cancellationToken);
+            }
+
+
             context.Remove(user);
             var result = await context.SaveChangesAsync(cancellationToken) > 0;
             return !result

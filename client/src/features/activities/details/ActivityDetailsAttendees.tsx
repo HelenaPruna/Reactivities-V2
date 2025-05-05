@@ -21,7 +21,6 @@ export default function ActivityDetailsAttendees({ activity }: Props) {
     const [checkAtt, setCheckAtt] = useState(false);
     const [addAtt, setAddAtt] = useState(false);
     const [numAtt, setNumAtt] = useState(activity.numberAttendees)
-    const [full, setFull] = useState(activity.isFull);
     const [recurId, setRecurId] = useState<string | null>(null);
     const { currentUser } = useAccount()
     const { addAttendee } = useAttendees(activity.id)
@@ -32,8 +31,8 @@ export default function ActivityDetailsAttendees({ activity }: Props) {
 
     const handleChange = (event: SelectChangeEvent) => setRecurId(event.target.value);
     const setIsFull = (int: number) => {
-        setFull(activity.maxParticipants <= numAtt + int)
         activity.isFull = activity.maxParticipants <= numAtt + int
+        reset({ isWaiting: activity.maxParticipants <= activity.numberAttendees + int })
         setNumAtt(numAtt => numAtt + int)
     }
 
@@ -47,7 +46,6 @@ export default function ActivityDetailsAttendees({ activity }: Props) {
         addAttendee.mutate(data, {
             onSettled: () => {
                 setAddAtt(false)
-                reset({ isWaiting: activity.maxParticipants <= activity.numberAttendees + 1 })
                 setIsFull(1)
             }
         })
@@ -59,10 +57,10 @@ export default function ActivityDetailsAttendees({ activity }: Props) {
                 <Grid2 container spacing={2} alignItems='center' pl={1}>
                     <PeopleAltIcon color="info" fontSize="large" />
                     <Typography variant="h5">ASSISTÈNCIA</Typography>
-                    {full && <Chip label='COMPLETA' color='success' sx={{ borderRadius: 2, fontWeight: 'bold' }} />}
+                    {activity.isFull && <Chip label='COMPLETA' color='success' sx={{ borderRadius: 2, fontWeight: 'bold' }} />}
                 </Grid2>
                 {(currentUser?.role === "Admin" || activity.isOrganizing) && numAtt > 0 && (
-                    <Button variant="contained" onClick={(e) => { e.currentTarget.blur(); setCheckAtt(true) }} endIcon={<ChecklistRtlIcon />}>
+                    <Button variant="contained" onClick={(e) => { e.currentTarget.blur(); setCheckAtt(true) }} disabled={addAttendee.isPending} endIcon={<ChecklistRtlIcon />}>
                         Passa llista
                     </Button>
                 )}

@@ -7,8 +7,7 @@ import { useAccount } from "../../lib/hooks/useAccount";
 function App() {
   const location = useLocation();
   //el carrego així no m'apareix el loading inicial quan entro per primer cop
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { currentUser } = useAccount(); 
+  const { currentUser } = useAccount();
 
   return (
     <Box sx={{ bgcolor: '#eeeeee', minHeight: '100vh' }}>
@@ -18,7 +17,7 @@ function App() {
         <>
           <NavBar />
           <Container sx={{ pt: 14, maxWidth: '90%' }} maxWidth={false}>
-            <Outlet />
+            {currentUser ? <Outlet /> : <Outlet />}
           </Container>
         </>
       )}

@@ -57,6 +57,7 @@ export const useAttendees = (id: string, isWaiting?: boolean, recurId?: string |
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: [id, 'attendees', isWaiting] });
+            queryClient.invalidateQueries({ queryKey: ['activities', id] });
         }
     })
 
@@ -100,6 +101,8 @@ export const useAttendees = (id: string, isWaiting?: boolean, recurId?: string |
             queryClient.invalidateQueries({
                 queryKey: [id, 'attendees', isWaiting]
             })
+            queryClient.invalidateQueries({ queryKey: ['activities', id] });
+
         }
     })
 
