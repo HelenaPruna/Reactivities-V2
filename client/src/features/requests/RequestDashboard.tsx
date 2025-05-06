@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useStore } from "../../lib/hooks/useStore"
-import { Grid2 } from "@mui/material";
+import { Grid2, Paper } from "@mui/material";
 import RequestFilters from "./RequestFilters";
 import RequestList from "./RequestList";
 
@@ -13,7 +13,9 @@ export default function RequestDashboard() {
     return (
         <Grid2 pb={4}>
             <RequestFilters />
-            <RequestList />
+            <Paper sx={{p:1, mt: 2}}>
+                <RequestList />
+            </Paper>
         </Grid2>
     )
 }

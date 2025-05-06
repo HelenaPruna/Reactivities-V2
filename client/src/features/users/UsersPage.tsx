@@ -23,31 +23,30 @@ export default function UsersPage() {
                     Crea un nou usuari
                 </IconButton>
             </Paper>
-            <Paper sx={{ mx: 'auto', maxWidth: 'md', mt: 2, maxHeight: 720,  p:1 }}>
-                <TableContainer sx={{maxHeight: 700}} ><Table stickyHeader>
+            <Paper sx={{ mx: 'auto', maxWidth: 'md', mt: 2, maxHeight: 720, p: 1 }}>
+                <TableContainer sx={{ maxHeight: 700 }} ><Table stickyHeader>
                     <TableHead>
                         <TableRow>
                             <TableCell>ESTAT</TableCell>
-                            <TableCell>TIPUS</TableCell>
+                            <TableCell>EMAIL</TableCell>
                             <TableCell>ROL</TableCell>
                             <TableCell></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {loadingUsers ? (
-                            Array.from({ length: 10 }, (_, i) => (
+                            Array.from({ length: 20 }, (_, i) => (
                                 <TableRow key={i} >
                                     <TableCell component="th" scope="row">
-                                        <Skeleton variant="text" />
+                                        <Skeleton variant="text" width={'50%'} />
                                     </TableCell>
                                     <TableCell>
-                                        <Skeleton variant='text' />
+                                        <Skeleton variant='text' width={'50%'} />
                                     </TableCell>
                                     <TableCell>
-                                        <Skeleton variant='text' />
+                                        <Skeleton variant='text' width={'50%'} />
                                     </TableCell>
                                     <TableCell align="right">
-                                        <Skeleton variant='circular' />
                                     </TableCell>
                                 </TableRow>
                             ))

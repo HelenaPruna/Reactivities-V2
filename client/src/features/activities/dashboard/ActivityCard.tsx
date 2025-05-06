@@ -37,7 +37,7 @@ export default function ActivityCard({ activity }: Props) {
                         <Chip label='CANCEL·LAT' color='error' sx={{ borderRadius: 2, fontWeight: 'bold' }} />
                     }
                     {activity.isFull && !activity.isCancelled &&
-                        <Chip label='COMPLET' color='success' sx={{ borderRadius: 2, fontWeight: 'bold' }} />
+                        <Chip label='COMPLET' variant="outlined" color='success' sx={{ borderRadius: 2, fontWeight: 'bold' }} />
                     }
                 </Box>
             </Box>
@@ -61,13 +61,13 @@ export default function ActivityCard({ activity }: Props) {
                         <Tooltip title="Número de participants">
                             <People fontSize="small" sx={{ mr: 0.5, color: 'text.secondary' }} />
                         </Tooltip>
-                        <Typography variant="body2">
+                        <Typography variant="body2"  component="span">
                             {activity.numberAttendees} / {activity.maxParticipants} {activity.maxParticipants < activity.numberAttendees && 
                             <WarningTooltip title={'Hi ha més participants que places ofertes'} />}
                         </Typography>
                     </Box>
                     <Box display="flex" alignItems="center">
-                        <Tooltip title="Número de persones esperant">
+                        <Tooltip title="Número de persones en llista d'espera">
                             <Queue fontSize="small" sx={{ mr: 0.5, color: 'text.secondary' }} />
                         </Tooltip>
                         <Typography variant="body2">{activity.numberWaiting}</Typography>

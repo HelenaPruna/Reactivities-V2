@@ -16,18 +16,11 @@ export default function RoomSkeleton({grid, placeholder}:Props) {
             {Array.from({ length: placeholder * 2 }).map((_, idx) => (
                 <Card key={idx} sx={{ borderRadius: 3 }}>
                     <CardHeader
-                        title={<Skeleton width="60%" />}
-                        subheader={<Skeleton width="40%" />}
+                        title={<Skeleton width="20%" />}
+                        subheader={<Skeleton width="10%" />}
                     />
-                    <CardContent sx={{ pt: 0 }}>
-                        {/* Calendar placeholder */}
-                        <Skeleton
-                            variant="rectangular"
-                            width="100%"
-                            height={365}
-                        />
-                        {/* Capacity placeholder */}
-                        <Skeleton width="30%" sx={{ mt: 1 }} />
+                    <CardContent sx={{ pt: 0, height:420, display: 'flex',flexDirection: 'column', justifyContent: 'flex-end' }}>
+                        <Skeleton width="30%" sx={{ mt: 1}} />
                     </CardContent>
                 </Card>
             ))}

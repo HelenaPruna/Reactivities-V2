@@ -1,4 +1,4 @@
-import { Box, Typography, Link as MuiLink, Skeleton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Box, Typography, Link as MuiLink, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { useRequests } from "../../lib/hooks/useRequests"
 import { observer } from 'mobx-react-lite';
 import ActionsRequest from './ActionsRequest';
@@ -12,7 +12,7 @@ const RequestList = observer(function RequestList() {
     const typeLabels = ['Abonar diners', 'Comprar', 'Reserva sala', 'Altres']
 
     return (
-        <TableContainer component={Paper} sx={{ mt: 2 }}><Table>
+        <TableContainer sx={{ height:580 }}><Table>
             <TableHead>
                 <TableRow>
                     <TableCell>ESTAT</TableCell>

@@ -1,17 +1,13 @@
-import { Box, Grid2, Paper, Skeleton, Stack } from "@mui/material";
+import { Box, Divider, Grid2, Paper, Skeleton } from "@mui/material";
 
 export default function LaundrySkeleton() {
     return (
         <Grid2 pb={4}>
             <Paper sx={{
                 position: "relative",
-                p: 2, borderRadius: 3, display: "flex"
+                borderRadius: 3, display: "flex",
+                height: 68
             }}>
-                <Stack direction="row" spacing={1} alignItems="center"
-                    sx={{ width: "100%", height: 36, justifyContent: "center" }}>
-                    <Skeleton variant="text" width={570} height={55} />
-                </Stack>
-                <Skeleton variant="text" width={200} height={30} sx={{position: 'absolute', right: 20, top: "50%", transform: "translateY(-50%)"}} />
             </Paper>
             <Paper elevation={3} sx={{ p: 2, borderRadius: 2, overflow: 'hidden', mt: 2 }}>
                 <Box
@@ -33,7 +29,6 @@ export default function LaundrySkeleton() {
                                 justifyContent: 'center',
                             }}
                         >
-                            <Skeleton variant="text" width={120} height={40} />
                         </Box>
                     ))}
                     <Box sx={{ gridColumn: 1, gridRow: 2, position: 'relative' }}>
@@ -45,7 +40,7 @@ export default function LaundrySkeleton() {
                                 height={20}
                                 sx={{
                                     position: 'absolute',
-                                    top: 40 + i * 50,
+                                    top: 40 + i * 100,
                                     left: 4,
                                 }}
                             />
@@ -59,15 +54,17 @@ export default function LaundrySkeleton() {
                                 gridRow: 2,
                                 borderLeft: 1,
                                 borderColor: 'divider',
+                                position: "relative"
                             }}
                         >
-                            {[...Array(12)].map((__, row) => (
-                                <Box
-                                    key={row}
+                            {Array.from({ length: 12 }, (_, i) => (
+                                <Divider
+                                    key={i}
                                     sx={{
-                                        height: 50,
-                                        borderBottom: 1,
-                                        borderColor: 'divider',
+                                        position: "absolute",
+                                        top: 40 + i * 60 * 560 / 660,
+                                        width: "100%",
+                                        opacity: 0.3,
                                     }}
                                 />
                             ))}

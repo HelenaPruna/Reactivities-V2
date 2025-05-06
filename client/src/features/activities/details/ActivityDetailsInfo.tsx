@@ -8,6 +8,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useState } from "react";
 import { useAccount } from "../../../lib/hooks/useAccount";
 import EventCalendar from "./ActivityDetailsCalendar";
+import WarningTooltip from "../../../app/shared/components/WarningTooltip";
 
 
 type Props = { activity: Activity };
@@ -52,8 +53,9 @@ export default function ActivityDetailsInfo({ activity }: Props) {
                     <Divider />
                     <Stack direction="row" spacing={1} alignItems="center">
                         <PeopleAlt color="info" fontSize="large" />
-                        <Typography variant="body2">
-                            {activity.numberAttendees} / {activity.maxParticipants}
+                        <Typography variant="body2"  component="span">
+                            {activity.numberAttendees} / {activity.maxParticipants} {activity.maxParticipants < activity.numberAttendees &&                                                                                         
+                                <WarningTooltip title={'Hi ha més participants que places ofertes'} />}
                         </Typography>
                     </Stack>
                     <Divider />

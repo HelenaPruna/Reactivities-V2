@@ -51,7 +51,7 @@ export default function AttendanceForm({ activity,  recurId, setCheckAtt }: Prop
                                         <Skeleton variant="text" />
                                     </TableCell>
                                     <TableCell>
-                                        <Skeleton variant="rounded" height={59} />
+                                        <Skeleton variant="rounded" height={35} />
                                     </TableCell>
                                 </TableRow>
                             ))

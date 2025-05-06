@@ -25,10 +25,13 @@ export default function ActivityDetailsAttendees({ activity }: Props) {
     const { currentUser } = useAccount()
     const { addAttendee } = useAttendees(activity.id)
 
+    const today = new Date()
     const dateOptions: { text: Date, value: string }[] = activity.recurrences
+        .filter(r => new Date(r.date) <= today)
         .map(r => ({ text: new Date(r.composedTime), value: r.id }))
         .sort((a, b) => a.text.getTime() - b.text.getTime());
 
+    const hasOldRecur = dateOptions.length > 0 
     const handleChange = (event: SelectChangeEvent) => setRecurId(event.target.value);
     const setIsFull = (int: number) => {
         activity.isFull = activity.maxParticipants <= numAtt + int
@@ -59,7 +62,7 @@ export default function ActivityDetailsAttendees({ activity }: Props) {
                     <Typography variant="h5">ASSISTÈNCIA</Typography>
                     {activity.isFull && <Chip label='COMPLETA' color='success' sx={{ borderRadius: 2, fontWeight: 'bold' }} />}
                 </Grid2>
-                {(currentUser?.role === "Admin" || activity.isOrganizing) && numAtt > 0 && (
+                {(currentUser?.role === "Admin" || activity.isOrganizing) && numAtt > 0 && hasOldRecur && (
                     <Button variant="contained" onClick={(e) => { e.currentTarget.blur(); setCheckAtt(true) }} disabled={addAttendee.isPending} endIcon={<ChecklistRtlIcon />}>
                         Passa llista
                     </Button>

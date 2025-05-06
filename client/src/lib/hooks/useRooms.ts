@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useStore } from "./useStore"
 import agent from "../api/agent"
 
@@ -17,7 +17,8 @@ export const useRooms = (activityId?: string, recurId?: string) => {
             });
             return response.data
         },
-        enabled: !activityId && !recurId
+        placeholderData: keepPreviousData,
+        enabled: !activityId && !recurId,
     })
 
     const { data: availableRooms, isLoading: loadingAvailableRooms } = useQuery({
