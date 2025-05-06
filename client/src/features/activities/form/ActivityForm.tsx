@@ -45,17 +45,23 @@ export default function ActivityForm() {
     const onSubmit = (data: ActivitySchema) => {
         setShouldPrompt(false);
         try {
-            const activityData = {
-                ...data,
-                dateEnd: data.isOneDay ? data.dateStart : data.dateEnd ?? data.dateStart,
-                allowedMissedDays: data.isOneDay ? 1 : data.allowedMissedDays ?? 1,
-                interval: data.interval ? 1 : data.interval ?? 1
-            };
             if (activity) {
+                const activityData = {
+                    ...data,
+                    dateEnd: activity.isOneDay ? data.dateStart : data.dateEnd ?? activity.dateEnd,
+                    allowedMissedDays: activity.isOneDay ? 1 : data.allowedMissedDays ?? activity.allowedMissedDays,
+                    interval: activity.isOneDay ? 1 : data.interval ?? activity.interval
+                };
                 updateActivity.mutate({ ...activity, ...activityData }, {
                     onSuccess: () => navigate(`/activities/${activity.id}`, { replace: true })
                 })
             } else {
+                const activityData = {
+                    ...data,
+                    dateEnd: data.isOneDay ? data.dateStart : data.dateEnd ?? data.dateStart,
+                    allowedMissedDays: data.isOneDay ? 1 : data.allowedMissedDays ?? 1,
+                    interval: data.interval ? 1 : data.interval ?? 1
+                };
                 createActivity.mutate(activityData, {
                     onSuccess: (id) => navigate(`/activities/${id}`, { replace: true }),
                 })

@@ -11,6 +11,12 @@ export default function EventCalendar({ activity }: Props) {
         return events.some(eventDate => dayjs(eventDate).isSame(date, 'day'));
     };
 
+    const today = new Date()
+    const dateStart = new Date(activity.dateStart)
+    const dateEnd = new Date(activity.dateEnd)
+
+    const dateToStart = (dateStart <= today && today <= dateEnd) ? today : dateStart
+
     const colorEvent = (date: Date) => {
         const recucurrence = activity.recurrences.find(r => dayjs(r.composedTime).isSame(date, 'day'));
         return recucurrence === undefined ? 'blue' : 'green'
@@ -36,7 +42,7 @@ export default function EventCalendar({ activity }: Props) {
                     }
                     return null;
                 }}
-                defaultActiveStartDate={new Date(activity.dateStart)}
+                defaultActiveStartDate={dateToStart}
             />
         </div>
     );

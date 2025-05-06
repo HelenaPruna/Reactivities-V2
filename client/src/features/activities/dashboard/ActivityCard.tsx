@@ -2,6 +2,7 @@ import { AccessTime, CalendarToday, People, Queue } from "@mui/icons-material";
 import { Avatar, Box, Button, Card, CardActions, CardContent, CardHeader, Chip, Divider, Stack, Tooltip, Typography } from "@mui/material"
 import { Link } from "react-router";
 import { dateInformation, stringAvatar, timeInformation } from "../../../lib/util/util";
+import WarningTooltip from "../../../app/shared/components/WarningTooltip";
 
 type Props = {
     activity: Activity;
@@ -61,7 +62,8 @@ export default function ActivityCard({ activity }: Props) {
                             <People fontSize="small" sx={{ mr: 0.5, color: 'text.secondary' }} />
                         </Tooltip>
                         <Typography variant="body2">
-                            {activity.numberAttendees} / {activity.maxParticipants}
+                            {activity.numberAttendees} / {activity.maxParticipants} {activity.maxParticipants < activity.numberAttendees && 
+                            <WarningTooltip title={'Hi ha més participants que places ofertes'} />}
                         </Typography>
                     </Box>
                     <Box display="flex" alignItems="center">

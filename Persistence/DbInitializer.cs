@@ -75,8 +75,7 @@ public class DbInitializer
             new() { Id = "8",  Name = "Sala 31", NumberFloor = 3, Capacity = 5  },
             new() { Id = "9",  Name = "Sala 32", NumberFloor = 3, Capacity = 7  },
             new() { Id = "10", Name = "Sala 33", NumberFloor = 3, Capacity = 5  },
-            new() { Id = "11", Name = "Sala 34", NumberFloor = 3, Capacity = 5  },
-            new() { Id = "12", Name = "Sala 41", NumberFloor = 4, Capacity = 12 },
+            new() { Id = "11", Name = "Sala 41", NumberFloor = 4, Capacity = 12 },
         };
 
         context.Rooms.AddRange(rooms);
@@ -88,7 +87,7 @@ public class DbInitializer
         {
             new()
             {
-                Title = "Taller acabat",
+                Title = "Taller antic admin x eliminar",
                 Description = "Taller anterior",
                 CreatorId = users[14].Id,
                 MaxParticipants = 10,
@@ -451,7 +450,7 @@ public class DbInitializer
                 Description = "---",
                 CreatorId = users[rnd.Next(0, 4)].Id,
                 MaxParticipants = 7,
-                RoomId = rooms[12].Id,
+                RoomId = rooms[11].Id,
                 AllowedMissedDays = 2,
                 Organizers = [
                     new ActivityOrganizer
@@ -475,7 +474,7 @@ public class DbInitializer
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 8).AddDays(i * 7)),
                         TimeStart = new TimeOnly(16, 30),
                         TimeEnd = new TimeOnly(18, 30),
-                        RoomId = rooms[12].Id
+                        RoomId = rooms[11].Id
                     })
                 ]
             },
@@ -522,7 +521,7 @@ public class DbInitializer
                 Description = "",
                 CreatorId = users[rnd.Next(0, 4)].Id,
                 MaxParticipants = 7,
-                RoomId = rooms[12].Id,
+                RoomId = rooms[11].Id,
                 AllowedMissedDays = 2,
                 Organizers = [
                     new ActivityOrganizer
@@ -548,7 +547,7 @@ public class DbInitializer
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 10).AddDays(i * 7)),
                         TimeStart = new TimeOnly(16, 30),
                         TimeEnd = new TimeOnly(18, 30),
-                        RoomId = rooms[12].Id
+                        RoomId = rooms[11].Id
                     })
                 ]
             },
@@ -628,7 +627,7 @@ public class DbInitializer
                 Description = "---",
                 CreatorId = users[rnd.Next(0, 4)].Id,
                 MaxParticipants = 11,
-                RoomId = rooms[12].Id,
+                RoomId = rooms[11].Id,
                 AllowedMissedDays = rnd.Next(1, 3),
                 Organizers = [
                     new ActivityOrganizer
@@ -658,7 +657,7 @@ public class DbInitializer
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 16).AddDays(i * 7)),
                         TimeStart = new TimeOnly(10, 00),
                         TimeEnd = new TimeOnly(12, 30),
-                        RoomId = rooms[12].Id
+                        RoomId = rooms[11].Id
                     })
                 ]
             },
