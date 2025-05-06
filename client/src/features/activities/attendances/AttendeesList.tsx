@@ -3,8 +3,8 @@ import { SyntheticEvent, useState } from "react";
 import WarningTooltip from "../../../app/shared/components/WarningTooltip";
 import { useAttendees } from "../../../lib/hooks/useAttendees";
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
-import AttendeesTable from "./AttendeesTable";
 import { useAccount } from "../../../lib/hooks/useAccount";
+import AttendeesTable from "./AttendeesTable";
 
 const tabs = [
     { menuItem: 'Participants', key: false },

@@ -1,7 +1,7 @@
 import { TableRow, TableCell, Grid2 } from "@mui/material"
 import WarningTooltip from "../../../app/shared/components/WarningTooltip"
-import ActionsAttendee from "./ActionsAttendee"
 import { useAccount } from "../../../lib/hooks/useAccount"
+import ActionsAttendee from "./ActionsAttendee"
 
 type Props = {
     activityAttendees: Attendee[]

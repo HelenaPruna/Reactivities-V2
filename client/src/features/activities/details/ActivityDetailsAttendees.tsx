@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid2, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Typography } from "@mui/material";
-import AttendanceForm from "../attendance/AttendanceForm";
-import AttendeesList from "../attendance/AttendeesList";
+import AttendanceForm from "../attendances/AttendanceForm";
+import AttendeesList from "../attendances/AttendeesList";
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import ChecklistRtlIcon from '@mui/icons-material/ChecklistRtl';
 import dayjs from "dayjs";
