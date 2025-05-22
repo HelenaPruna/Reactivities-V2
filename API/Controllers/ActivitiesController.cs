@@ -64,7 +64,7 @@ public class ActivitiesController : BaseApiController
     }
 
     [HttpPost("{id}/recurrence")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "AdminOrOrganizer")]
     public async Task<ActionResult<string>> AddOneTimeRecurrence(string id, CreateRecurrenceDto recurrenceDto)
     {
         return HandleResult(await Mediator.Send(new AddRecurrence.Command
@@ -96,15 +96,23 @@ public class ActivitiesController : BaseApiController
     }
 
     [HttpPut("{id}/attendees/{attendeeId}")]
-    [Authorize(Policy = "AdminOrOrganizer")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> ActivateAttendee(string id, string attendeeId)
     {
         return HandleResult(await Mediator.Send(new ActivateAttendee.Command
         { ActivityId = id, AttendeeId = attendeeId }));
     }
 
-    [HttpDelete("{id}/attendees/{attendeeId}")]
+    [HttpPut("attendees/{attendeeId}")]
     [Authorize(Policy = "AdminOrOrganizer")]
+    public async Task<ActionResult> EditAttendee(string attendeeId, CreateAttendeeDto createAttendeeDto)
+    {
+        return HandleResult(await Mediator.Send(new EditAttendee.Command
+        { AttendeeId = attendeeId, CreateAttendeeDto = createAttendeeDto }));
+    }
+
+    [HttpDelete("{id}/attendees/{attendeeId}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> DeleteAttendee(string id, string attendeeId)
     {
         return HandleResult(await Mediator.Send(new DeleteAttendee.Command

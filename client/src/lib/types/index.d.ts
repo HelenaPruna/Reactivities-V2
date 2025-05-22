@@ -64,6 +64,7 @@ type Attendee = {
 }
 
 type AttendeeVal = {
+    id?: string
     identifier: string
     comments?: string
     isWaiting: boolean

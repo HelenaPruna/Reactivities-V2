@@ -70,9 +70,9 @@ public class AccountController(SignInManager<User> signInManager) : BaseApiContr
 
     [HttpGet("users")]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<List<UserDto>>> GetUsers()
+    public async Task<ActionResult<List<UserDto>>> GetUsers([FromQuery] string? searchTerm)
     {
-        return HandleResult(await Mediator.Send(new GetUsers.Query()));
+        return HandleResult(await Mediator.Send(new GetUsers.Query{ SearchTerm = searchTerm}));
     }
 
     [HttpDelete("users/{id}")]

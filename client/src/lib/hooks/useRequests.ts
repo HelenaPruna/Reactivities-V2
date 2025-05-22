@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import agent from "../api/agent"
 import { useStore } from "./useStore"
 
-export const useRequests = (isAdding?: boolean, isEval?: boolean, id?: string) => {
+export const useRequests = (isAdding?: boolean, isEval?: boolean, id?: string, activityId?: string) => {
     const queryClient = useQueryClient();
     const { requestStore: { filter, myRequests, myActReqs } } = useStore()
     
@@ -27,7 +27,7 @@ export const useRequests = (isAdding?: boolean, isEval?: boolean, id?: string) =
             const response = await agent.get<ActivityOptions[]>('/requests/activities');
             return response.data
         },
-        enabled: !!isAdding && isEval !== true 
+        enabled: !!isAdding && isEval === undefined 
     })
 
     const addRequest = useMutation({
@@ -55,6 +55,9 @@ export const useRequests = (isAdding?: boolean, isEval?: boolean, id?: string) =
             queryClient.invalidateQueries({
                 queryKey: ["requests", filter, myRequests]
             })
+            if (activityId) queryClient.invalidateQueries({
+                queryKey: ["activities", activityId]
+            })
         }
     })    
 
@@ -65,6 +68,9 @@ export const useRequests = (isAdding?: boolean, isEval?: boolean, id?: string) =
         onSuccess: async () => {
             queryClient.invalidateQueries({
                 queryKey: ["requests", filter, myRequests]
+            })
+            if (activityId) queryClient.invalidateQueries({
+                queryKey: ["activities", activityId]
             })
         }
     })

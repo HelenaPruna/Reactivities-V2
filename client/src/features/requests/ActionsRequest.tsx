@@ -12,9 +12,10 @@ import { observer } from "mobx-react-lite";
 
 type Props = {
     reqId: string
+    activityId?: string
 }
-const ActionsRequest = observer(function ActionsRequest({ reqId }: Props) {
-    const { updateRequest, deleteRequest } = useRequests(false, true, reqId)
+const ActionsRequest = observer(function ActionsRequest({ reqId, activityId }: Props) {
+    const { updateRequest, deleteRequest } = useRequests(false, true, reqId, activityId)
     const { requestStore: { filter } } = useStore()
 
     const [open, setOpen] = useState(false);
@@ -47,27 +48,14 @@ const ActionsRequest = observer(function ActionsRequest({ reqId }: Props) {
                 anchorOrigin={{
                     vertical: 'bottom',
                     horizontal: 'right',
-                  }}
-              
+                }}
+
                 transformOrigin={{
                     vertical: 'top',
                     horizontal: 'right',
                 }}
-                
+
             >
-                <MenuItem component="dialog" onClick={(e) => {
-                    e.currentTarget.blur(); 
-                    setOpen(true);
-                    handleClose();
-                }}>
-                    <ListItemIcon>
-                        <DeleteIcon color="error" />
-                    </ListItemIcon>
-                    <ListItemText>ELIMINAR</ListItemText>
-                </MenuItem>
-                {currentUser?.role === 'Admin' && <Divider />}
-
-
                 {currentUser?.role === 'Admin' &&
                     (filter !== undefined && filter !== 0) &&
                     <MenuItem onClick={() => {
@@ -77,7 +65,7 @@ const ActionsRequest = observer(function ActionsRequest({ reqId }: Props) {
                         <ListItemIcon>
                             <PendingIcon />
                         </ListItemIcon>
-                        <ListItemText>REACTIVAR</ListItemText>
+                        <ListItemText>Reactivar</ListItemText>
                     </MenuItem>
                 }
                 {currentUser?.role === 'Admin' &&
@@ -89,7 +77,7 @@ const ActionsRequest = observer(function ActionsRequest({ reqId }: Props) {
                         <ListItemIcon>
                             <CheckCircleIcon color="success" />
                         </ListItemIcon>
-                        <ListItemText>APROVAR</ListItemText>
+                        <ListItemText>Aprovar</ListItemText>
                     </MenuItem>
                 }
                 {currentUser?.role === 'Admin' &&
@@ -99,11 +87,22 @@ const ActionsRequest = observer(function ActionsRequest({ reqId }: Props) {
                         handleClose();
                     }}>
                         <ListItemIcon>
-                            <CancelIcon color="error" />
+                            <CancelIcon color="warning" />
                         </ListItemIcon>
-                        <ListItemText>DENEGAR</ListItemText>
+                        <ListItemText>Denegar</ListItemText>
                     </MenuItem>
                 }
+                {currentUser?.role === 'Admin' && <Divider />}
+                <MenuItem onClick={(e) => {
+                    e.currentTarget.blur();
+                    setOpen(true);
+                    handleClose();
+                }}>
+                    <ListItemIcon>
+                        <DeleteIcon />
+                    </ListItemIcon>
+                    <ListItemText>Eliminar la sol·licitud</ListItemText>
+                </MenuItem>
             </Menu>
             <Dialog onClose={() => setOpen(false)} open={open}>
                 <DialogTitle>Estàs segura d'eliminar la sol·licitud?</DialogTitle>

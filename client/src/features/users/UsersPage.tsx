@@ -1,29 +1,52 @@
-import { Add } from "@mui/icons-material";
-import { Grid2, IconButton, Paper, Skeleton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Add, Search } from "@mui/icons-material";
+import { Box, Grid2, IconButton, InputAdornment, Paper, Skeleton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
 import { useAccount } from "../../lib/hooks/useAccount";
 import ActionsUsers from "./ActionsUsers";
+import { useStore } from "../../lib/hooks/useStore";
+import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 
-export default function UsersPage() {
+const UserPage = observer(function UsersPage() {
     const navigate = useNavigate()
     const { usersList, loadingUsers, currentUser } = useAccount(true);
+    const { userStore: { searchTerm, setSearchTerm, resetFilters } } = useStore()
 
     const roleLabel = (role: string) => role === 'Admin' ? "Administrador" : role === 'Regular' ? 'Organitzador' : 'Observador'
 
+    useEffect(() => {
+        return () => resetFilters();
+    }, [resetFilters]);
 
     return (
         <Grid2 pb={4}>
-            <Paper sx={{ mx: 'auto', maxWidth: 'md', position: "relative", p: 2, borderRadius: 3, display: "flex" }}>
+            <Paper sx={{ mx: 'auto', maxWidth: 'md', p: 2, borderRadius: 3, display: "flex" }}>
+                <Box>
+                    <TextField
+                        value={searchTerm}
+                        placeholder="Cercar..."
+                        onChange={e => setSearchTerm(e.target.value)}
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <Search color="action" />
+                                    </InputAdornment>
+                                )
+                            }
+                        }}
+                    />
+                </Box>
                 <Stack width='100%' alignItems='center' justifyContent='center'>
                     <Typography variant="h5" color="secondary">USUARIS</Typography>
                 </Stack>
                 <IconButton onClick={() => navigate('/register')}
-                    color="primary" sx={{ fontSize: 18, position: "absolute", right: 20, top: "50%", transform: "translateY(-50%)" }} >
+                    color="primary" sx={{ fontSize: 18 }} >
                     <Add />
                     Crea un nou usuari
                 </IconButton>
             </Paper>
-            <Paper sx={{ mx: 'auto', maxWidth: 'md', mt: 2, maxHeight: 720, p: 1 }}>
+            <Paper sx={{ mx: 'auto', maxWidth: 'md', mt: 2, height: 720, p: 1 }}>
                 <TableContainer sx={{ maxHeight: 700 }} ><Table stickyHeader>
                     <TableHead>
                         <TableRow>
@@ -51,7 +74,7 @@ export default function UsersPage() {
                                 </TableRow>
                             ))
                         ) :
-                            usersList && usersList.length > 0 ? (
+                            usersList && usersList.length > 0 && (
                                 usersList.map(u => (
                                     <TableRow key={u.id} hover>
                                         <TableCell>{u.displayName}</TableCell>
@@ -62,15 +85,22 @@ export default function UsersPage() {
                                         </TableCell>
                                     </TableRow>
                                 ))
-                            ) :
-                                <Typography>
-                                    Hi hagut algun problema carregant els usuaris prova a recarregar la pàgina o en un altre moment
-                                </Typography>
+                            )
                         }
                     </TableBody>
+                    {usersList && usersList.length === 0 &&
+                        <Typography>
+                            {searchTerm !== undefined
+                                ? "No hi ha cap usuari amb aquest nom"
+                                : "Hi hagut algun problema carregant els usuaris prova a recarregar la pàgina o en un altre moment"
+                            }
+                        </Typography>
+                    }
                 </Table></TableContainer>
             </Paper>
 
         </Grid2>
     )
-}
+})
+
+export default UserPage;

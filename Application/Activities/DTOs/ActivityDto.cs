@@ -1,4 +1,5 @@
 using Application.Profiles.DTOs;
+using Application.Rooms.DTOs;
 
 namespace Application.Activities.DTOs;
 
@@ -13,6 +14,7 @@ public class ActivityDto
     public bool IsOrganizing { get; set; }
     public required int NumberAttendees { get; set; }
     public required int NumberWaiting { get; set; }
+    public ActivityRoomDto Room { get; set; } = null!;
 
     //Time info
     public DateOnly DateStart { get; set; }

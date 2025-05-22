@@ -4,6 +4,7 @@ import { ActivityStore } from "./activityStore";
 import { RoomStore } from "./roomStore";
 import { LaundryStore } from "./laundryStore";
 import { RequestStore } from "./requestStore";
+import { UserStore } from "./userStore";
 
 interface Store {
     uiStore: UiStore
@@ -11,6 +12,7 @@ interface Store {
     roomStore: RoomStore
     laundryStore: LaundryStore
     requestStore: RequestStore
+    userStore: UserStore
 }
 
 export const store: Store = {
@@ -18,7 +20,8 @@ export const store: Store = {
     activityStore: new ActivityStore(),
     roomStore: new RoomStore(),
     laundryStore: new LaundryStore(),
-    requestStore: new RequestStore()
+    requestStore: new RequestStore(),
+    userStore: new UserStore()
 }
 
 export const StoreContext = createContext(store);

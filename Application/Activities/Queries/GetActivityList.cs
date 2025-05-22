@@ -47,7 +47,7 @@ public class GetActivityList
                 baseQuery = baseQuery.Where(a => a.Title.ToLower().Contains(term));
             }
 
-            var inMemory = await baseQuery.Include(x => x.Creator).Include(x => x.Attendees).ToListAsync(cancellationToken);
+            var inMemory = await baseQuery.Include(x => x.Creator).Include(x => x.Attendees).Include(x => x.Room).ToListAsync(cancellationToken);
 
             var paged = inMemory
                 .Where(a => lastId == null || string.CompareOrdinal(a.Id, lastId) >= 0)

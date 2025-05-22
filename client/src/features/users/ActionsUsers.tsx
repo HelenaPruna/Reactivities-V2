@@ -42,7 +42,7 @@ export default function ActionsUsers({ userId }: Props) {
                     horizontal: 'right',
                 }}
             >
-                <MenuItem component="dialog" onClick={(e) => {
+                <MenuItem onClick={(e) => {
                     e.currentTarget.blur(); 
                     handleClose();
                     setOpen(true);

@@ -32,7 +32,6 @@ export default function AttendeesList({ activity, setAddAtt, setIsFull }: Props)
     const deleteAtt = (attendeeId: string) => {
         deleteAttendee.mutate(attendeeId)
         setIsFull(-1)
-
     }
 
     const activateAtt = (attendeeId: string) => activateAttendee.mutate(attendeeId)
@@ -48,7 +47,7 @@ export default function AttendeesList({ activity, setAddAtt, setIsFull }: Props)
                     </Tabs>
                 </Grid2>
                 <Grid2>
-                    <Button variant="outlined" onClick={() => { setAddAtt(true); }} startIcon={<PersonAddAlt1Icon />}>Afegeix participant</Button>
+                    <Button variant="outlined" onClick={(e) => { e.currentTarget.blur(); setAddAtt(true); }} startIcon={<PersonAddAlt1Icon />}>Afegeix {currentUser?.role === "Admin" ? "participant" : " a la llista d'espera"}</Button>
                 </Grid2>
             </Grid2>
             <TableContainer sx={{ height: 440, mt: 2, mb: 2, border: '1px solid rgba(0,0,0,0.12)' }}>
@@ -70,7 +69,14 @@ export default function AttendeesList({ activity, setAddAtt, setIsFull }: Props)
                                     <TableCell><Skeleton variant="text" /></TableCell>
                                     {!isWaiting && <TableCell><Skeleton variant="text" /></TableCell>}
                                 </TableRow>
-                            ) : activityAttendees && <AttendeesTable activityAttendees={activityAttendees} isWaiting={isWaiting} allowedMissedDays={activity.allowedMissedDays} activateAtt={activateAtt} deleteAtt={deleteAtt} />
+                            ) : activityAttendees &&
+                            <AttendeesTable
+                                activityAttendees={activityAttendees}
+                                isWaiting={isWaiting}
+                                activity={activity}
+                                activateAtt={activateAtt}
+                                deleteAtt={deleteAtt}
+                            />
                         }
                     </TableBody>
                 </Table>

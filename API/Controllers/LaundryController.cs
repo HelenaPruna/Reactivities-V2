@@ -17,10 +17,19 @@ public class LaundryController : BaseApiController
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin, Regular")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> BookingLaundry(BookingDto bookingDto)
     {
         return HandleResult(await Mediator.Send(new CreateBooking.Command
+        { BookingDto = bookingDto }));
+    }
+
+    [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult> EditBooking(string id, EditBookingDto bookingDto)
+    {
+        bookingDto.Id = id;
+        return HandleResult(await Mediator.Send(new EditBooking.Command
         { BookingDto = bookingDto }));
     }
 

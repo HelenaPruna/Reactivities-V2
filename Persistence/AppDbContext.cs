@@ -37,7 +37,7 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
             .HasOne(a => a.FirstDate)
             .WithOne()
             .HasForeignKey<Activity>(a => a.FirstDateId)
-            .OnDelete(DeleteBehavior.Restrict); //?: nss si es el format correcte
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<RecurrenceActivity>()
             .HasOne(r => r.Activity)

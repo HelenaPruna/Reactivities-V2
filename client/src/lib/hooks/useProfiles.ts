@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import agent from "../api/agent";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 export const useProfiles = (id?: string) => {
     const [filter, setFilter] = useState<string | null>(null);
@@ -12,7 +12,7 @@ export const useProfiles = (id?: string) => {
             const response = await agent.get<Profile[]>('/profiles');
             return response.data;
         },
-        enabled: !id
+        enabled: !id && !queryClient.getQueryData(['profiles'])
     })
 
     const { data: profile, isLoading: loadingProfile} = useQuery<Profile>({
@@ -37,17 +37,11 @@ export const useProfiles = (id?: string) => {
         enabled: !!id && !!filter
     });
 
-
-    const isCurrentUser = useMemo(() => {  //TODO: revisar si al final necessito això o no 
-        return id === queryClient.getQueryData<User>(['user'])?.id 
-     }, [id, queryClient])
-
     return {
         profiles,
         isLoadingProfiles,
         profile,
         loadingProfile,
-        isCurrentUser,
         userActivities,
         loadingUserActivities,
         filter,

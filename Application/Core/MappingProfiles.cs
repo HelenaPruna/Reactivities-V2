@@ -1,5 +1,6 @@
 using Application.Activities.DTOs;
 using Application.Attendances.DTOs;
+using Application.Laundry.DTOs;
 using Application.Profiles.DTOs;
 using Application.Requests.DTOs;
 using Application.Rooms.DTOs;
@@ -30,7 +31,7 @@ public class MappingProfiles : Profile
             .ForMember(x => x.TimeStart, o => o.MapFrom(s => s.FirstDate.TimeStart))
             .ForMember(x => x.TimeEnd, o => o.MapFrom(s => s.FirstDate.TimeEnd))
             .ForMember(x => x.Recurrences, o => o.MapFrom(s => s.Recurrences.Where(x => x.IsRecurrent)))
-            .ForMember(x => x.OneTimeEvents, o => o.MapFrom(s => s.Recurrences.Where(x => !x.IsRecurrent)));
+            .ForMember(x => x.OneTimeEvents, o => o.MapFrom(s => s.Recurrences.Where(x => !x.IsRecurrent).OrderBy(x => x.Date)));
         CreateMap<Activity, UserActivityDto>()
             .ForMember(x => x.DateStart, o => o.MapFrom(s => s.FirstDate.Date))
             .ForMember(x => x.DateEnd, o => o.MapFrom(s => s.Recurrences.Where(x => x.IsRecurrent && x.Id != s.FirstDate.Id).Max(recur => recur.Date)));
@@ -56,5 +57,7 @@ public class MappingProfiles : Profile
         CreateMap<Request, ActivityRequestDto>();
         CreateMap<Request, RequestDto>()
             .ForMember(d => d.ActivityTitle, o => o.MapFrom(s => s.Activity.Title));
+
+        CreateMap<EditBookingDto, LaundryBooking>();
     }
 }

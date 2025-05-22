@@ -29,7 +29,6 @@ public class CreateBooking
 
                 bool conflict = await context.LaundryBookings
                     .AnyAsync(b => b.Start < end && start < b.End, cancellationToken);
-                //?: nss si això ho voldran així que es puguin crear reserves fins que hi hagi un error de conflicte 
                 if (conflict) return Result<Unit>.Failure($"Hi ha un conflicte d'horaris per la data: {start:yyyy-MM-dd HH:mm}", 400);
 
                 tmpBookings.Add(new LaundryBooking { Name = bookingDto.Name, Start = start, End = end });

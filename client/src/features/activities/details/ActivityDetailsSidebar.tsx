@@ -1,10 +1,8 @@
 import { Paper, Typography, List, ListItem, Chip, ListItemAvatar, Avatar, ListItemText, Grid2, IconButton, Button, Box, Tooltip } from "@mui/material";
 import { useActivities } from "../../../lib/hooks/useActivities";
 import { useState } from "react";
-import EditIcon from '@mui/icons-material/Edit';
 import MultiSelectInput from "../../../app/shared/components/MultiSelectInput";
 import { SubmitHandler, useForm } from "react-hook-form";
-import CloseIcon from '@mui/icons-material/Close';
 import { stringAvatar } from "../../../lib/util/util";
 import ActivityDetailsRecur from "./ActivityDetailsRecur";
 import DateInput from "../../../app/shared/components/DateInput";
@@ -12,9 +10,9 @@ import TimeInput from "../../../app/shared/components/TimeInput";
 import { recurrenceSchema, RecurrenceSchema } from "../../../lib/schemas/recurrenceSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAccount } from "../../../lib/hooks/useAccount";
-import AddIcon from '@mui/icons-material/Add';
 import RequestForm from "../../requests/RequestForm";
 import ActivityDetailsListReq from "./ActivityDetailsListReq";
+import { Add, Close, Edit } from "@mui/icons-material";
 
 
 type Props = {
@@ -82,10 +80,10 @@ export default function ActivityDetailsSidebar({ activity }: Props) {
                                 <IconButton aria-label="edit" onClick={() => setUpdateOrg(!updateOrg)}>
                                     {!updateOrg
                                         ? <Tooltip title="Edita la llista d'organitzadores">
-                                            <EditIcon sx={{ color: "white" }} fontSize="small" />
+                                            <Edit sx={{ color: "white" }} fontSize="small" />
                                         </Tooltip>
                                         : <Tooltip title="Cancel·la">
-                                            <CloseIcon sx={{ color: "white" }} fontSize="small" />
+                                            <Close sx={{ color: "white" }} fontSize="small" />
                                         </Tooltip>
                                     }
                                 </IconButton>
@@ -132,10 +130,10 @@ export default function ActivityDetailsSidebar({ activity }: Props) {
             </Grid2>
             <Grid2 alignItems='center'>
                 <Paper sx={{ textAlign: 'center', border: 'none', backgroundColor: 'primary.main', color: 'white', p: 1 }} >
-                    <Typography variant="subtitle1">Activitats extra {currentUser?.role === "Admin" && !addEvent && !activity.isCancelled &&
+                    <Typography variant="subtitle1">Activitats extra {(currentUser?.role === "Admin" || activity.isOrganizing) && !addEvent && !activity.isCancelled &&
                         <Tooltip title="Afegeix una activitiat puntual">
                             <IconButton onClick={() => setAddEvent(!addEvent)}>
-                                <AddIcon sx={{ color: "white" }} fontSize="small" />
+                                <Add sx={{ color: "white" }} fontSize="small" />
                             </IconButton>
                         </Tooltip>
                     }</Typography>
@@ -146,7 +144,7 @@ export default function ActivityDetailsSidebar({ activity }: Props) {
                         oneTimeRecur={activity.oneTimeEvents}
                         deleteRecur={deleteRecurrence}
                     />}
-                {currentUser?.role === "Admin" && addEvent &&
+                { addEvent &&
                     <Paper sx={{ padding: 2 }}>
                         <Box component='form' display='flex' flexDirection='column' onSubmit={handleRecur(onSubmitRecur)} gap={1}>
                             <DateInput label='Data' control={controlRecur} name='date' />
@@ -169,13 +167,13 @@ export default function ActivityDetailsSidebar({ activity }: Props) {
                     <Typography variant="subtitle1"> Sol·licituds
                         {!addReq && !activity.isCancelled && <IconButton onClick={() => setAddReq(true)}>
                             <Tooltip title="Afegeix una activitiat puntual">
-                                <AddIcon sx={{ color: "white" }} fontSize="small" />
+                                <Add sx={{ color: "white" }} fontSize="small" />
                             </Tooltip>
 
                         </IconButton>}
                     </Typography>
                 </Paper>
-                {activity.requests.length > 0 && <ActivityDetailsListReq requests={activity.requests} />}
+                {activity.requests.length > 0 && <ActivityDetailsListReq requests={activity.requests} activityId={activity.id} />}
                 {addReq && <RequestForm open={addReq} onClose={() => setAddReq(false)} isFromActivity={true} activityId={activity.id} />}
             </Grid2>
         </Box >

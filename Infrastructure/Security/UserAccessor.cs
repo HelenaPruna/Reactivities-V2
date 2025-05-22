@@ -21,4 +21,9 @@ public class UserAccessor(IHttpContextAccessor httpContextAccessor, AppDbContext
         return httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier)
             ?? throw new Exception("No user found");
     }
+
+    public bool IsUserAdmin()
+    {
+        return httpContextAccessor.HttpContext?.User.IsInRole("Admin") ?? false;
+    }
 }

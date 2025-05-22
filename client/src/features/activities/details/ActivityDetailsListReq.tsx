@@ -2,18 +2,23 @@ import { HourglassEmpty, CheckCircle, Cancel } from "@mui/icons-material";
 import { Box, Divider, List, ListItem, ListItemText, Paper, Typography } from "@mui/material"
 import dayjs from 'dayjs';
 import { Fragment } from "react/jsx-runtime";
+import { useAccount } from "../../../lib/hooks/useAccount";
+import ActionsRequest from "../../requests/ActionsRequest";
 
 type Props = {
     requests: RequestSol[]
+    activityId: string
 }
 
-export default function ActivityDetailsListReq({ requests }: Props) {
+export default function ActivityDetailsListReq({ requests, activityId }: Props) {
+    const { currentUser } = useAccount()
+
     const icons = [
         <HourglassEmpty color="warning" fontSize="small" />,
         <CheckCircle color="success" fontSize="small" />,
         <Cancel color="error" fontSize="small" />
     ]
-    const typeLabels = ['Abonar diners', 'Comprar', 'Reserva sala', 'Altres'];
+    const typeLabels = ['Abonar diners', 'Comprar', 'Reserva sala', 'Rentadora', 'Participants', 'Altres']
 
     return (
         <Paper><List disablePadding>
@@ -45,6 +50,10 @@ export default function ActivityDetailsListReq({ requests }: Props) {
 
                             }
                         />
+
+                        {currentUser?.role === "Admin" &&
+                            <ActionsRequest reqId={r.id} activityId={activityId} />
+                        }
                     </ListItem>
                     {index < requests.length - 1 && <Divider component="li" />}
                 </Fragment>

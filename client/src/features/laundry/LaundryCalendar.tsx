@@ -1,5 +1,4 @@
-import { Box, Paper, Typography, Divider, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Card, CardHeader } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Box, Paper, Typography, Divider, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Card, CardHeader, Tooltip } from "@mui/material";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../lib/hooks/useStore";
 import { useLaundry } from "../../lib/hooks/useLaundry";
@@ -8,6 +7,8 @@ import { getDate, getMinutes } from "../../lib/util/util";
 import { useState } from "react";
 import { blue } from "@mui/material/colors";
 import { useAccount } from "../../lib/hooks/useAccount";
+import LaundryForm from "./LaundryForm";
+import { Delete, Edit } from "@mui/icons-material";
 
 const TIME_COL_WIDTH = 60;
 const DAY_COUNT = 5;
@@ -22,7 +23,9 @@ const LaundryCalendar = observer(function LaundryCalendar() {
     const { laundryStore: { startDate } } = useStore();
     const { bookings, loadingBookings, deleteBooking } = useLaundry();
     const [toDeleteId, setToDeleteId] = useState<string | null>(null);
+    const [toEditBooking, setOpenEdit] = useState<LaundryBooking | null>(null);
     const open = Boolean(toDeleteId);
+    const openEdit = Boolean(toEditBooking);
     const { currentUser } = useAccount()
 
     const days = Array.from({ length: DAY_COUNT }, (_, i) =>
@@ -135,10 +138,19 @@ const LaundryCalendar = observer(function LaundryCalendar() {
                                                 slotProps={{ title: { fontSize: 16 } }}
                                                 sx={{ padding: 1.5 }}
                                                 subheader={booking.name}
-                                                action={ currentUser?.role === 'Admin' &&
-                                                    <IconButton onClick={(e) => { e.currentTarget.blur(); setToDeleteId(booking.id) }}>
-                                                        <DeleteIcon color="error" />
-                                                    </IconButton>
+                                                action={currentUser?.role === 'Admin' &&
+                                                    <>
+                                                        <Tooltip title="Edita la reserva">
+                                                            <IconButton onClick={(e) => { e.currentTarget.blur(); setOpenEdit(booking) }}>
+                                                                <Edit />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                        <Tooltip title="Elimina la reserva">
+                                                            <IconButton onClick={(e) => { e.currentTarget.blur(); setToDeleteId(booking.id) }}>
+                                                                <Delete color="error" />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </>
                                                 }
                                             />
                                         </Card>
@@ -168,6 +180,7 @@ const LaundryCalendar = observer(function LaundryCalendar() {
                     </Button>
                 </DialogActions>
             </Dialog>
+            {toEditBooking && <LaundryForm open={openEdit} onClose={() => setOpenEdit(null)} laundryBooking={toEditBooking} />}
         </>
     );
 });

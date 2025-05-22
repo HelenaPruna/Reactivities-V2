@@ -5,12 +5,14 @@ import { FieldValues, useController, UseControllerProps } from "react-hook-form"
 type Props<T extends FieldValues> = {
     items: { text: string, value: string | number }[];
     label?: string;
+    size?: boolean
 } & UseControllerProps<T> & Partial<SelectInputProps>
 
 export default function SelectInput<T extends FieldValues>(props: Props<T>) {
+    const size = props.size ? "medium" : "small" 
     const {field, fieldState} = useController({...props});
     return (
-        <FormControl fullWidth error={!!fieldState.error} size="small">
+        <FormControl fullWidth error={!!fieldState.error} size={size}>
             <InputLabel>{props.label}</InputLabel>
             <Select
                 value={field.value ?? ""}

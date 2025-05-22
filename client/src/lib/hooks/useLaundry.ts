@@ -30,6 +30,17 @@ export const useLaundry = (booking: boolean = false) => {
         }
     })
 
+    const editBooking = useMutation({
+        mutationFn: async (booking: LaundryBooking) => {
+            await agent.put(`/laundry/${booking.id}`, booking);
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({
+                queryKey: ['laundryBookings', startDate]
+            })
+        }
+    })
+
     const deleteBooking = useMutation({
         mutationFn: async (id: string) => {
             await agent.delete(`/laundry/${id}`)
@@ -45,6 +56,7 @@ export const useLaundry = (booking: boolean = false) => {
         bookings,
         loadingBookings,
         bookLaundry,
-        deleteBooking
+        deleteBooking,
+        editBooking
     }
 }

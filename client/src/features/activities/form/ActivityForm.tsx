@@ -9,6 +9,8 @@ import DateInput from "../../../app/shared/components/DateInput";
 import TimeInput from "../../../app/shared/components/TimeInput";
 import CheckBoxInput from "../../../app/shared/components/CheckBoxInput";
 import { useEffect, useState } from "react";
+import SelectInput from "../../../app/shared/components/SelectInput";
+import { intervalOptions } from "./selectOptions";
 
 export default function ActivityForm() {
     const navigate = useNavigate();
@@ -60,7 +62,7 @@ export default function ActivityForm() {
                     ...data,
                     dateEnd: data.isOneDay ? data.dateStart : data.dateEnd ?? data.dateStart,
                     allowedMissedDays: data.isOneDay ? 1 : data.allowedMissedDays ?? 1,
-                    interval: data.interval ? 1 : data.interval ?? 1
+                    interval: data.isOneDay ? 1 : data.interval ?? 1
                 };
                 createActivity.mutate(activityData, {
                     onSuccess: (id) => navigate(`/activities/${id}`, { replace: true }),
@@ -92,7 +94,7 @@ export default function ActivityForm() {
                 {!oneDayValue && <Box display='flex' gap={3}>
                     <TextInput label='Nombre de places disponibles *' placeholder="Entre 1 - 40 places" control={control} name='maxParticipants' type="number" />
                     <TextInput label='Màxim de faltes permeses *' control={control} name='allowedMissedDays' type="number" />
-                    <TextInput label='Interval en dies *' placeholder="Ex: 7 (un cop per setmana)" control={control} name='interval' type="number" />
+                    <SelectInput label='Interval *' control={control} items={intervalOptions} name="interval" size={true} />
                 </Box>}
                 <Box display='flex' justifyContent='end' gap={3}>
                     <Button color="inherit" onClick={() => {

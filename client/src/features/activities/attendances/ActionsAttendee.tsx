@@ -1,17 +1,17 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { MouseEvent, useState } from "react"
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Delete, DriveFileMove, Edit, MoreVert } from "@mui/icons-material";
 
 type Props = {
     deleteAtt: () => void
     activateAtt: () => void
     isWaiting: boolean
+    setEdit: () => void
 }
 
-export default function ActionsAttendee({ deleteAtt, activateAtt, isWaiting }: Props) {
+export default function ActionsAttendee({ deleteAtt, activateAtt, isWaiting, setEdit }: Props) {
     const [open, setOpen] = useState(false);
+
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const openMenu = Boolean(anchorEl);
 
@@ -28,7 +28,7 @@ export default function ActionsAttendee({ deleteAtt, activateAtt, isWaiting }: P
                 aria-haspopup="true"
                 onClick={handleClick}
             >
-                <MoreVertIcon />
+                <MoreVert />
             </IconButton>
             <Menu
                 MenuListProps={{
@@ -40,31 +40,41 @@ export default function ActionsAttendee({ deleteAtt, activateAtt, isWaiting }: P
                 anchorOrigin={{
                     vertical: 'bottom',
                     horizontal: 'right',
-                  }}
-              
+                }}
+
                 transformOrigin={{
                     vertical: 'top',
                     horizontal: 'right',
                 }}
-            >
-                <MenuItem component="dialog" onClick={(e) => {
-                    e.currentTarget.blur();
-                    setOpen(true);
-                    handleClose();
-                }}>
-                    <ListItemIcon>
-                        <DeleteIcon color="error"/>
-                    </ListItemIcon>
-                    <ListItemText>Elimina participant</ListItemText>
-                </MenuItem>
+            >                
                 <MenuItem onClick={() => {
                     activateAtt();
                     handleClose();
                 }}>
                     <ListItemIcon>
-                        <DriveFileMoveIcon />
+                        <DriveFileMove />
                     </ListItemIcon>
                     <ListItemText>{isWaiting ? "Mou a participants" : "Mou a la llista d'espera"}</ListItemText>
+                </MenuItem>
+                <MenuItem onClick={(e) => {
+                    handleClose();
+                    e.currentTarget.blur();
+                    setEdit()
+                }}>
+                    <ListItemIcon>
+                        <Edit />
+                    </ListItemIcon>
+                    <ListItemText>Edita</ListItemText>
+                </MenuItem>
+                <MenuItem onClick={(e) => {
+                    handleClose();
+                    e.currentTarget.blur();
+                    setOpen(true);
+                }}>
+                    <ListItemIcon>
+                        <Delete color="error" />
+                    </ListItemIcon>
+                    <ListItemText>Elimina</ListItemText>
                 </MenuItem>
             </Menu>
             <Dialog onClose={() => setOpen(false)} open={open}>

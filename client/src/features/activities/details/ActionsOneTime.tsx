@@ -56,7 +56,7 @@ export default function ActionsOneTime({ deleteEvent, activityId, recurId }: Pro
                     </ListItemIcon>
                     <ListItemText>Assigna a una sala</ListItemText>
                 </MenuItem>
-                <MenuItem component="dialog" onClick={(e) => {
+                <MenuItem onClick={(e) => {
                     e.currentTarget.blur();
                     setOpen(true);
                     handleClose();

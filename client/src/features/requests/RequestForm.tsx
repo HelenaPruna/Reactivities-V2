@@ -15,12 +15,13 @@ type Props = {
     activityId?: string
 }
 
-export default function RequestForm({ open, onClose, isFromActivity = false, activityId }: Props) {
+export default function RequestForm({ open, onClose, isFromActivity, activityId }: Props) {
     const { addRequest, actOptions, loadingActOpt } = useRequests(true, isFromActivity)
 
     const { control, handleSubmit, reset, formState: { isDirty, isValid } } = useForm<RequestSchema>({
         mode: 'onTouched',
-        resolver: zodResolver(requestSchema)
+        resolver: zodResolver(requestSchema),
+        defaultValues: isFromActivity === false ? {type: 3} : {}
     })
 
     if (loadingActOpt) return (
@@ -29,9 +30,9 @@ export default function RequestForm({ open, onClose, isFromActivity = false, act
         >
             <DialogTitle sx={{ pt: 3, textAlign: 'center' }} color="secondary.main">CREA UNA SOL·LICITUD</DialogTitle>
             <Box display="flex" flexDirection="column" gap={2} pt={1} px={4} pb={4} >
-                <Skeleton variant="rectangular" height={56} />
+                {isFromActivity !== false && <Skeleton variant="rectangular" height={56} />}
                 <Skeleton variant="rectangular" height={148} />
-                <Skeleton variant="rectangular" height={56} />
+                {isFromActivity === undefined && <Skeleton variant="rectangular" height={56} />}
                 <Box display="flex" justifyContent='end' gap={3}>
                     <Skeleton variant="rectangular" width={106.03} height={36.5} />
                     <Skeleton variant="rectangular" width={93.61} height={36.5} />
@@ -43,7 +44,7 @@ export default function RequestForm({ open, onClose, isFromActivity = false, act
     const options: { text: string, value: string }[] = (actOptions ?? []).map(x => ({ text: x.title, value: x.id }))
 
     const onSubmit = (data: RequestSchema) => {
-        if (isFromActivity) data.activityId = activityId;
+        if (isFromActivity === true) data.activityId = activityId;
         addRequest.mutate(data)
         reset()
         onClose()
@@ -53,11 +54,11 @@ export default function RequestForm({ open, onClose, isFromActivity = false, act
         <Dialog open={open}
             slotProps={{ paper: { style: { width: '800px' } }, container: { style: { height: '70%' } } }}
         >
-            <DialogTitle sx={{ pt: 3, textAlign: 'center' }} color="secondary.main">CREA UNA SOL·LICITUD</DialogTitle>
+            <DialogTitle sx={{ pt: 3, textAlign: 'center' }} color="secondary.main">CREA UNA SOL·LICITUD{isFromActivity === false ? " DE RENTADORA" :""}</DialogTitle>
             <Box component="form" display='flex' flexDirection='column' onSubmit={handleSubmit(onSubmit)} gap={2} pt={1} px={4} pb={4}>
-                <SelectInput label="Sel·lecciona el tipus de sol·licitud *" control={control} items={requestTypeOptions} name='type' value={0} />
+                {isFromActivity !== false && <SelectInput label="Sel·lecciona el tipus de sol·licitud *" control={control} items={requestTypeOptions} name='type' value={0} />}
                 <TextInput label='Descripció *' control={control} name='message' multiline rows={5} />
-                {!isFromActivity && <SearchableSelect label="Taller (opcional)" control={control} items={options} name='activityId' />}
+                {isFromActivity === undefined && <SearchableSelect label="Taller (opcional)" control={control} items={options} name='activityId' />}
                 <Box display='flex' justifyContent='end' gap={3}>
                     <Button type="submit" variant="contained" disabled={!isDirty || !isValid}>
                         Confirma

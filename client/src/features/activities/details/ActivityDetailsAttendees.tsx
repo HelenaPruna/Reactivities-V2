@@ -1,17 +1,12 @@
 import { useState } from "react";
-import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid2, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Typography } from "@mui/material";
+import { Button, Chip, Dialog, DialogContent, DialogTitle, FormControl, Grid2, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Typography } from "@mui/material";
 import AttendanceForm from "../attendances/AttendanceForm";
 import AttendeesList from "../attendances/AttendeesList";
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import ChecklistRtlIcon from '@mui/icons-material/ChecklistRtl';
 import dayjs from "dayjs";
 import { useAccount } from "../../../lib/hooks/useAccount";
-import { useAttendees } from "../../../lib/hooks/useAttendees";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import CheckBoxInput from "../../../app/shared/components/CheckBoxInput";
-import TextInput from "../../../app/shared/components/TextInput";
-import { AttendeeSchema, attendeeSchema } from "../../../lib/schemas/attendeeSchema";
+import AttendeeForm from "../attendances/AttendeeForm";
 
 type Props = {
     activity: Activity
@@ -21,9 +16,8 @@ export default function ActivityDetailsAttendees({ activity }: Props) {
     const [checkAtt, setCheckAtt] = useState(false);
     const [addAtt, setAddAtt] = useState(false);
     const [numAtt, setNumAtt] = useState(activity.numberAttendees)
-    const [recurId, setRecurId] = useState<string | null>(null);
+    const [recur, setRecur] = useState<{ value: string, name: string } | null>(null);
     const { currentUser } = useAccount()
-    const { addAttendee } = useAttendees(activity.id)
 
     const today = new Date()
     const dateOptions: { text: Date, value: string }[] = activity.recurrences
@@ -31,27 +25,15 @@ export default function ActivityDetailsAttendees({ activity }: Props) {
         .map(r => ({ text: new Date(r.composedTime), value: r.id }))
         .sort((a, b) => a.text.getTime() - b.text.getTime());
 
-    const hasOldRecur = dateOptions.length > 0 
-    const handleChange = (event: SelectChangeEvent) => setRecurId(event.target.value);
+    const hasOldRecur = dateOptions.length > 0
+    const handleChange = (event: SelectChangeEvent) => {
+        const tmpRecur = dateOptions.find(x => x.value === event.target.value)?.text
+        const dateStr = dayjs(tmpRecur).format("DD-MM-YYYY[ (]HH:mm[)]")
+        setRecur({ value: event.target.value, name: dateStr });
+    }
     const setIsFull = (int: number) => {
         activity.isFull = activity.maxParticipants <= numAtt + int
-        reset({ isWaiting: activity.maxParticipants <= activity.numberAttendees + int })
         setNumAtt(numAtt => numAtt + int)
-    }
-
-    const { control, handleSubmit, reset } = useForm<AttendeeSchema>({
-        mode: 'onTouched',
-        resolver: zodResolver(attendeeSchema),
-        defaultValues: { isWaiting: activity.maxParticipants <= activity.numberAttendees }
-    });
-
-    const onSubmit = (data: AttendeeSchema) => {
-        addAttendee.mutate(data, {
-            onSettled: () => {
-                setAddAtt(false)
-                setIsFull(1)
-            }
-        })
     }
 
     return (
@@ -62,8 +44,8 @@ export default function ActivityDetailsAttendees({ activity }: Props) {
                     <Typography variant="h5">ASSISTÈNCIA</Typography>
                     {activity.isFull && <Chip label='COMPLETA' color='success' sx={{ borderRadius: 2, fontWeight: 'bold' }} />}
                 </Grid2>
-                {(currentUser?.role === "Admin" || activity.isOrganizing) && numAtt > 0 && hasOldRecur && (
-                    <Button variant="contained" onClick={(e) => { e.currentTarget.blur(); setCheckAtt(true) }} disabled={addAttendee.isPending} endIcon={<ChecklistRtlIcon />}>
+                {(currentUser?.role === "Admin" || activity.isOrganizing) && activity.numberAttendees > 0 && hasOldRecur && (
+                    <Button variant="contained" onClick={(e) => { e.currentTarget.blur(); setCheckAtt(true) }} endIcon={<ChecklistRtlIcon />}>
                         Passa llista
                     </Button>
                 )}
@@ -72,38 +54,32 @@ export default function ActivityDetailsAttendees({ activity }: Props) {
             <Grid2 container pl={3} py={0.75} pr={3.5} sx={{ display: "block" }}>
                 <AttendeesList activity={activity} setAddAtt={setAddAtt} setIsFull={setIsFull} />
             </Grid2>
-            <Dialog open={checkAtt} onClose={() => setCheckAtt(false)} fullWidth maxWidth="md">
+            {checkAtt && <Dialog open={checkAtt} onClose={() => { setCheckAtt(false); setRecur(null); }} fullWidth maxWidth="md">
                 <DialogTitle display='flex' color="secondary" alignItems='center' justifyContent='center' >PASSA LLISTA</DialogTitle>
                 <DialogContent dividers>
-                    <Typography variant="h6">Sel·lecciona la data de l'activitat:</Typography>
-                    <FormControl fullWidth size="small" sx={{ mb: 2, mt: 1 }}>
-                        <InputLabel>Data</InputLabel>
-                        <Select value={recurId ?? ''} label="Data" onChange={handleChange}>
-                            {dateOptions.map(o => (
-                                <MenuItem key={o.value} value={o.value}>
-                                    {dayjs(o.text).format("DD-MM-YYYY[ (]HH:mm[)]")}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    {recurId && <AttendanceForm activity={activity} recurId={recurId} setCheckAtt={setCheckAtt} />}
+                    {recur === null ?
+                        <>
+                            <Typography variant="h6">Sel·lecciona la data de l'activitat:</Typography>
+                            <FormControl fullWidth size="small" sx={{ mb: 2, mt: 1 }}>
+                                <InputLabel>Data</InputLabel>
+                                <Select label="Data" onChange={handleChange}>
+                                    {dateOptions.map(o => (
+                                        <MenuItem key={o.value} value={o.value}>
+                                            {dayjs(o.text).format("DD-MM-YYYY[ (]HH:mm[)]")}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </>
+                        :
+                        <>
+                            <Typography variant="h6">ASSISTÈNCIA DEL DIA: {recur.name}</Typography>
+                            <AttendanceForm activity={activity} recurId={recur.value} setCheckAtt={() => { setCheckAtt(false); setRecur(null); }} />
+                        </>
+                    }
                 </DialogContent>
-            </Dialog>
-
-            <Dialog open={addAtt} onClose={() => setAddAtt(false)} fullWidth maxWidth="sm">
-                <DialogTitle>Afegeix participant</DialogTitle>
-                <DialogContent dividers>
-                    <Box component="form" onSubmit={handleSubmit(onSubmit)} display='flex' flexDirection='column' gap={3} sx={{ mt: 1 }}>
-                        <TextInput required label='Nom identificatiu' control={control} name='identifier' />
-                        <TextInput label='Comentaris' control={control} name='comments' multiline rows={3} />
-                        <CheckBoxInput label="Llista d'espera" control={control} name='isWaiting' />
-                    </Box>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => { setAddAtt(false); reset(); }} color="error">Cancel·la</Button>
-                    <Button onClick={handleSubmit(onSubmit)} variant="contained" color="success">Crea</Button>
-                </DialogActions>
-            </Dialog>
+            </Dialog>}
+            <AttendeeForm open={addAtt} onClose={() => setAddAtt(false)} activity={activity} setIsFull={setIsFull} />
         </Paper>
     )
 }

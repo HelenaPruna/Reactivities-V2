@@ -9,13 +9,20 @@ public class GetUsers
 {
     public class Query : IRequest<Result<List<UserDto>>>
     {
-
+        public string? SearchTerm { get; set; }
     }
     public class Handler(AppDbContext context) : IRequestHandler<Query, Result<List<UserDto>>>
     {
         public async Task<Result<List<UserDto>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var dtos = await context.Users.Select(u => new UserDto
+            var users = context.Users.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                var term = request.SearchTerm.Trim().ToLower();
+                users = users.Where(a => a.DisplayName!.ToLower().StartsWith(term));
+            }
+
+            var userList = await users.Select(u => new UserDto
             {
                 Id = u.Id,
                 DisplayName = u.DisplayName ?? u.UserName!,
@@ -28,7 +35,7 @@ public class GetUsers
                 .FirstOrDefault() ?? "NoRole"
             }).ToListAsync(cancellationToken);
 
-            return Result<List<UserDto>>.Success(dtos);
+            return Result<List<UserDto>>.Success(userList);
         }
     }
 }

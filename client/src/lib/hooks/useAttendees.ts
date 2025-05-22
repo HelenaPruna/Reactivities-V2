@@ -106,6 +106,24 @@ export const useAttendees = (id: string, isWaiting?: boolean, recurId?: string |
         }
     })
 
+    const editAttendee = useMutation({
+        mutationFn: async (attendee: AttendeeVal) => {
+            await agent.put(`/activities/attendees/${attendee.id}`, attendee)
+        },
+        onMutate: async (attendeeEdited) => {
+            await queryClient.cancelQueries({ queryKey: [id, 'attendees', attendeeEdited.isWaiting] });
+            const prevAttendees = queryClient.getQueryData<Attendee[]>([id, 'attendees', attendeeEdited.isWaiting]);
+            return { prevAttendees };
+        },
+        onError: (_, newAttendee, context) => {
+            queryClient.setQueryData([id, 'attendees', newAttendee.isWaiting], context?.prevAttendees);
+        },
+        onSettled: (_, __, newAtt) => {
+            const waitKey = newAtt.isWaiting;
+            queryClient.invalidateQueries({ queryKey: [id, 'attendees', waitKey] });
+        }
+    })
+
     return {
         activityAttendees,
         loadingAttendees,
@@ -114,6 +132,7 @@ export const useAttendees = (id: string, isWaiting?: boolean, recurId?: string |
         updateAttendance,
         deleteAttendee,
         addAttendee,
-        activateAttendee
+        activateAttendee,
+        editAttendee
     }
 }

@@ -9,7 +9,7 @@ const RequestList = observer(function RequestList() {
     const { currentUser } = useAccount();
 
     const stateLabels = ['Pendents', 'Aprovades', 'Denegades']
-    const typeLabels = ['Abonar diners', 'Comprar', 'Reserva sala', 'Altres']
+    const typeLabels = ['Abonar diners', 'Comprar', 'Reserva sala', 'Rentadora', 'Participants', 'Altres']
 
     return (
         <TableContainer sx={{ height:580 }}><Table>
