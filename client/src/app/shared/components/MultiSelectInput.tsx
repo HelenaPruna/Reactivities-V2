@@ -23,15 +23,18 @@ export default function MultiSelectInput<T extends FieldValues>(props: Props<T>)
       onChange={(_, newValue) => {
         field.onChange(newValue.map(p => p.id));
       }}
-      renderOption={(props, option, { selected }) => (
-        <li {...props}>
-          <Checkbox
-            style={{ marginRight: 8 }}
-            checked={selected}
-          />
-          <ListItemText primary={option.displayName} />
-        </li>
-      )}
+      renderOption={(props, option, { selected }) => {
+        const { key, ...rest } = props;
+        return (
+          <li key={key} {...rest}>
+            <Checkbox
+              style={{ marginRight: 8 }}
+              checked={selected}
+            />
+            <ListItemText primary={option.displayName} />
+          </li>
+        );
+      }}
       renderInput={params => (
         <TextField
           {...params}

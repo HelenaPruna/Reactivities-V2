@@ -1,4 +1,5 @@
 using Application.Core;
+using Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -11,11 +12,15 @@ public class DeleteUser
     {
         public required string Id { get; set; }
     }
-    public class Handler(AppDbContext context) : IRequestHandler<Command, Result<Unit>>
+    public class Handler(AppDbContext context, IUserAccessor userAccessor) : IRequestHandler<Command, Result<Unit>>
     {
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var user = await context.Users
+            var currUserId = userAccessor.GetUserId();
+            if (currUserId == request.Id)
+                return Result<Unit>.Failure("No es pot eliminar un mateix", 400);
+
+            var user = await context.Users 
                 .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
             if (user == null) return Result<Unit>.Failure("User not found", 404);
 

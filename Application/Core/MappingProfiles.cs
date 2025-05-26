@@ -32,9 +32,6 @@ public class MappingProfiles : Profile
             .ForMember(x => x.TimeEnd, o => o.MapFrom(s => s.FirstDate.TimeEnd))
             .ForMember(x => x.Recurrences, o => o.MapFrom(s => s.Recurrences.Where(x => x.IsRecurrent)))
             .ForMember(x => x.OneTimeEvents, o => o.MapFrom(s => s.Recurrences.Where(x => !x.IsRecurrent).OrderBy(x => x.Date)));
-        CreateMap<Activity, UserActivityDto>()
-            .ForMember(x => x.DateStart, o => o.MapFrom(s => s.FirstDate.Date))
-            .ForMember(x => x.DateEnd, o => o.MapFrom(s => s.Recurrences.Where(x => x.IsRecurrent && x.Id != s.FirstDate.Id).Max(recur => recur.Date)));
         CreateMap<Activity, ActivitiesOptionsDto>();
 
         CreateMap<RecurrenceActivity, RecurrenceDto>();

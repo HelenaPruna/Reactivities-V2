@@ -10,7 +10,6 @@ import ServerError from "../../features/errors/ServerError";
 import LoginForm from "../../features/account/LoginForm";
 import RequireAuth from "./RequireAuth";
 import RegisterForm from "../../features/account/RegisterForm";
-import ProfilePage from "../../features/profiles/ProfilePage";
 import RoomDashboard from "../../features/rooms/RoomDashboard";
 import LaundryDashboard from "../../features/laundry/LaundryDashboard";
 import RequestDashboard from "../../features/requests/RequestDashboard";
@@ -28,7 +27,6 @@ export const router = createBrowserRouter([
                     { path: 'createActivity', element: <ActivityForm key='create' /> },
                     { path: 'register', element: <RegisterForm /> }, //Els admins registren a les persones
                     { path: 'manage/:id', element: <ActivityForm /> },
-                    { path: 'profiles/:id', element: <ProfilePage /> },
                     { path: 'rooms', element: <RoomDashboard /> },
                     { path: 'laundry', element: <LaundryDashboard /> },
                     { path: 'requests', element: <RequestDashboard /> },

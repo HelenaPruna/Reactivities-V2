@@ -7,7 +7,6 @@ import LaundrySkeleton from "../shared/skeletons/LaundrySkeleton";
 import RoomsPageSkeleton from "../shared/skeletons/RoomsPageSkeleton";
 import RequestPageSkeleton from "../shared/skeletons/RequestPageSkeleton";
 import UsersSkeleton from "../shared/skeletons/UsersSkeleton";
-import ProfilePageSkeleton from "../shared/skeletons/ProfilePageSkeleton";
 
 export default function RequireAuth() {
   const { currentUser, loadingUserInfo } = useAccount();
@@ -25,8 +24,6 @@ export default function RequireAuth() {
         return <LaundrySkeleton />
       case '/rooms':
         return <RoomsPageSkeleton />
-      case `/profiles/${id}`:
-        return <ProfilePageSkeleton />
       case '/users':
         return <UsersSkeleton />
       case '/requests':
