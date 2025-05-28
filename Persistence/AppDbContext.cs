@@ -24,7 +24,7 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
 
         builder.Entity<ActivityOrganizer>()
             .HasOne(x => x.User)
-            .WithMany(x => x.ActivitiesOrganized)
+            .WithMany()
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Restrict);
 
@@ -59,7 +59,7 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
 
         builder.Entity<Request>()
             .HasOne(r => r.RequestedBy)
-            .WithMany(u => u.RequestsMade)
+            .WithMany()
             .HasForeignKey(r => r.RequestedById)
             .OnDelete(DeleteBehavior.Restrict);
 
