@@ -1,7 +1,6 @@
 ## Punt de partida
 
-Per al desenvolupament inicial he seguit el curs de Udemy _Complete Guide to Building an App with .NET Core and React_  
-(https://www.udemy.com/course/complete-guide-to-building-an-app-with-net-core-and-react/?course_id=2472180),  
+Per al desenvolupament inicial he seguit el curs de Udemy [_Complete Guide to Building an App with .NET Core and React_](https://www.udemy.com/course/complete-guide-to-building-an-app-with-net-core-and-react/?course_id=2472180),  
 que proporciona un projecte de referència amb l’estructura bàsica de React + .NET, autenticació, models i serveis essencials  
 (vegeu també el [repositori del curs complet](https://github.com/TryCatchLearn/Reactivities)).  
 
