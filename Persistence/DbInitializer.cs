@@ -75,7 +75,8 @@ public class DbInitializer
             new() { Id = "8",  Name = "Sala 31", NumberFloor = 3, Capacity = 5  },
             new() { Id = "9",  Name = "Sala 32", NumberFloor = 3, Capacity = 7  },
             new() { Id = "10", Name = "Sala 33", NumberFloor = 3, Capacity = 5  },
-            new() { Id = "11", Name = "Sala 41", NumberFloor = 4, Capacity = 12 },
+            new() { Id = "11", Name = "Sala 34", NumberFloor = 3, Capacity = 5  },
+            new() { Id = "12", Name = "Sala 41", NumberFloor = 4, Capacity = 12 },
         };
 
         context.Rooms.AddRange(rooms);
@@ -87,7 +88,7 @@ public class DbInitializer
         {
             new()
             {
-                Title = "Taller antic admin x eliminar",
+                Title = "Taller acabat",
                 Description = "Taller anterior",
                 CreatorId = users[14].Id,
                 MaxParticipants = 10,
@@ -208,7 +209,7 @@ public class DbInitializer
                     }
                 ],
                 Recurrences = [.. Enumerable
-                    .Range(0, 10)
+                    .Range(0, 20)
                     .Select(i => new RecurrenceActivity
                     {
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 14).AddDays(i * 7)),
@@ -220,7 +221,7 @@ public class DbInitializer
             new()
             {
                 Title = "Risoterapia",
-                Description = "",
+                Description = "--",
                 CreatorId = users[2].Id,
                 MaxParticipants = 10,
                 RoomId = rooms[2].Id,
@@ -243,7 +244,7 @@ public class DbInitializer
                     new Attendee { Identifier = "Ana López" }
                 ],
                 Recurrences = [.. Enumerable
-                    .Range(0, 10)
+                    .Range(0, 20)
                     .Select(i => new RecurrenceActivity
                     {
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 15).AddDays(i * 7)),
@@ -274,7 +275,7 @@ public class DbInitializer
                     new Request
                     {
                         State = 1,
-                        Type = 1,
+                        Type = 2,
                         Message = "Es necessita una sala per l'activitat extra del dia 7-5",
                         RequestedById = users[4].Id,
                         ApprovedById = users[1].Id,
@@ -308,7 +309,7 @@ public class DbInitializer
                     new Attendee { Identifier = "Bianca Vazquez" }
                 ],
                 Recurrences = [.. Enumerable
-                    .Range(0, 10)
+                    .Range(0, 20)
                     .Select(i => new RecurrenceActivity
                     {
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 16).AddDays(i * 7)),
@@ -346,7 +347,7 @@ public class DbInitializer
 
                 ],
                 Recurrences = [.. Enumerable
-                    .Range(0, 10)
+                    .Range(0, 20)
                     .Select(i => new RecurrenceActivity
                     {
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 15).AddDays(i * 14)),
@@ -377,7 +378,7 @@ public class DbInitializer
                     new Attendee { Identifier = "Irene Delgado" }
                 ],
                 Recurrences = [.. Enumerable
-                    .Range(0, 10)
+                    .Range(0, 20)
                     .Select(i => new RecurrenceActivity
                     {
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 16).AddDays(i * 7)),
@@ -414,7 +415,7 @@ public class DbInitializer
                     new Attendee { Identifier = "Silvia Castaño" }
                 ],
                 Recurrences = [.. Enumerable
-                    .Range(0, 10)
+                    .Range(0, 20)
                     .Select(i => new RecurrenceActivity
                     {
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 16).AddDays(i * 7)),
@@ -450,7 +451,7 @@ public class DbInitializer
                 Description = "---",
                 CreatorId = users[rnd.Next(0, 4)].Id,
                 MaxParticipants = 7,
-                RoomId = rooms[11].Id,
+                RoomId = rooms[12].Id,
                 AllowedMissedDays = 2,
                 Organizers = [
                     new ActivityOrganizer
@@ -468,13 +469,13 @@ public class DbInitializer
                     new Attendee { Identifier = "José Antonio Díaz" }
                 ],
                 Recurrences = [.. Enumerable
-                    .Range(0, 10)
+                    .Range(0, 20)
                     .Select(i => new RecurrenceActivity
                     {
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 8).AddDays(i * 7)),
                         TimeStart = new TimeOnly(16, 30),
                         TimeEnd = new TimeOnly(18, 30),
-                        RoomId = rooms[11].Id
+                        RoomId = rooms[12].Id
                     })
                 ]
             },
@@ -493,7 +494,7 @@ public class DbInitializer
                     }
                 ],
                 Recurrences = [.. Enumerable
-                    .Range(0, 10)
+                    .Range(0, 20)
                     .Select(i => new RecurrenceActivity
                     {
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 16).AddDays(i * 7)),
@@ -518,10 +519,10 @@ public class DbInitializer
             new()
             {
                 Title = "Yoga Grup dijous",
-                Description = "",
+                Description = "--",
                 CreatorId = users[rnd.Next(0, 4)].Id,
                 MaxParticipants = 7,
-                RoomId = rooms[11].Id,
+                RoomId = rooms[12].Id,
                 AllowedMissedDays = 2,
                 Organizers = [
                     new ActivityOrganizer
@@ -541,13 +542,13 @@ public class DbInitializer
                     new Attendee { Identifier = "Rocío Gil", Comments = "Ja ha participat en anterioritat a yoga" , IsWaiting = true },
                 ],
                 Recurrences = [.. Enumerable
-                    .Range(0, 10)
+                    .Range(0, 20)
                     .Select(i => new RecurrenceActivity
                     {
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 10).AddDays(i * 7)),
                         TimeStart = new TimeOnly(16, 30),
                         TimeEnd = new TimeOnly(18, 30),
-                        RoomId = rooms[11].Id
+                        RoomId = rooms[12].Id
                     })
                 ]
             },
@@ -576,7 +577,7 @@ public class DbInitializer
                     new Attendee { Identifier = "Alberto Gómez", IsWaiting = true }
                 ],
                 Recurrences = [.. Enumerable
-                    .Range(0, 10)
+                    .Range(0, 20)
                     .Select(i => new RecurrenceActivity
                     {
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 16).AddDays(i * 7)),
@@ -611,7 +612,7 @@ public class DbInitializer
                     new Attendee { Identifier = "Iván Domínguez", IsWaiting = true },
                 ],
                 Recurrences = [.. Enumerable
-                    .Range(0, 10)
+                    .Range(0, 20)
                     .Select(i => new RecurrenceActivity
                     {
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 16).AddDays(i * 7)),
@@ -626,8 +627,8 @@ public class DbInitializer
                 Title = "Crochet",
                 Description = "---",
                 CreatorId = users[rnd.Next(0, 4)].Id,
-                MaxParticipants = 11,
-                RoomId = rooms[11].Id,
+                MaxParticipants = rnd.Next(6, 12),
+                RoomId = rooms[12].Id,
                 AllowedMissedDays = rnd.Next(1, 3),
                 Organizers = [
                     new ActivityOrganizer
@@ -651,13 +652,13 @@ public class DbInitializer
                     new Attendee { Identifier = "Lola Ramos", IsWaiting = true },
                 ],
                 Recurrences = [.. Enumerable
-                    .Range(0, 10)
+                    .Range(0, 20)
                     .Select(i => new RecurrenceActivity
                     {
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 16).AddDays(i * 7)),
                         TimeStart = new TimeOnly(10, 00),
                         TimeEnd = new TimeOnly(12, 30),
-                        RoomId = rooms[11].Id
+                        RoomId = rooms[12].Id
                     })
                 ]
             },
@@ -685,7 +686,7 @@ public class DbInitializer
                     new Attendee { Identifier = "María José Ruiz" }
                 ],
                 Recurrences = [.. Enumerable
-                    .Range(0, 10)
+                    .Range(0, 20)
                     .Select(i => new RecurrenceActivity
                     {
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 14).AddDays(i * 7)),
@@ -717,7 +718,7 @@ public class DbInitializer
                     new Attendee { Identifier = "Khalid Bennani" }
                 ],
                 Recurrences = [.. Enumerable
-                    .Range(0, 10)
+                    .Range(0, 20)
                     .Select(i => new RecurrenceActivity
                     {
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 15).AddDays(i * 7)),
@@ -749,7 +750,7 @@ public class DbInitializer
                     new Attendee { Identifier = "Paola Cedeño" }
                 ],
                 Recurrences = [.. Enumerable
-                    .Range(0, 10)
+                    .Range(0, 20)
                     .Select(i => new RecurrenceActivity
                     {
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 16).AddDays(i * 7)),
@@ -804,7 +805,7 @@ public class DbInitializer
                     new Attendee { Identifier = "Alba Ramírez" }
                 ],
                 Recurrences = [.. Enumerable
-                    .Range(0, 5)
+                    .Range(0, 10)
                     .Select(i => new RecurrenceActivity
                     {
                         Date = DateOnly.FromDateTime(new DateTime(2025, 04, 10).AddDays(i * 7)),
@@ -833,7 +834,7 @@ public class DbInitializer
                 {
                     foreach (var att in attendees) if (!att.IsWaiting)
                         {
-                            var randomValue = rnd.Next(1, 3);
+                            var randomValue = (rnd.NextDouble() < 0.95) ? 1 : 2;
                             recur.Attendances.Add(new()
                             {
                                 AttendeeId = att.Id,
