@@ -62,7 +62,7 @@ export default function ActionsUsers({ userId }: Props) {
                 </DialogContent>
                 <DialogActions>
                     <Button variant="contained" autoFocus onClick={() => setOpen(false)}>Cancel·la</Button>
-                    <Button onClick={() => { deleteUser.mutate(); setOpen(false) }} color="error">El·limina</Button>
+                    <Button onClick={() => { deleteUser.mutate(); setOpen(false) }} color="error">Elimina</Button>
                 </DialogActions>
             </Dialog>
         </>

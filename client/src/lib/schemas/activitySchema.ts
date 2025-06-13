@@ -4,7 +4,7 @@ import { requiredString } from '../util/util';
 
 export const activitySchema = z.object({
     title: requiredString(),
-    description: z.coerce.string().default("--"),
+    description: z.coerce.string().optional(),
     maxParticipants: z.coerce
         .number({ message: 'Camp obligatori' }).int()
         .positive({ message: 'El nombre de participants ha de ser postiu' })

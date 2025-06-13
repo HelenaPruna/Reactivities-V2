@@ -107,7 +107,7 @@ export const useActivities = (id?: string) => {
             await agent.delete(`/activities/${id}`)
         },
         onSuccess: async () => {
-            navigate('/activities')
+            navigate('/activities', { replace: true })
         }
     })
 

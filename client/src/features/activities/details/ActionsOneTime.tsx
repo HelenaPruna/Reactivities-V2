@@ -77,7 +77,7 @@ export default function ActionsOneTime({ deleteEvent, activityId, recurId }: Pro
                 </DialogContent>
                 <DialogActions>
                     <Button variant="contained" onClick={() => setOpen(false)}>Cancel·la</Button>
-                    <Button onClick={() => { setOpen(false); deleteEvent() }} color="error">El·limina</Button>
+                    <Button onClick={() => { setOpen(false); deleteEvent() }} color="error">Elimina</Button>
                 </DialogActions>
             </Dialog>
             {bookRoom && <RoomBooking activityId={activityId} setOpen={setBookRoom} recurId={recurId} /> }

@@ -22,8 +22,10 @@ public class EditActivity
                 .Where(x => x.Id == request.ActivityDto.Id).FirstOrDefaultAsync(cancellationToken);
             if (activity == null) return Result<Unit>.Failure("Activity not found", 404);
             var dto = request.ActivityDto;
+            var isCapacityMod = activity.MaxParticipants < dto.MaxParticipants;
 
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
             var tmpRecurList = activity.Recurrences.Where(x => x.IsRecurrent).OrderBy(x => x.Date).ToList();
             var firstRecur = activity.FirstDate;
             var lastDate = tmpRecurList.Last().Date;
@@ -36,7 +38,7 @@ public class EditActivity
                 IsModRecurrences = true;
                 List<DateOnly> newDates = [];
                 for (var date = dto.DateStart; date <= dto.DateEnd; date = date.AddDays(dto.Interval))
-                {  newDates.Add(date); }
+                { newDates.Add(date); }
 
                 foreach (var newDate in newDates)
                 {
@@ -56,17 +58,17 @@ public class EditActivity
                         activity.Recurrences.Add(recur);
                     }
                 }
-                foreach (var obsoleteRecur in tmpRecurList) if(obsoleteRecur.Date >= today) //nomes s'eliminaran les que siguin futures, les passades es poden modificar pero no eliminar. 
-                {
-                    if (obsoleteRecur.Id == activity.FirstDateId)
+                foreach (var obsoleteRecur in tmpRecurList) if (obsoleteRecur.Date >= today) //nomes s'eliminaran les que siguin futures, les passades es poden modificar pero no eliminar. 
                     {
-                        activity.FirstDateId = null;
-                        await context.SaveChangesAsync(cancellationToken);
+                        if (obsoleteRecur.Id == activity.FirstDateId)
+                        {
+                            activity.FirstDateId = null;
+                            await context.SaveChangesAsync(cancellationToken);
+                        }
+                        activity.Recurrences.Remove(obsoleteRecur);
+                        context.Recurrences.Remove(obsoleteRecur);
                     }
-                    activity.Recurrences.Remove(obsoleteRecur);
-                    context.Recurrences.Remove(obsoleteRecur);
-                }
-                activity.FirstDateId = activity.Recurrences.Where(x => x.IsRecurrent).First(x => x.Date == dto.DateStart && x.TimeStart == dto.TimeStart).Id; 
+                activity.FirstDateId = activity.Recurrences.Where(x => x.IsRecurrent).First(x => x.Date == dto.DateStart && x.TimeStart == dto.TimeStart).Id;
                 await context.SaveChangesAsync(cancellationToken);
             }
             else
@@ -85,23 +87,28 @@ public class EditActivity
             }
 
             //ara revisar que la sala serveix per les recurrences noves
-            if (IsModRecurrences && activity.RoomId != null)
+            if ((IsModRecurrences || isCapacityMod) && activity.RoomId != null)
             {
                 var room = await context.Rooms.Include(r => r.Recurrences)
                     .FirstOrDefaultAsync(r => r.Id == activity.RoomId, cancellationToken);
                 if (room == null) return Result<Unit>.Failure("Failed to find room", 400);
+                var IsRoomAvailable = true;
                 var updatedRecur = activity.Recurrences.Where(x => x.IsRecurrent && x.Date >= today).ToList();
 
-                var IsRoomAvailable = updatedRecur.All(newRecur => !room.Recurrences.Any(exist =>
+                if (isCapacityMod && room.Capacity < dto.MaxParticipants) IsRoomAvailable = false;
+                else if (IsModRecurrences)
+                {
+                    IsRoomAvailable = updatedRecur.All(newRecur => !room.Recurrences.Any(exist =>
                     exist.Date == newRecur.Date && exist.Id != newRecur.Id &&
                     newRecur.TimeStart < exist.TimeEnd && newRecur.TimeEnd > exist.TimeStart));
+                }
 
                 if (!IsRoomAvailable)
                 {
                     activity.RoomId = null;
                     foreach (var recur in updatedRecur) recur.RoomId = null;
                 }
-                else
+                else if(IsModRecurrences)
                 {
                     var needRoomAssigned = updatedRecur.Where(x => x.RoomId == null).ToList();
                     foreach (var recur in needRoomAssigned)
@@ -110,6 +117,17 @@ public class EditActivity
                         room.Recurrences.Add(recur);
                     }
                 }
+            }
+
+            if (isCapacityMod)
+            {
+                var oneTimeRecurList = activity.Recurrences.Where(x => !x.IsRecurrent && x.Date >= today).ToList();
+                foreach (var oneTimeRecur in oneTimeRecurList) if (oneTimeRecur.RoomId != null)
+                    {
+                        var room = await context.Rooms.FirstOrDefaultAsync(r => r.Id == oneTimeRecur.RoomId, cancellationToken);
+                        if (room == null) return Result<Unit>.Failure("Failed to find room", 400);
+                        if (room.Capacity < dto.MaxParticipants) oneTimeRecur.RoomId = null;
+                    }
             }
 
             mapper.Map(request.ActivityDto, activity);

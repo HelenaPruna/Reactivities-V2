@@ -45,7 +45,7 @@ export default function AttendeesTable({ activityAttendees, isWaiting, activateA
                         </TableCell>}
                         {currentUser?.role !== 'Admin' && isOrganizing && <TableCell align="right">
                             <Tooltip title="Edita el participant" >
-                                <IconButton onClick={(e) => { e.currentTarget.blur(); }}>
+                                <IconButton onClick={(e) => { e.currentTarget.blur(); setToEdit(att) }}>
                                     <Edit />
                                 </IconButton>
                             </Tooltip>

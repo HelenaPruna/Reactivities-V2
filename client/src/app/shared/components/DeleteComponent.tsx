@@ -63,7 +63,7 @@ export default function DeleteComponent({ delActivity }: Props) {
                 </DialogContent>
                 <DialogActions>
                     <Button variant="contained" onClick={() => setOpen(false)}>Cancel·la</Button>
-                    <Button onClick={() => { delActivity(); setOpen(false) }} color="error">El·limina</Button>
+                    <Button onClick={() => { delActivity(); setOpen(false) }} color="error">Elimina</Button>
                 </DialogActions>
             </Dialog>
         </>

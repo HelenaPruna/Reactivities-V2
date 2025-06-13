@@ -13,8 +13,9 @@ import { observer } from "mobx-react-lite";
 type Props = {
     reqId: string
     activityId?: string
+    state?: number
 }
-const ActionsRequest = observer(function ActionsRequest({ reqId, activityId }: Props) {
+const ActionsRequest = observer(function ActionsRequest({ reqId, activityId,  state }: Props) {
     const { updateRequest, deleteRequest } = useRequests(false, true, reqId, activityId)
     const { requestStore: { filter } } = useStore()
 
@@ -57,7 +58,7 @@ const ActionsRequest = observer(function ActionsRequest({ reqId, activityId }: P
 
             >
                 {currentUser?.role === 'Admin' &&
-                    (filter !== undefined && filter !== 0) &&
+                    ((filter !== undefined && filter !== 0) || (state !== undefined && state !== 0)) &&
                     <MenuItem onClick={() => {
                         updateRequest.mutate(0);
                         handleClose();
@@ -69,7 +70,7 @@ const ActionsRequest = observer(function ActionsRequest({ reqId, activityId }: P
                     </MenuItem>
                 }
                 {currentUser?.role === 'Admin' &&
-                    (filter === undefined || filter !== 1) &&
+                    filter !== 1 && state !== 1 &&
                     <MenuItem onClick={() => {
                         updateRequest.mutate(1);
                         handleClose();
@@ -81,13 +82,13 @@ const ActionsRequest = observer(function ActionsRequest({ reqId, activityId }: P
                     </MenuItem>
                 }
                 {currentUser?.role === 'Admin' &&
-                    (filter === undefined || filter !== 2) &&
+                    filter !== 2 && state !== 2 &&
                     <MenuItem onClick={() => {
                         updateRequest.mutate(2);
                         handleClose();
                     }}>
                         <ListItemIcon>
-                            <CancelIcon color="warning" />
+                            <CancelIcon color="error" />
                         </ListItemIcon>
                         <ListItemText>Denegar</ListItemText>
                     </MenuItem>
@@ -113,7 +114,7 @@ const ActionsRequest = observer(function ActionsRequest({ reqId, activityId }: P
                 </DialogContent>
                 <DialogActions>
                     <Button variant="contained" onClick={() => setOpen(false)}>Cancel·la</Button>
-                    <Button onClick={() => { deleteRequest.mutate(); setOpen(false) }} color="error">El·limina</Button>
+                    <Button onClick={() => { deleteRequest.mutate(); setOpen(false) }} color="error">Elimina</Button>
                 </DialogActions>
             </Dialog>
         </>

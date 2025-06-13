@@ -59,17 +59,17 @@ export default function RegisterForm() {
                 <Box component="ul" sx={{ pl: 2, my:0 }}>
                     <li>
                         <Typography variant="body1" sx={{mb: 1}}>
-                            <strong>Observador:</strong> pot veure tota la informació i només fer sol·licituds.
+                            <strong>Observador:</strong> pot veure tota la informació, fer sol·licituds i afegir persones a la llista d'espera.
                         </Typography>
                     </li>
                     <li>
                         <Typography variant="body1" sx={{mb: 1}}>
-                            <strong>Organitzador:</strong> totes les accions d'Observador, més gestionar, editar i eliminar participants de les activitats on és organitzador, i crear reserves per a la rentadora.
+                            <strong>Organitzador:</strong> totes les accions d'Observador, més pels tallers on és organitzador poder afegir comentaris als participants, passar assitència, afegir sessions extres.
                         </Typography>
                     </li>
                     <li>
                         <Typography variant="body1">
-                            <strong>Administratiu:</strong> totes les accions d'Organitzador, més crear i gestionar activitats, gestionar reserves de sales, i crear nous usuaris.
+                            <strong>Administratiu:</strong> totes les accions d'Organitzador, més crear i gestionar activitats, gestionar reserves de sales i del servei de rentadora, i crear nous usuaris.
                         </Typography>
                     </li>
                 </Box>

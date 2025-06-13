@@ -176,7 +176,7 @@ const LaundryCalendar = observer(function LaundryCalendar() {
                             setToDeleteId(null);
                         }}
                     >
-                        El·limina
+                        Elimina
                     </Button>
                 </DialogActions>
             </Dialog>

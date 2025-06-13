@@ -32,7 +32,7 @@ export default function AttendeeForm({ open, onClose, activity, attendee, setIsF
         }
         else {
             addAttendee.mutate(data)
-            if (setIsFull) setIsFull(1)
+            if (setIsFull && currentUser?.role === "Admin") setIsFull(1)
         }
         reset()
         onClose()

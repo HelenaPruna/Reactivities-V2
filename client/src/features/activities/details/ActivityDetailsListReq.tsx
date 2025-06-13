@@ -52,7 +52,7 @@ export default function ActivityDetailsListReq({ requests, activityId }: Props) 
                         />
 
                         {currentUser?.role === "Admin" &&
-                            <ActionsRequest reqId={r.id} activityId={activityId} />
+                            <ActionsRequest reqId={r.id} activityId={activityId} state={r.state} />
                         }
                     </ListItem>
                     {index < requests.length - 1 && <Divider component="li" />}

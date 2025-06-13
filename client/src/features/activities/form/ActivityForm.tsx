@@ -52,7 +52,8 @@ export default function ActivityForm() {
                     ...data,
                     dateEnd: activity.isOneDay ? data.dateStart : data.dateEnd ?? activity.dateEnd,
                     allowedMissedDays: activity.isOneDay ? 1 : data.allowedMissedDays ?? activity.allowedMissedDays,
-                    interval: activity.isOneDay ? 1 : data.interval ?? activity.interval
+                    interval: activity.isOneDay ? 1 : data.interval ?? activity.interval,
+                    description: data.description || "-"
                 };
                 updateActivity.mutate({ ...activity, ...activityData }, {
                     onSuccess: () => navigate(`/activities/${activity.id}`, { replace: true })
@@ -62,7 +63,8 @@ export default function ActivityForm() {
                     ...data,
                     dateEnd: data.isOneDay ? data.dateStart : data.dateEnd ?? data.dateStart,
                     allowedMissedDays: data.isOneDay ? 1 : data.allowedMissedDays ?? 1,
-                    interval: data.isOneDay ? 1 : data.interval ?? 1
+                    interval: data.isOneDay ? 1 : data.interval ?? 1,
+                    description: data.description ?? "-"
                 };
                 createActivity.mutate(activityData, {
                     onSuccess: (id) => navigate(`/activities/${id}`, { replace: true }),

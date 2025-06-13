@@ -86,7 +86,7 @@ export default function ActionsAttendee({ deleteAtt, activateAtt, isWaiting, set
                 </DialogContent>
                 <DialogActions>
                     <Button variant="contained" onClick={() => setOpen(false)}>Cancel·la</Button>
-                    <Button onClick={() => { setOpen(false); deleteAtt() }} color="error">El·limina</Button>
+                    <Button onClick={() => { setOpen(false); deleteAtt() }} color="error">Elimina</Button>
                 </DialogActions>
             </Dialog>
         </>
