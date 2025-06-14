@@ -9,14 +9,14 @@ export const laundrySchema = z.object({
     isRecurrent: z.coerce.boolean().default(false)
 }).superRefine((data, ctx) => {
     const date = data.start
-    const hours = date.getHours()
+    const hours = date.getUTCHours()
     const minutes = date.getMinutes()
     const tooEarly = hours < 9
     const tooLate = hours > 17 || (hours === 17 && minutes > 30)
     if (tooEarly || tooLate) {
         ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: "L'hora sel·leccionada no és vàlida (9:00-17:30).",
+            message: `L'hora sel·leccionada ${hours}:${minutes} no és vàlida (9:00-17:30).`,
             path: ["start"],
         });
     }
