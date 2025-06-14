@@ -3,9 +3,9 @@ import { makeAutoObservable } from "mobx";
 import { getMonday } from "../util/util";
 
 export class RoomStore {
-    viewType: [string, number] = ['Dia', 1]
-    startDate = dayjs().format("YYYY-MM-DD")
-    endDate = dayjs(this.startDate).add(1, 'day').format("YYYY-MM-DD")
+    viewType: [string, number] = ["Setmana", 6]
+    startDate = getMonday(dayjs()).format("YYYY-MM-DD")
+    endDate = dayjs(this.startDate).add(6, 'day').format("YYYY-MM-DD")
 
     constructor() {
         makeAutoObservable(this)
@@ -25,19 +25,21 @@ export class RoomStore {
 
     setDates = (amount: number, positive: boolean) => {
         if (positive === true) {
-            if( amount === 1 && dayjs(this.startDate).day() === 5) amount = 3 // si es div que em passi a dilluns
+            if (amount === 1 && dayjs(this.startDate).day() === 5) amount = 3 // si es div que em passi a dilluns
+            if (this.viewType[0] === "Setmana") amount = 7 
             this.startDate = dayjs(this.startDate).add(amount, "day").format("YYYY-MM-DD")
         }
         else {
-            if( amount === 1 && dayjs(this.startDate).day() === 1) amount = 3 // si es dill que em passi a div
+            if (amount === 1 && dayjs(this.startDate).day() === 1) amount = 3 // si es dill que em passi a div
+            if (this.viewType[0] === "Setmana") amount = 7 
             this.startDate = dayjs(this.startDate).subtract(amount, "day").format("YYYY-MM-DD")
         }
         this.endDate = dayjs(this.startDate).add(this.viewType[1], 'day').format("YYYY-MM-DD")
     }
 
     resetDates = () => {
-        this.viewType= ['Dia', 1]
-        this.startDate = dayjs().format("YYYY-MM-DD")
-        this.endDate = dayjs(this.startDate).add(1, 'day').format("YYYY-MM-DD")
+        this.viewType= ["Setmana", 6]
+        this.startDate = getMonday(dayjs()).format("YYYY-MM-DD")
+        this.endDate = dayjs(this.startDate).add(6, 'day').format("YYYY-MM-DD")
     }
 }

@@ -15,7 +15,7 @@ const RoomFilters = observer(function RoomFilters() {
       <ButtonGroup>
         <Button variant="outlined" onClick={() => setDates(viewType[1], false)}><KeyboardArrowLeftIcon/></Button>
         <Button variant={viewType[0] === "Dia" ? "contained" : "outlined"} onClick={() => setView(["Dia", 1])}>Dia</Button>
-        <Button variant={viewType[0] === "Setmana" ? "contained" : "outlined"} onClick={() => setView(["Setmana", 7])}>Setmana</Button>
+        <Button variant={viewType[0] === "Setmana" ? "contained" : "outlined"} onClick={() => setView(["Setmana", 6])}>Setmana</Button>
         <Button onClick={() => setDates(viewType[1], true)}><KeyboardArrowRightIcon/></Button>
       </ButtonGroup>
       <Typography variant="h6" color="primary" sx={{ position: "absolute", left: "50%", transform: "translateX(-50%)", pointerEvents: "none" }}>
