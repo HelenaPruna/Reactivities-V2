@@ -39,7 +39,7 @@ cd Reactivities-V2
 git checkout a8d387a
 
 # Neteja i restaura paquets
-git clean -fdx           # opcional
+git clean -fdx           
 dotnet clean
 dotnet restore
 
@@ -51,8 +51,22 @@ npm run dev
 En un altre terminal: 
 ```bash
 cd ../API
-dotnet watch run         
+dotnet watch         
 ```
+> **Nota:** si en el terminal API et surt el següent avís
+> ```bash
+> warn: icrosoft.AspNetCore.Server.Kestrel.Core.KestrelServer[8]
+>     The ASP.NET Core developer certificate is not trusted. ...
+> ```
+> vol dir que el navegador no enviarà peticions HTTPS i, per tant, el client no es podrà connectar al backend.
+>
+> Per solucionar-ho obre powershell administrador (windows) o terminal (MacOS) i executa:
+> ```bash
+> dotnet dev-certs https --clean
+> dotnet dev-certs https --trust
+> ```
+> I reinicia el API (`dotnet watch`).
+
 L'aplicació hauria d'estar disponible al https://localhost:3000 amb els següents usuaris de prova: 
 email: `maria@test.com`, `tatiana@test.com` o `roser@test.com`
 Contrasenya: `Pa$$w0rd`
@@ -65,12 +79,21 @@ Contrasenya: `Pa$$w0rd`
 ```bash
 git fetch
 git checkout dev-sqlite-preusabilitat
-# Segueix els mateixos passos d’execució de la secció 1
+# Segueix els mateixos passos d’execució anteriors 
 ```
+L'aplicació hauria d'estar disponible al https://localhost:3000 amb els següents usuaris de prova: 
+
+email (usuària amb el rol admin): `tatiana@reactivities.com`,
+
+email (usuària amb el rol organitzador): `cristina@reactivities.com`
+
+email (usuària amb el rol observador): `antonia@reactivities.com`
+
+Contrasenya: `Pa$$w0rd`
+
 ## Codi final
 
 Aquesta és la versió actualment desplegada a **Azure App Service** amb **Azure SQL Database**. Per provar el codi localment es necessita tenir [docker](https://www.docker.com/products/docker-desktop/) instal·lat.
-Clonar 
 ```bash
 git clone https://github.com/HelenaPruna/Reactivities-V2.git
 cd Reactivities-V2
@@ -79,17 +102,18 @@ Arrencar el container:
 ```bash
 docker-compose up -d
 ```
-Aplica les migracions i executa el backend:
+Revisa que s'hagi creat el container i s'hagi activat. Aplica les migracions i executa el backend:
 ```bash
+dotnet tool install --global dotnet-ef # si no tens instal·lat dotnet-ef 
 dotnet ef database update -p Persistence -s API
 cd client
 npm install
-npm run build
+npm run buildn
 cd ..
 cd API
 dotnet watch
 ```
-Segueix les instruccions a la pàgina web https://localhost:5001 de la memoria amb aquesta versió. 
+Podràs veure l'app a: https://localhost:5001 , i seguir la guia de la memòria.  
 
 
 
