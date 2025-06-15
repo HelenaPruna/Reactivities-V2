@@ -14,9 +14,36 @@ Aquest repositori conté el codi font del meu Treball Final de Grau, una aplicac
 
 3. **Codi final (producció)**  
    - Versió desplegada a Azure App Service amb Azure SQL Database.  
-   - Instruccions detallades de desplegament i configuració en la memòria del TFG.
+   - La guia de les accions i la versió publicada a la memòria.
+   - Es pot utilitzar en local (instrucccions a sota) però es necessita Docker.
+   - Hi ha una carpeta `Videos/Actuals` on es pot veure algunes de les accions que poden fer per rol. 
 
 ---
+
+## Codi final
+
+Aquesta és la versió actualment desplegada a **Azure App Service** amb **Azure SQL Database**. Per provar el codi localment es necessita tenir [docker](https://www.docker.com/products/docker-desktop/) instal·lat.
+```bash
+git clone https://github.com/HelenaPruna/Reactivities-V2.git
+cd Reactivities-V2
+```
+Arrencar el container:
+```bash
+docker-compose up -d
+```
+Revisa que s'hagi creat el container i s'hagi activat. Aplica les migracions i executa el backend:
+```bash
+dotnet tool install --global dotnet-ef # si no tens instal·lat dotnet-ef 
+dotnet ef database update -p Persistence -s API
+cd client
+npm install
+npm run build
+cd ..
+cd API
+dotnet watch
+```
+Podràs veure l'app a: https://localhost:5001 , i seguir la guia de la memòria.  
+
 
 ## Punt de partida  
 
@@ -90,30 +117,6 @@ email (usuària amb el rol organitzador): `cristina@reactivities.com`
 email (usuària amb el rol observador): `antonia@reactivities.com`
 
 Contrasenya: `Pa$$w0rd`
-
-## Codi final
-
-Aquesta és la versió actualment desplegada a **Azure App Service** amb **Azure SQL Database**. Per provar el codi localment es necessita tenir [docker](https://www.docker.com/products/docker-desktop/) instal·lat.
-```bash
-git clone https://github.com/HelenaPruna/Reactivities-V2.git
-cd Reactivities-V2
-```
-Arrencar el container:
-```bash
-docker-compose up -d
-```
-Revisa que s'hagi creat el container i s'hagi activat. Aplica les migracions i executa el backend:
-```bash
-dotnet tool install --global dotnet-ef # si no tens instal·lat dotnet-ef 
-dotnet ef database update -p Persistence -s API
-cd client
-npm install
-npm run buildn
-cd ..
-cd API
-dotnet watch
-```
-Podràs veure l'app a: https://localhost:5001 , i seguir la guia de la memòria.  
 
 
 
