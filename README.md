@@ -22,7 +22,7 @@ Aquest repositori conté el codi font del meu Treball Final de Grau, una aplicac
 
 ## Codi final
 
-Aquesta és la versió actualment desplegada a **Azure App Service** amb **Azure SQL Database**. Per provar el codi localment es necessita tenir [docker](https://www.docker.com/products/docker-desktop/) instal·lat.
+Aquesta és la versió actualment desplegada a **Azure App Service** amb **Azure SQL Database**. Per provar el codi localment es necessita tenir [docker](https://www.docker.com/products/docker-desktop/) instal·lat, i seguir les següents instruccions: 
 ```bash
 git clone https://github.com/HelenaPruna/Reactivities-V2.git
 cd Reactivities-V2
@@ -31,10 +31,13 @@ Arrencar el container:
 ```bash
 docker-compose up -d
 ```
+Si no tens instal·lat dotnet-ef:
+```bash
+dotnet tool install --global dotnet-ef 
+```
 Revisa que s'hagi creat el container i s'hagi activat. Aplica les migracions i executa el backend:
 ```bash
-dotnet tool install --global dotnet-ef # si no tens instal·lat dotnet-ef 
-dotnet ef database update -p Persistence -s API
+dotnet ef database drop -p Persistence -s API
 cd client
 npm install
 npm run build
